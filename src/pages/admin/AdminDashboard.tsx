@@ -1,26 +1,7 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  Paper,
-} from '@mui/material';
+import {Box,Typography,Button,Card,List,ListItemButton,ListItemIcon,ListItemText,Divider,Paper,} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Dashboard,
-  Brush,
-  Store,
-  ShoppingCart,
-  Group,
-  CalendarToday,
-  LocalOffer,
-  BarChart,
-} from '@mui/icons-material';
+import {Dashboard,Brush,Store,ShoppingCart,Group,CalendarToday,LocalOffer,BarChart,Category}from '@mui/icons-material';
+import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -29,10 +10,11 @@ const AdminDashboard = () => {
   const sidebarItems = [
     { text: 'Tổng Quan', icon: <Dashboard />, path: '/admin' },
     { text: 'Dịch Vụ', icon: <Brush />, path: '/admin/services' },
+    { text: 'Combo làm đẹp', icon: <FaceRetouchingNaturalIcon />, path: '/admin/beautycombo' },
     { text: 'Sản Phẩm', icon: <Store />, path: '/admin/products' },
     { text: 'Đơn Hàng', icon: <ShoppingCart />, path: '/admin/orders' },
     { text: 'Người Dùng', icon: <Group />, path: '/admin/users' },
-    { text: 'Lịch Đặt', icon: <CalendarToday />, path: '/admin/booking' },
+    { text: 'Lịch Đặt', icon: <CalendarToday />, path: '/admin/bookings' },
     { text: 'Mã Giảm Giá', icon: <LocalOffer />, path: '/admin/discount' },
     { text: 'Doanh Thu', icon: <BarChart />, path: '/admin/revenue' },
   ];
@@ -47,6 +29,11 @@ const AdminDashboard = () => {
       title: 'Quản Lý Sản Phẩm',
       icon: <Store fontSize="large" color="secondary" />,
       path: '/admin/products',
+    },
+    {
+      title: 'Quản Lý Danh Mục',
+      icon: <Category fontSize="large" sx={{ color: '#9c27b0' }} />,
+      path: '/admin/categories',
     },
     {
       title: 'Quản Lý Đơn Hàng',
@@ -76,8 +63,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <Box display="flex">
-      {/* Sidebar */}
+    <Box display="flex" sx={{ background: 'linear-gradient(to right bottom, #e0f7fa, #ff7043)', minHeight: '100vh' }}>
       <Paper
         elevation={3}
         sx={{

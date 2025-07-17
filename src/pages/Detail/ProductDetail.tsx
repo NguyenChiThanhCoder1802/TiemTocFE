@@ -1,30 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchProductById } from '../api/productApi';
-import { addToCart } from '../api/apiService';
-import type { Product } from '../types/Product';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CircularProgress,
-  Button,
-} from '@mui/material';
+import { fetchProductById } from '../../api/productApi';
+import { addToCart } from '../../api/apiService';
+import type { Product } from '../../types/Product';
+import {Box,Typography,Card,CardContent,CardMedia,CircularProgress,Button,} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { motion } from 'framer-motion';
 import { useSnackbar } from 'notistack';
-
+import ReviewDialog from '../ReviewDialog';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import AverageRating from '../../components/AverageRating';
+import { getReviewsByProductId, type ReviewDto } from '../../api/reviewApi';
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
+  const [openReview, setOpenReview] = useState(false)
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<ReviewDto[]>([]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -44,6 +40,11 @@ const ProductDetail = () => {
     };
 
     loadProduct();
+     if (id) {
+    getReviewsByProductId(Number(id))
+      .then(setReviews)
+      .catch(() => setReviews([]));
+  }
   }, [id]);
 
   const handleAddToCart = async () => {
@@ -54,6 +55,7 @@ const ProductDetail = () => {
     } catch {
       enqueueSnackbar('❌ Không thể thêm vào giỏ hàng', { variant: 'error' });
     }
+    
   };
 
   if (loading) {
@@ -130,6 +132,7 @@ const ProductDetail = () => {
               <Typography variant="h4" gutterBottom>
                 {product.name}
               </Typography>
+              <AverageRating reviews={reviews} />
               <Typography variant="body1" color="text.secondary" paragraph>
                 {product.description || 'Không có mô tả'}
               </Typography>
@@ -145,6 +148,21 @@ const ProductDetail = () => {
               >
                 Thêm vào giỏ hàng
               </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenReview(true)}
+                startIcon={<RateReviewIcon />}
+                sx={{ mt: 2, borderRadius: 2, ml: 2 }}
+              >
+                Đánh giá
+              </Button>
+                <ReviewDialog
+                  open={openReview}
+                  onClose={() => setOpenReview(false)}
+                  productId={product.id}
+                  productName={product.name}
+                />
+
             </CardContent>
           </Box>
         </Card>

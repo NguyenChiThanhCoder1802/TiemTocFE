@@ -44,7 +44,7 @@ const BookingHistoryPage = () => {
             <Box
               key={booking.id}
               sx={{
-                flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' }, // chia 2 cột trên sm+
+                flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' }, 
                 maxWidth: { xs: '100%', sm: 'calc(50% - 12px)' },
               }}
             >
@@ -70,7 +70,6 @@ const BookingHistoryPage = () => {
                         <CalendarTodayIcon />
                       )}
                     </Avatar>
-
                     <Box>
                       <Typography variant="subtitle2" color="text.secondary">
                         Đặt lịch

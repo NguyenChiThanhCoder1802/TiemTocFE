@@ -14,7 +14,7 @@ import { getProfile, updateProfile } from '../api/profileApi';
 import type { ProfileDto } from '../types/ProfileDto';
 import { ProfileWrapper, ProfileContainer, AvatarCircle } from '../styles/ProfileStyles';
 import { Box} from '@mui/material';
-
+import UserPointDisplay from '../pages/UserPointsDisplay';
 const genders = ['Nam', 'Nữ', 'Khác'];
 
 const ProfilePage = () => {
@@ -158,7 +158,10 @@ const ProfilePage = () => {
           </Box>
         </Box>
       </ProfileContainer>
+      <UserPointDisplay />
+     
     </ProfileWrapper>
+    
   );
 };
 

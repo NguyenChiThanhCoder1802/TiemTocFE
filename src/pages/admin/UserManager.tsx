@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-// import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { getAllUsers, lockUser, unlockUser, assignRole } from '../../services/UserService';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { Snackbar, Alert } from '@mui/material';

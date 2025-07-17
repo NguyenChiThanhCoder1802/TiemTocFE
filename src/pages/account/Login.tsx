@@ -48,7 +48,7 @@ const Login = () => {
 
       const user = getDecodedToken(token);
       if (user) {
-        console.log('✅ Đăng nhập với vai trò:', user.role);
+      
 
         if (user.role === 'Admin') {
           navigate('/admin/dashboard');

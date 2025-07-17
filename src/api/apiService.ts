@@ -1,7 +1,7 @@
 import axiosInstance from '../utils/axiosInstance';
 import type { Product } from '../types/Product';
 import type { Service } from '../types/Service';
-
+import type { CartResponse } from '../types/Cart';
 // Lấy danh sách dịch vụ
 export async function fetchServices(): Promise<Service[]> {
   const res = await axiosInstance.get('/service');
@@ -21,7 +21,7 @@ export async function addToCart(productId: number, quantity: number = 1) {
 }
   
 // Lấy giỏ hàng của người dùng
-export async function fetchCart() {
+export async function fetchCart(): Promise<CartResponse> {
   const res = await axiosInstance.get('/cart');
   return res.data;
 }
@@ -32,11 +32,6 @@ export async function removeFromCart(itemId: number) {
   return res.data;
 }
 
-// Tạo đơn hàng từ giỏ hàng
-// export async function createOrderFromCart(cartId: number) {
-//   const res = await axiosInstance.post(`/order/from-cart/${cartId}`);
-//   return res.data;
-// }
 
  export async function createOrderFromCart(data: { cartId: number; discountCode?: string }) {
   const res = await axiosInstance.post('/order/from-cart', data);

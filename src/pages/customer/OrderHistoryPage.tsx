@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Box, Typography, Card, CardContent, Divider
-} from '@mui/material';
+import {Box, Typography, Card, CardContent, Divider} from '@mui/material';
 import { fetchMyOrders } from '../../api/OrderAPI';
 import type { Order } from '../../types/Order';
 

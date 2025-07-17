@@ -3,15 +3,7 @@ import { Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { getAllDiscounts } from '../services/discountService';
 import type { Discount} from '../types/Discount';
-import {
-  StyledBox,
-  Title,
-  DiscountCard,
-  DiscountBadge,
-  DiscountDetails,
-  DiscountCode,
-  SaveButton,
-} from '../styles/discount';
+import {StyledBox,Title,DiscountCard,DiscountBadge,DiscountDetails,DiscountCode,SaveButton,} from '../styles/discount';
 
 const DiscountListPage = () => {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
@@ -56,7 +48,6 @@ const DiscountListPage = () => {
 
             <SaveButton onClick={() => navigator.clipboard.writeText(discount.code)}>
               Sao chép mã
-              
             </SaveButton>
           </DiscountCard>
         ))

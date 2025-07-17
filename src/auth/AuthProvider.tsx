@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
   };
-
+  
   // Khi load lại trang, kiểm tra token hợp lệ
   useEffect(() => {
     const token = localStorage.getItem('token');

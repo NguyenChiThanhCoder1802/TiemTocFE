@@ -2,7 +2,7 @@ export interface ProfileDto {
   fullName?: string;
   address?: string;
   gender?: string;
-  birthDate?: string; // ISO string
+  birthDate?: string;
   avatarUrl?: string;
   phoneNumber?: string;
 }

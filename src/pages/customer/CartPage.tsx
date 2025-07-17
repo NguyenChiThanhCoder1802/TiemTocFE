@@ -1,144 +1,166 @@
 import { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  Button,
-  Divider,
-  TextField,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCart, removeFromCart, createOrderFromCart, updateCartItemQuantity } from '../../api/apiService';
-import { applyDiscountCode } from '../../services/discountService';
+import {Box,Typography,Table,TableHead,TableRow,TableCell,TableBody,Divider,Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-
-interface CartItem {
-  productId: number;
-  productName: string;
-  price: number;
-  quantity: number;
-  imageUrl?: string;
-}
-
+import { removeFromCart, createOrderFromCart, updateCartItemQuantity } from '../../api/apiService';
+import { applyDiscountCode } from '../../services/discountService';
+import { useCart } from '../../hooks/useCart';
+import type { CartItem } from '../../types/Cart';
+import CartItemRow from '../../components/Cart/CartItemRow';
+import DiscountSection from '../../components/Discount/DiscountSection';
+import CartSummary from '../../components/Cart/CartSummary';
+import type { Product } from '../../types/Product';
+import ItemCardList from '../../components/List/ItemCardList';
+import { addToCart,fetchProducts} from '../../api/apiService';
 const CartPage = () => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const { items, refreshCart, cartId } = useCart();
   const [total, setTotal] = useState(0);
-  const [cartId, setCartId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [discountCode, setDiscountCode] = useState('');
   const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [products, setProducts] = useState<Product[]>([]);
   const [discountError, setDiscountError] = useState('');
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-
-  const loadCart = async () => {
-    try {
-      const data = await fetchCart();
-      setItems(data.items);
-      setCartId(data.id);
-
-      const totalAmount = data.items.reduce(
-        (sum: number, item: CartItem) => sum + item.price * item.quantity,
-        0
-      );
-      setTotal(totalAmount);
-    } catch (err) {
-      console.error('Lỗi khi tải giỏ hàng:', err);
-    }
-  };
-
   const handleRemove = async (productId: number) => {
     try {
       await removeFromCart(productId);
-      await loadCart();
-    } catch (err) {
-      console.error('Lỗi khi xóa sản phẩm:', err);
+      await refreshCart();
+    } catch {
+      enqueueSnackbar('Không xóa được sản phẩm', { variant: 'error', autoHideDuration: 1000 });
     }
   };
+
   const handleQuantityChange = async (productId: number, newQuantity: number) => {
-  if (newQuantity < 1) return;
-
-  try {
-    await updateCartItemQuantity(productId, newQuantity);
-    await loadCart();
-  } catch (err) {
-    console.error('Lỗi khi cập nhật số lượng:', err);
-    enqueueSnackbar(`Không load được`, { variant: 'error' });
-
-  }
-};
-
-  const handleApplyDiscount = async () => {
+    if (newQuantity < 1) return;
     try {
-      const result = await applyDiscountCode(discountCode.trim());
-      setDiscountPercentage(result.percentage);
-      setDiscountError('');
-      enqueueSnackbar(`✅ Mã ${result.code} áp dụng thành công: Giảm ${result.percentage}%`, { variant: 'success' });
-
-    }  catch (err: unknown) {
-  setDiscountPercentage(0);
-
-  if (err instanceof Error) {
-    setDiscountError(err.message || 'Không thể áp dụng mã');
-  } else {
-    setDiscountError('Không thể áp dụng mã');
-  }
-}
-
+      await updateCartItemQuantity(productId, newQuantity);
+      await refreshCart();
+    } catch {
+      enqueueSnackbar('Không load được', { variant: 'error', autoHideDuration: 1000 });
+    }
   };
 
-  const discountedTotal = total - (total * discountPercentage) / 100;
- const handleCheckout = async () => {
-  if (!cartId) {
-    alert("Không tìm thấy giỏ hàng để thanh toán.");
-    return;
-  }
+  const handleApplyDiscount = async () => {
   try {
-    setIsLoading(true);
+    const result = await applyDiscountCode(discountCode.trim());
 
-    const payload = {
-      cartId,
-      discountCode: discountCode.trim() || undefined,
-    };
+    // Nếu có giảm theo số tiền thì dùng, nếu không thì dùng phần trăm
+    if (result.amount && result.amount > 0) {
+      setDiscountAmount(result.amount);
+      setDiscountPercentage(0);
+      enqueueSnackbar(`Mã ${result.code} áp dụng thành công: Giảm ${result.amount.toLocaleString()}₫`, {
+        variant: 'success',
+        autoHideDuration: 1000,
+      });
+    } else {
+      setDiscountPercentage(result.percentage);
+      setDiscountAmount(0);
+      enqueueSnackbar(`Mã ${result.code} áp dụng thành công: Giảm ${result.percentage}%`, {
+        variant: 'success',
+        autoHideDuration: 1000,
+      });
+    }
 
-    const order = await createOrderFromCart(payload);
-
-    enqueueSnackbar(`Đã đặt hành thành công`, { variant: 'success' });
-
-
-    // Reset sau khi đặt hàng
-    setItems([]);
-    setTotal(0);
-    setCartId(null);
-    setDiscountCode('');
+    setDiscountError('');
+  } catch (err: unknown) {
     setDiscountPercentage(0);
-
-    navigate(`/orders/${order.id}`);
-  } catch (err) {
-    console.error("Lỗi khi thanh toán:", err);
-    enqueueSnackbar(`Lỗi khi thanh toán`, { variant: 'error' });
-
-  } finally {
-    setIsLoading(false);
+    setDiscountAmount(0);
+    if (err instanceof Error) {
+      setDiscountError(err.message || 'Không thể áp dụng mã');
+    } else {
+      setDiscountError('Không thể áp dụng mã');
+    }
   }
 };
-  useEffect(() => {
-    loadCart();
-  }, []);
+useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+      } catch{
+        enqueueSnackbar('❌ Không tải được sản phẩm!', { variant: 'error',autoHideDuration: 1000, });
+      }
+    };
+    load();
+  }, [enqueueSnackbar]);
 
+  const handleCheckout = async () => {
+    if (!cartId) {
+      alert('Không tìm thấy giỏ hàng để thanh toán.');
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const payload = {
+        cartId,
+        discountCode: discountCode.trim() || undefined,
+      };
+      const order = await createOrderFromCart(payload);
+      enqueueSnackbar('Đã đặt hàng thành công', { variant: 'success', autoHideDuration: 1000 });
+      await refreshCart();
+      setTotal(0);
+      setDiscountCode('');
+      setDiscountPercentage(0);
+      setDiscountAmount(0);
+
+      navigate(`/my-orders/${order.id}`);
+    } catch {
+      enqueueSnackbar('Lỗi khi thanh toán', { variant: 'error', autoHideDuration: 1000 });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const totalAmount = items.reduce(
+      (sum: number, item: CartItem) => sum + item.price * item.quantity,
+      0
+    );
+    setTotal(totalAmount);
+  }, [items]);
+  const handleAddToCart = async (productId: number) => {
+      try {
+        await addToCart(productId, 1);
+        await refreshCart();
+  
+        enqueueSnackbar(' Đã thêm vào giỏ hàng', { variant: 'success' ,autoHideDuration: 1000,});
+      } catch{
+        enqueueSnackbar('Lỗi khi thêm vào giỏ hàng', { variant: 'error' });
+      }
+      await refreshCart();
+    };
   return (
     <Box maxWidth={800} mx="auto" mt={4}>
-      <Typography variant="h5" gutterBottom>Giỏ hàng của bạn</Typography>
+      <Typography variant="h5" gutterBottom>
+        Giỏ hàng của bạn
+      </Typography>
 
       {items.length === 0 ? (
+        <>
         <Typography variant="body1">Không có sản phẩm trong giỏ hàng.</Typography>
+        <Box mt={2}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => navigate('/product')}
+          >
+            🛍️ Mua hàng ngay
+          </Button>
+        </Box>
+         <ItemCardList
+          items={products}
+          title="Mua Ngay"
+          linkPrefix="product"
+          showActionButton
+          actionLabel="Thêm vào giỏ"
+          onActionClick={handleAddToCart}
+        />
+        </>
+        
+       
       ) : (
         <>
           <Table>
@@ -153,78 +175,25 @@ const CartPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map(item => (
-                <TableRow key={item.productId}>
-                  <TableCell>
-                    <img
-                      src={item.imageUrl || 'https://via.placeholder.com/80x80?text=No+Image'}
-                      alt={item.productName}
-                      style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }}
-                    />
-                  </TableCell>
-                  <TableCell>{item.productName}</TableCell>
-                  <TableCell>{item.price.toLocaleString()}đ</TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-                      >-</Button>
-                      <Typography>{item.quantity}</Typography>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-                      >+</Button>
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>{(item.price * item.quantity).toLocaleString()}đ</TableCell>
-                  <TableCell>
-                    <IconButton color="error" onClick={() => handleRemove(item.productId)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+              {items.map((item) => (
+                <CartItemRow
+                  key={item.productId}
+                  item={item}
+                  onRemove={handleRemove}
+                  onQuantityChange={handleQuantityChange}
+                />
               ))}
             </TableBody>
           </Table>
 
-          {/* --- Áp dụng mã giảm giá --- */}
-          <Box mt={3} display="flex" gap={2} alignItems="center">
-            <TextField
-              label="Mã giảm giá"
-              variant="outlined"
-              size="small"
-              value={discountCode}
-              onChange={(e) => setDiscountCode(e.target.value)}
-              error={!!discountError}
-              helperText={discountError}
-            />
-            <Button variant="outlined" onClick={handleApplyDiscount}>
-              Áp dụng
-            </Button>
-          </Box>
-
+          <DiscountSection
+            code={discountCode}
+            error={discountError}
+            onChange={setDiscountCode}
+            onApply={handleApplyDiscount}
+          />
           <Divider sx={{ my: 3 }} />
-
-          <Box>
-            <Typography variant="body1">
-              Tổng tiền gốc: {total.toLocaleString()}đ
-            </Typography>
-
-            {discountPercentage > 0 && (
-              <Typography variant="body1" color="green">
-                Đã giảm: {discountPercentage}% ({(total * discountPercentage / 100).toLocaleString()}đ)
-              </Typography>
-            )}
-
-            <Typography variant="h6" sx={{ mt: 1 }}>
-              Tổng thanh toán: {discountedTotal.toLocaleString()}đ
-            </Typography>
-          </Box>
-
+          <CartSummary total={total} discountPercentage={discountPercentage} discountAmount={discountAmount} />
           <Box mt={3}>
             <Button
               variant="contained"
@@ -232,7 +201,7 @@ const CartPage = () => {
               disabled={items.length === 0 || isLoading}
               onClick={handleCheckout}
             >
-              {isLoading ? "Đang xử lý..." : "Thanh toán"}
+              {isLoading ? 'Đang xử lý...' : 'Thanh toán'}
             </Button>
           </Box>
         </>
@@ -240,5 +209,4 @@ const CartPage = () => {
     </Box>
   );
 };
-
 export default CartPage;

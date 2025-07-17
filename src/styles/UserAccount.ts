@@ -1,5 +1,5 @@
 export interface UserDto {
-  id: string;         // <- GUID
+  id: string;
   email: string;
   fullName: string;
   emailConfirmed: boolean;

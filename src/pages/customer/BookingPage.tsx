@@ -1,56 +1,31 @@
-import { useEffect, useState } from 'react';
-import {
-  Typography,
-  TextField,
-  Button,
-  Alert,
-  InputLabel,
-  FormControl,
-  Select,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
-  MenuItem,
-} from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Typography, Alert, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { fetchServices } from '../../api/apiService';
-import {
-  LoginWrapper,
-  LoginContainer,
-  AvatarCircle,
-} from '../../styles/LoginStyles';
-
-interface Service {
-  id: number;
-  name: string;
-  price: number;
-  duration: string;
-}
-
+import { createBooking } from '../../services/bookingService';
+import { LoginWrapper, LoginContainer, AvatarCircle } from '../../styles/LoginStyles';
+import ServiceSelector from '../../components/Booking/ServiceSelector';
+import BookingForm from '../../components/Booking/BookingForm';
+import BookingSummary from '../../components/Booking/BookingSummary';
+import type { Service } from '../../types/Service';
+import { useSnackbar } from 'notistack';
 const BookingPage = () => {
-  const [customerName, setCustomerName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [appointmentTime, setAppointmentTime] = useState('');
-  const [note, setNote] = useState('');
-  const [serviceIds, setServiceIds] = useState<number[]>([]);
+  const [form, setForm] = useState({
+    customerName: '',
+    phone: '',
+    appointmentTime: '',
+    note: '',
+  });
   const [services, setServices] = useState<Service[]>([]);
+  const [serviceIds, setServiceIds] = useState<number[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [message, setMessage] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
-  // Fetch danh sách dịch vụ
   useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await fetchServices();
-        setServices(data);
-      } catch (err) {
-        console.error('Lỗi khi tải dịch vụ:', err);
-      }
-    };
-    load();
+    fetchServices().then(setServices).catch(console.error);
   }, []);
 
-  // Tính tổng tiền mỗi khi dịch vụ thay đổi
   useEffect(() => {
     const total = services
       .filter((s) => serviceIds.includes(s.id))
@@ -58,135 +33,58 @@ const BookingPage = () => {
     setTotalPrice(total);
   }, [serviceIds, services]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
+  const handleChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
+  const handleSubmit = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/booking`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          customerName,
-          phone,
-          appointmentTime,
-          note,
-          serviceIds,
-        }),
+      await createBooking({
+        ...form,
+        serviceIds,
       });
-
-      if (!res.ok) throw new Error('Đặt lịch không thành công');
-
-      setMessage('✅ Đặt lịch thành công!');
-      setCustomerName('');
-      setPhone('');
-      setAppointmentTime('');
-      setNote('');
+      enqueueSnackbar('Đặt lịch thành công!', { variant: 'success', autoHideDuration: 1000 });
+      setForm({ customerName: '', phone: '', appointmentTime: '', note: '' });
       setServiceIds([]);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setMessage('❌ Lỗi khi đặt lịch');
     }
   };
 
-  const formatDuration = (durationStr: string) => {
-    const [hh, mm] = durationStr.split(':');
-    return `${parseInt(hh) * 60 + parseInt(mm)} phút`;
-  };
-
   return (
     <LoginWrapper sx={{ py: 6 }}>
-      <LoginContainer elevation={6} >
+      <LoginContainer elevation={6}>
         <AvatarCircle>
           <CalendarMonthIcon fontSize="large" color="primary" />
         </AvatarCircle>
-
-        <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+        <Typography variant="h5" sx={{ mt: 4 }} gutterBottom>
           Đặt lịch hẹn
         </Typography>
 
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Họ tên"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            fullWidth
-            margin="normal"
-            required
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <BookingForm
+            customerName={form.customerName}
+            phone={form.phone}
+            appointmentTime={form.appointmentTime}
+            note={form.note}
+            onChange={handleChange}
           />
-          <TextField
-            label="Số điện thoại"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            fullWidth
-            margin="normal"
-            required
+          <ServiceSelector
+            services={services}
+            selected={serviceIds}
+            onChange={setServiceIds}
           />
-          <TextField
-            label="Thời gian hẹn"
-            type="datetime-local"
-            value={appointmentTime}
-            onChange={(e) => setAppointmentTime(e.target.value)}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-            required
-          />
-          <TextField
-            label="Ghi chú"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={3}
-          />
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Dịch vụ</InputLabel>
-            <Select
-              multiple
-              value={serviceIds}
-              onChange={(e) => setServiceIds(e.target.value as number[])}
-              input={<OutlinedInput label="Dịch vụ" />}
-              renderValue={(selected) =>
-                services
-                  .filter((s) => selected.includes(s.id))
-                  .map((s) => s.name)
-                  .join(', ')
-              }
+          <BookingSummary total={totalPrice} />
+         <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2, borderRadius: 2 }}
             >
-              {services.map((service) => (
-                <MenuItem key={service.id} value={service.id}>
-                  <Checkbox checked={serviceIds.includes(service.id)} />
-                  <ListItemText
-                    primary={`${service.name} - ${service.price.toLocaleString()}đ`}
-                    secondary={`Thời gian: ${formatDuration(service.duration)}`}
-                  />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {/* Tổng tiền hiển thị tại đây */}
-          <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
-            Tổng tiền: {totalPrice.toLocaleString()}đ
-          </Typography>
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2, borderRadius: 2 }}
-          >
-            Xác nhận đặt lịch
-          </Button>
+              Xác nhận đặt lịch
+            </Button>
         </form>
-
         {message && (
           <Alert
             severity={message.includes('✅') ? 'success' : 'error'}

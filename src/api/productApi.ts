@@ -14,6 +14,7 @@ export const addProduct = async (product: Omit<Product, 'id' | 'imageUrl'>, toke
   formData.append('Name', product.name);
   formData.append('Price', product.price.toString());
   formData.append('Description', product.description);
+  formData.append('CategoryId', product.categoryId.toString());
   if (product.imageFile) formData.append('Image', product.imageFile);
 
   const res = await fetch(`${API_URL}/product`, {
@@ -32,6 +33,7 @@ export const updateProduct = async (product: Product, token: string): Promise<Pr
   formData.append('Price', product.price.toString());
   formData.append('Description', product.description);
   formData.append('ImageUrl', product.imageUrl || '');
+   formData.append('CategoryId', product.categoryId.toString());
   if (product.imageFile) formData.append('Image', product.imageFile);
 
   const res = await fetch(`${API_URL}/product/${product.id}`, {

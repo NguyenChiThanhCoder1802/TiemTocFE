@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Box, Typography, Table, TableHead, TableRow, TableCell,
-  TableBody, Divider
-} from '@mui/material';
+import {Box, Typography, Table, TableHead, TableRow, TableCell,TableBody, Divider} from '@mui/material';
 import axios from 'axios';
 
 interface OrderItem {
@@ -47,9 +44,7 @@ const OrderDetailPage = () => {
       <Typography variant="h5" gutterBottom>Chi tiết đơn hàng #{order.id}</Typography>
       <Typography>Ngày đặt: {new Date(order.orderDate).toLocaleString()}</Typography>
       <Typography>Trạng thái: {order.status}</Typography>
-
       <Divider sx={{ my: 2 }} />
-
       <Table>
         <TableHead>
           <TableRow>

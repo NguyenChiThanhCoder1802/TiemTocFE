@@ -1,4 +1,3 @@
-// src/utils/axiosInstance.ts
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -22,7 +21,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Xử lý lỗi 401/403 toàn cục (nếu cần)
+// Xử lý lỗi 401/403 toàn cục
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -30,12 +29,16 @@ axiosInstance.interceptors.response.use(
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      alert('Bạn không có quyền truy cập. Vui lòng đăng nhập lại.');
-      // Optional: redirect về trang đăng nhập
-      // window.location.href = '/login';
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login') {
+        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
+  
 );
 
 export default axiosInstance;

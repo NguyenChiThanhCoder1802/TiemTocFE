@@ -1,7 +1,7 @@
 import axiosInstance from '../utils/axiosInstance';
 import { jwtDecode } from 'jwt-decode';
 
-const API_BASE = '/booking'; // đã cấu hình baseURL trong axiosInstance
+const API_BASE = '/booking';
 
 interface JwtPayload {
   exp: number;

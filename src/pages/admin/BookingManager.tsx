@@ -1,16 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  Table, TableHead, TableBody, TableRow, TableCell,
-  Typography, IconButton, Dialog, DialogTitle, DialogContent,
-  DialogActions, Button, Select, MenuItem
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-
-import {
-  fetchAllBookings,
-  deleteBookingById,
-  updateBookingStatus
-} from '../../services/bookingService';
+import {Table, TableHead, TableBody, TableRow, TableCell,Typography, Dialog, DialogTitle, DialogContent,DialogActions, Button, Select, MenuItem} from '@mui/material';
+import {fetchAllBookings,deleteBookingById,updateBookingStatus} from '../../services/bookingService';
 
 interface Booking {
   id: number;
@@ -21,14 +11,13 @@ interface Booking {
     name: string;
     description?: string;
     price: number;
-    duration: string;
   }[];
   status: string;
 }
 
 const BookingManager = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
   const fetchData = async () => {
@@ -78,9 +67,9 @@ const BookingManager = () => {
           <TableRow>
             <TableCell>Khách hàng</TableCell>
             <TableCell>Dịch vụ</TableCell>
+            <TableCell>Tổng tiền</TableCell>
             <TableCell>Thời gian</TableCell>
             <TableCell>Trạng thái</TableCell>
-            <TableCell>Xóa</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -88,6 +77,9 @@ const BookingManager = () => {
             <TableRow key={b.id}>
               <TableCell>{b.customerName}</TableCell>
               <TableCell>{b.services.map(s => s.name).join(', ')}</TableCell>
+              <TableCell>{b.services.reduce((total, s) => total + s.price, 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+            </TableCell>
+
               <TableCell>{new Date(b.appointmentTime).toLocaleString()}</TableCell>
               <TableCell>
                 <Select
@@ -102,9 +94,7 @@ const BookingManager = () => {
                 </Select>
               </TableCell>
               <TableCell>
-                <IconButton color="error" onClick={() => { setSelectedId(b.id); setOpen(true); }}>
-                  <DeleteIcon />
-                </IconButton>
+
               </TableCell>
             </TableRow>
           ))}

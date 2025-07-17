@@ -36,9 +36,9 @@ const Footer = () => {
         {/* Cột 2 - Liên hệ */}
         <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
           <Typography variant="h6" gutterBottom>Liên hệ</Typography>
-          <Typography variant="body2">📍 123 Đường Sáng Tạo, Quận 10, TP.HCM</Typography>
+          <Typography variant="body2">📍 123 Đường Trần Hưng Đạo, Quận 10, TP.HCM</Typography>
           <Typography variant="body2">📞 <Link href="tel:0123456789" underline="hover">0123 456 789</Link></Typography>
-          <Typography variant="body2">✉️ <Link href="mailto:tiemtocthanh@example.com" underline="hover">tiemtocthanh@example.com</Link></Typography>
+          <Typography variant="body2">✉️ <Link href="mailto:tiemtocthanh@gmail.com" underline="hover">tiemtoc789@gmail.com</Link></Typography>
         </Box>
 
         {/* Cột 3 - Chính sách */}

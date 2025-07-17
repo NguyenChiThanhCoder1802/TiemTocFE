@@ -1,19 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchBookingById } from "../services/bookingService";
-import type { BookingDetailDto } from "../types/Booking";
-import {
-  Box,
-  Typography,
-  Paper,
-  CircularProgress,
-  Button,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Alert
-} from "@mui/material";
+import { fetchBookingById } from "../../services/bookingService";
+import type { BookingDetailDto } from "../../types/Booking";
+import { Box, Typography, Paper, CircularProgress, Button, Divider, List, ListItem, ListItemText, Alert } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const BookingDetail: React.FC = () => {
@@ -31,16 +20,16 @@ const BookingDetail: React.FC = () => {
         const data = await fetchBookingById(Number(id));
         setBooking(data);
       } catch (err: unknown) {
-  if (
-    typeof err === "object" &&
-    err !== null &&
-        "message" in err &&
-        typeof (err as { message?: unknown }).message === "string"
-    ) {
-        setError((err as { message: string }).message);
-    } else {
-        setError("Đã xảy ra lỗi không xác định");
-    }
+        if (
+          typeof err === "object" &&
+          err !== null &&
+          "message" in err &&
+          typeof (err as { message?: unknown }).message === "string"
+        ) {
+          setError((err as { message: string }).message);
+        } else {
+          setError("Đã xảy ra lỗi không xác định");
+        }
 
       } finally {
         setLoading(false);
@@ -57,7 +46,7 @@ const BookingDetail: React.FC = () => {
     }).format(new Date(date));
   };
 
-  const handleBack = () => navigate(-1); // hoặc navigate("/my-bookings")
+  const handleBack = () => navigate(-1);
 
   if (loading)
     return (
@@ -102,7 +91,6 @@ const BookingDetail: React.FC = () => {
             <ListItem key={s.id} sx={{ pl: 0 }}>
               <ListItemText
                 primary={`${s.name} — ${s.price.toLocaleString()} VND`}
-                secondary={`${s.duration} phút`}
               />
             </ListItem>
           ))}
