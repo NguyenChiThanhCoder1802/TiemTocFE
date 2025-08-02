@@ -25,6 +25,7 @@ const CategoryForm = ({ newCategory, setNewCategory, onAdd }: Props) => (
       >
         <option value="Product">Sản phẩm</option>
         <option value="Service">Dịch vụ</option>
+        <option value="Combo">Combo</option>
       </TextField>
       <Button variant="contained" startIcon={<AddIcon />} onClick={onAdd}>Thêm</Button>
     </Stack>

@@ -48,7 +48,7 @@ const AdminDashboard = () => {
     {
       title: 'Quản Lý Lịch Đặt',
       icon: <CalendarToday fontSize="large" color="warning" />,
-      path: '/admin/booking',
+      path: '/admin/bookings',
     },
     {
       title: 'Mã Giảm Giá',

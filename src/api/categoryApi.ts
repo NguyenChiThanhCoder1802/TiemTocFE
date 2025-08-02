@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { Category } from '../types/Category';
 
 const BASE_URL = import.meta.env.VITE_API_URL + '/Category';
-const API_URL = `${BASE_URL}/Category`;
+const API_URL = `${BASE_URL}`;
 
 export const fetchCategories = async (): Promise<Category[]> => {
   const res = await axios.get(BASE_URL);

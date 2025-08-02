@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useState, useEffect } from 'react';
-
+import GradientBackgroundWrapper from './GradientBackgroundWrapper';
 import Header from '../share/Header';
 import Footer from '../share/Footer';
 import TopBar from '../../components/share/TopBar';
@@ -66,6 +66,7 @@ const MainLayout = () => {
   };
 
   return (
+   <GradientBackgroundWrapper>
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <Header />
       <TopBar onCategorySelect={handleCategorySelect} />
@@ -74,6 +75,8 @@ const MainLayout = () => {
       </Box>
       <Footer />
     </Box>
+   </GradientBackgroundWrapper>
+   
   );
 };
 

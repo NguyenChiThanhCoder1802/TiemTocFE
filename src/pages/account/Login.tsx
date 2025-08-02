@@ -6,7 +6,7 @@ import {
   Typography,
   Alert,
   IconButton,
-  InputAdornment,
+  InputAdornment,Box
 } from '@mui/material';
 import {
   Visibility,
@@ -132,13 +132,31 @@ const Login = () => {
           >
             Đăng nhập
           </Button>
-          <Typography
-            variant="body2"
-            sx={{ mt: 2, textAlign: 'center', cursor: 'pointer', color: 'primary.main' }}
-            onClick={() => navigate('/forgot-password')}
-          >
-            Quên mật khẩu?
-          </Typography>
+          <Box
+              sx={{
+                mt: 2,
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 4, // khoảng cách giữa hai mục
+               
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ cursor: 'pointer', color: 'primary.main' }}
+                onClick={() => navigate('/forgot-password')}
+              >
+                Quên mật khẩu?
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ cursor: 'pointer', color: 'primary.main' }}
+                onClick={() => navigate('/register')}
+              >
+                Đăng ký
+              </Typography>
+            </Box>
+
 
         </form>
 

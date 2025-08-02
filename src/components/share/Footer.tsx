@@ -34,7 +34,7 @@ const Footer = () => {
         </Box>
 
         {/* Cột 2 - Liên hệ */}
-        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'center' } }}>
           <Typography variant="h6" gutterBottom>Liên hệ</Typography>
           <Typography variant="body2">📍 123 Đường Trần Hưng Đạo, Quận 10, TP.HCM</Typography>
           <Typography variant="body2">📞 <Link href="tel:0123456789" underline="hover">0123 456 789</Link></Typography>
@@ -42,7 +42,7 @@ const Footer = () => {
         </Box>
 
         {/* Cột 3 - Chính sách */}
-        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'right' } }}>
           <Typography variant="h6" gutterBottom>Chính sách</Typography>
           <Typography variant="body2"><Link href="#" underline="hover" color="inherit">Chính sách bảo mật</Link></Typography>
           <Typography variant="body2"><Link href="#" underline="hover" color="inherit">Chính sách hoàn trả</Link></Typography>

@@ -12,9 +12,17 @@ interface Booking {
     description?: string;
     price: number;
   }[];
+  combos: Combo[];
   status: string;
 }
-
+interface Combo {
+  id: number;
+  name: string;
+  description?: string;
+  originalPrice: number;
+  discountedPrice: number;
+  imageUrl?: string | null;
+}
 const BookingManager = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedId] = useState<number | null>(null);
@@ -76,9 +84,23 @@ const BookingManager = () => {
           {bookings.map(b => (
             <TableRow key={b.id}>
               <TableCell>{b.customerName}</TableCell>
-              <TableCell>{b.services.map(s => s.name).join(', ')}</TableCell>
-              <TableCell>{b.services.reduce((total, s) => total + s.price, 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-            </TableCell>
+              <TableCell>
+  <div>
+    {b.services.map(s => s.name).join(', ')}
+  </div>
+  {b.combos.length > 0 && (
+    <div style={{ fontStyle: 'italic', color: '#555' }}>
+      Combo: {b.combos.map(c => c.name).join(', ')}
+    </div>
+  )}
+</TableCell>
+
+              <TableCell>
+  {(
+    b.services.reduce((total, s) => total + s.price, 0) +
+    b.combos.reduce((total, c) => total + c.discountedPrice, 0)
+  ).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+</TableCell>
 
               <TableCell>{new Date(b.appointmentTime).toLocaleString()}</TableCell>
               <TableCell>
@@ -87,8 +109,7 @@ const BookingManager = () => {
                   size="small"
                   onChange={(e) => handleStatusChange(b.id, e.target.value)}
                 >
-                  <MenuItem value="Chờ xác nhận">Chờ xác nhận</MenuItem>
-                  <MenuItem value="Đã nhận">Đã nhận</MenuItem>
+              
                   <MenuItem value="Đã hoàn thành">Đã hoàn thành</MenuItem>
                   <MenuItem value="Đã hủy">Đã hủy</MenuItem>
                 </Select>

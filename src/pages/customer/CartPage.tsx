@@ -11,7 +11,7 @@ import DiscountSection from '../../components/Discount/DiscountSection';
 import CartSummary from '../../components/Cart/CartSummary';
 import type { Product } from '../../types/Product';
 import ItemCardList from '../../components/List/ItemCardList';
-import { addToCart,fetchProducts} from '../../api/apiService';
+import {fetchProducts} from '../../api/apiService';
 const CartPage = () => {
   const { items, refreshCart, cartId } = useCart();
   const [total, setTotal] = useState(0);
@@ -121,17 +121,6 @@ useEffect(() => {
     );
     setTotal(totalAmount);
   }, [items]);
-  const handleAddToCart = async (productId: number) => {
-      try {
-        await addToCart(productId, 1);
-        await refreshCart();
-  
-        enqueueSnackbar(' Đã thêm vào giỏ hàng', { variant: 'success' ,autoHideDuration: 1000,});
-      } catch{
-        enqueueSnackbar('Lỗi khi thêm vào giỏ hàng', { variant: 'error' });
-      }
-      await refreshCart();
-    };
   return (
     <Box maxWidth={800} mx="auto" mt={4}>
       <Typography variant="h5" gutterBottom>
@@ -154,13 +143,9 @@ useEffect(() => {
           items={products}
           title="Mua Ngay"
           linkPrefix="product"
-          showActionButton
-          actionLabel="Thêm vào giỏ"
-          onActionClick={handleAddToCart}
+         
         />
         </>
-        
-       
       ) : (
         <>
           <Table>

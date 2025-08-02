@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { fetchBookingById } from "../../services/bookingService";
 import type { BookingDetailDto } from "../../types/Booking";
-import { Box, Typography, Paper, CircularProgress, Button, Divider, List, ListItem, ListItemText, Alert } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
+import { Box, Typography, Paper, CircularProgress, Divider, List, ListItem, ListItemText, Alert,Button } from "@mui/material";
+import BackButton from '../../components/Common/BackButton';
+import ReviewDialog from '../ReviewDialog';
 const BookingDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+
+// Thêm ở đầu component
+const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+const [selectedProductId, setSelectedProductId] = useState<number | undefined>();
+const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>();
+const [selectedName, setSelectedName] = useState('');
+const handleOpenReviewDialog = (
+  type: 'product' | 'service' | 'combo',
+  id: number,
+  name: string
+) => {
+  setSelectedProductId(type === 'product' ? id : undefined);
+  setSelectedServiceId(type === 'service' ? id : undefined);
+  setSelectedName(name);
+  setReviewDialogOpen(true);
+};
 
   const [booking, setBooking] = useState<BookingDetailDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +61,7 @@ const BookingDetail: React.FC = () => {
     }).format(new Date(date));
   };
 
-  const handleBack = () => navigate(-1);
+  
 
   if (loading)
     return (
@@ -71,7 +86,9 @@ const BookingDetail: React.FC = () => {
 
   return (
     <Box maxWidth="700px" mx="auto" mt={5} px={2}>
+      <BackButton />
       <Paper elevation={3} sx={{ p: 4 }}>
+        
         <Typography variant="h5" gutterBottom>
           📝 Chi tiết lịch đặt #{booking.id}
         </Typography>
@@ -95,21 +112,67 @@ const BookingDetail: React.FC = () => {
             </ListItem>
           ))}
         </List>
+          <Typography variant="h6" mt={3} mb={1}>🎁 Combo đã chọn:</Typography>
+          <List dense>
+            {booking.combos.map((combo) => (
+              <Box key={combo.id} sx={{ pl: 0, mb: 2 }}>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {combo.name} — {combo.discountedPrice.toLocaleString()} VND
+                </Typography>
+                <List dense sx={{ pl: 2 }}>
+                  {combo.services.map((s) => (
+                    <ListItem key={s.id} sx={{ pl: 0 }}>
+                      <ListItemText
+                        primary={`• ${s.name} — ${s.price.toLocaleString()} VND`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            ))}
+          </List>
+       
 
         <Divider sx={{ my: 2 }} />
         <Typography variant="h6" color="error">
           💵 Tổng tiền: {booking.total.toLocaleString()} VND
         </Typography>
-
-        <Box mt={3}>
+            <Box mt={2}>
+        <Typography variant="h6" mb={1}>✍️ Đánh giá dịch vụ:</Typography>
+        {booking.services.map((s) => (
+          <Box key={s.id} display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+            <Typography>{s.name}</Typography>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleOpenReviewDialog('service', s.id, s.name)}
+            >
+              Đánh giá
+            </Button>
+          </Box>
+        ))}
+        {booking.combos?.map((c) => (
+        <Box key={c.id} display="flex" justifyContent="space-between">
+          <Typography>{c.name}</Typography>
           <Button
-            variant="contained"
-            startIcon={<ArrowBackIcon />}
-            onClick={handleBack}
+            onClick={() => handleOpenReviewDialog('combo', c.id, c.name)}
+            size="small"
+            variant="outlined"
           >
-            Quay lại
+            Đánh giá
           </Button>
         </Box>
+      ))}
+
+      </Box>
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onClose={() => setReviewDialogOpen(false)}
+          productId={selectedProductId}
+          serviceId={selectedServiceId}
+          productName={selectedName}
+        />
+
       </Paper>
     </Box>
   );

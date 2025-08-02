@@ -59,4 +59,11 @@ export const fetchProductById = async (id: number): Promise<Product> => {
   if (!res.ok) throw new Error(await res.text());
   return await res.json();
 };
+export async function fetchProductsByCategory(categoryId: number): Promise<Product[]> {
+  const res = await fetch(`${API_URL}/filter?categoryId=${categoryId}`, {
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Không thể tải dịch vụ');
+  return res.json();
+}
 

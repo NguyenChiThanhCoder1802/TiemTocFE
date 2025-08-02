@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
-import {Box,Typography, Card,CardContent,Avatar,Stack,CircularProgress,} from '@mui/material';
+import {
+  Box, Typography, CircularProgress, Table, TableHead,
+  TableBody, TableRow, TableCell, Paper 
+} from '@mui/material';
 import { fetchMyBookings } from '../../services/bookingService';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import WarningIcon from '@mui/icons-material/Warning';
 import dayjs from 'dayjs';
 import type { Booking } from '../../types/Booking';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +33,7 @@ const BookingHistoryPage = () => {
   return (
     <Box maxWidth="1000px" mx="auto" mt={4} px={2}>
       <Typography variant="h5" gutterBottom fontWeight="bold">
-        Lịch sử đặt lịch
+        Lịch sử đặt lịch của bạn
       </Typography>
 
       {loading ? (
@@ -39,57 +43,54 @@ const BookingHistoryPage = () => {
       ) : bookings.length === 0 ? (
         <Typography>Không có lịch sử đặt lịch.</Typography>
       ) : (
-        <Box display="flex" flexWrap="wrap" gap={3} mt={2}>
-          {bookings.map((booking) => (
-            <Box
-              key={booking.id}
-              sx={{
-                flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' }, 
-                maxWidth: { xs: '100%', sm: 'calc(50% - 12px)' },
-              }}
-            >
-              <Card onClick={() => navigate(`/booking/${booking.id}`)}
-                sx={{
-                  borderRadius: 3,
-                  boxShadow: 3,
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s ease',
-                  '&:hover': {
-                    transform: 'scale(1.02)',
-                    boxShadow: 6,
-                  },
-                }}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: '#1976d2' }}>
-                      {booking.services.some((s) =>
-                        s.name.toLowerCase().includes('online')
-                      ) ? (
-                        <VideoCallIcon /> 
+        <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                <TableCell></TableCell>
+                <TableCell>Dịch vụ / Combo</TableCell>
+                <TableCell>Thời gian</TableCell>
+                <TableCell>Trạng thái</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {bookings.map((booking) => {
+                const serviceNames = booking.services?.map((s) => s.name) || [];
+                const comboNames = booking.combos?.map((c) => `Combo: ${c.name}`) || [];
+                const allItems = [...comboNames, ...serviceNames];
+
+                return (
+                  <TableRow
+                    key={booking.id}
+                    hover
+                    onClick={() => navigate(`/booking/${booking.id}`)}
+                    sx={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
+                  >
+                    <TableCell>
+                      {booking.status === 'Đã hoàn thành' ? (
+                        <CheckCircleIcon sx={{ color: 'green' }} />
+                      ) : booking.status === 'Cancelled' ? (
+                        <CancelIcon sx={{ color: 'red' }} />
                       ) : (
-                        <CalendarTodayIcon />
+                        <WarningIcon sx={{ color: 'orange' }} />
                       )}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        Đặt lịch
-                      </Typography>
-                      <Typography variant="h6" fontWeight="bold">
-                        {booking.services.map((s) => s.name).join(', ')}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" mt={0.5}>
-                        {dayjs(booking.date).format('DD/MM/YYYY')} - {booking.time}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Trạng thái: {booking.status}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
-        </Box>
+                    </TableCell>
+
+                    <TableCell>
+                      {allItems.length > 0 ? allItems.join(', ') : 'Không có dịch vụ hoặc combo'}
+                    </TableCell>
+
+                    <TableCell>
+                      {dayjs(booking.date).format('DD/MM/YYYY')} - {booking.time}
+                    </TableCell>
+
+                    <TableCell>{booking.status}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
       )}
     </Box>
   );

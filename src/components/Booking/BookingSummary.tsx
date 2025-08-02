@@ -5,7 +5,10 @@ interface Props {
 }
 
 const BookingSummary = ({ total }: Props) => (
-  <Typography variant="subtitle1" sx={{ mt: 1, fontWeight: 'bold' }}>
+  <Typography
+    variant="h6"
+    sx={{ mt: 2, fontWeight: 'bold', color: 'primary.main', textAlign: 'right' }}
+  >
     Tổng tiền: {total.toLocaleString()}đ
   </Typography>
 );

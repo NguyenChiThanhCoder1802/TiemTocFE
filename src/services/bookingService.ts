@@ -27,39 +27,39 @@ function isAdmin(): boolean {
   }
 }
 
-// 🟢 Tạo đặt lịch mới (người dùng)
+//  Tạo đặt lịch mới (người dùng)
 export async function createBooking(booking: unknown) {
   const res = await axiosInstance.post(API_BASE, booking);
   return res.data;
 }
 
-// 🟢 Lấy lịch sử đặt lịch của người dùng
+//  Lấy lịch sử đặt lịch của người dùng
 export const fetchMyBookings = async () => {
   const res = await axiosInstance.get(`${API_BASE}/my-bookings`);
   return res.data;
 };
 
-// 🔒 Lấy tất cả lịch đặt (Admin)
+//  Lấy tất cả lịch đặt (Admin)
 export const fetchAllBookings = async () => {
   if (!isAdmin()) throw new Error('Bạn không có quyền truy cập');
   const res = await axiosInstance.get(`${API_BASE}/all`);
   return res.data;
 };
 
-// 🔒 Xóa lịch đặt (Admin)
+//  Xóa lịch đặt (Admin)
 export const deleteBookingById = async (id: number) => {
   if (!isAdmin()) throw new Error('Bạn không có quyền xóa');
   const res = await axiosInstance.delete(`${API_BASE}/${id}`);
   return res.data;
 };
 
-// 🔒 Cập nhật trạng thái đặt lịch (Admin)
+//  Cập nhật trạng thái đặt lịch (Admin)
 export const updateBookingStatus = async (id: number, status: string) => {
   if (!isAdmin()) throw new Error('Bạn không có quyền cập nhật');
   const res = await axiosInstance.put(`${API_BASE}/${id}/status`, { status });
   return res.data;
 };
-// 🟢 Lấy chi tiết lịch đặt theo ID (user hoặc admin đều dùng được)
+// Lấy chi tiết lịch đặt theo ID (user hoặc admin đều dùng được)
 export const fetchBookingById = async (id: number) => {
   const res = await axiosInstance.get(`${API_BASE}/${id}`);
   return res.data;

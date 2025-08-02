@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import ReviewDialog from '../ReviewDialog';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import AverageRating from '../../components/AverageRating';
+import { useCart } from '../../hooks/useCart';
 import { getReviewsByProductId, type ReviewDto } from '../../api/reviewApi';
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +20,7 @@ const ProductDetail = () => {
   const [openReview, setOpenReview] = useState(false)
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const { refreshCart } = useCart();
   const [error, setError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<ReviewDto[]>([]);
 
@@ -51,9 +53,10 @@ const ProductDetail = () => {
     if (!product) return;
     try {
       await addToCart(product.id, 1);
-      enqueueSnackbar('✅ Đã thêm vào giỏ hàng', { variant: 'success' });
+      await refreshCart();
+      enqueueSnackbar('✅ Đã thêm vào giỏ hàng', { variant: 'success', autoHideDuration: 1000, });
     } catch {
-      enqueueSnackbar('❌ Không thể thêm vào giỏ hàng', { variant: 'error' });
+      enqueueSnackbar('❌ Không thể thêm vào giỏ hàng', { variant: 'error', autoHideDuration: 1000, });
     }
     
   };

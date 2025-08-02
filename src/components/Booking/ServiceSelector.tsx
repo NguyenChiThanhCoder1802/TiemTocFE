@@ -17,8 +17,9 @@ interface Props {
 
 const ServiceSelector = ({ services, selected, onChange }: Props) => (
   <FormControl fullWidth margin="normal">
-    <InputLabel>Dịch vụ</InputLabel>
+    <InputLabel id="service-select-label">Dịch vụ</InputLabel>
     <Select
+      labelId="service-select-label"
       multiple
       value={selected}
       onChange={(e) => onChange(e.target.value as number[])}

@@ -43,7 +43,7 @@ const AppRouter = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/otp" element={<OtpVerification />} />
-      <Route path="/change-password" element={<SecuritySettings />} />
+     
       
 
       {/* <Route path="/beautycombo" element={<BeautyComboPage />} /> */}
@@ -62,6 +62,9 @@ const AppRouter = () => {
         <Route path="/combos" element={<ComboListPage />} />
         <Route path="/combos/:id" element={<ComboDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+         <Route path="/change-password" element={<SecuritySettings />} />
+         <Route path="/booking/:id" element={<BookingPage />} />
+
 
         {/* Admin */}
         <Route element={<PrivateRoute allowedRoles={['Admin']} />}>

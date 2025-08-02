@@ -100,7 +100,6 @@ const OtpVerification = () => {
               )
             }}
           />
-
           <Button
             type="submit"
             variant="contained"

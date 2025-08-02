@@ -8,9 +8,13 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import PersonIcon from '@mui/icons-material/Person';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Money } from '@mui/icons-material';
+import UserPointDisplay from '../../pages/UserPointsDisplay';
+
 
 const menuItems = [
   { label: 'Thông tin cá nhân', icon: <PersonIcon />, key: 'profile' },
+  { label: 'Tích lũy điểm', icon: <Money />, route: 'profile' },
   { label: 'Lịch sử đặt lịch', icon: <CalendarMonthIcon />, route: '/my-booking' },
   { label: 'Đơn hàng của bạn', icon: <InventoryIcon />, route: '/my-orders' },
   { label: 'Kho mã giảm giá', icon: <LocalOfferIcon />, route: '/applydiscount' },
@@ -62,8 +66,6 @@ const CustomerDashboard = () => {
           ))}
         </List>
       </Paper>
-
-      {/* Nội dung hiển thị */}
       <Box
         flex={1}
         component={motion.div}
@@ -76,11 +78,10 @@ const CustomerDashboard = () => {
             <Typography variant="h5" gutterBottom>
               Thông tin cá nhân
             </Typography>
+            <UserPointDisplay />
             <ProfileInfoCard />
           </>
         )}
-
-        {/* Các key khác nếu muốn thêm tab nội dung tại chỗ */}
       </Box>
     </Box>
   );

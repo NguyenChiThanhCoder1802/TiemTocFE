@@ -1,11 +1,5 @@
-// src/pages/HomePage.tsx
 import { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Container,
-  Button,
-} from '@mui/material';
+import {Box, Typography,Container,Button,} from '@mui/material';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import BookingFab from '../components/Common/BookingFab';
 import ItemCardList from '../components/List/ItemCardList';
@@ -13,17 +7,17 @@ import ComboCard from '../components/BeautyCombo/ComboCard';
 import { getCombos } from '../api/comboAPI';
 import type { ComboDto } from '../types/Combo';
 import type { Service } from '../types/Service';
-
+import { useSnackbar } from 'notistack';
 interface OutletContextType {
   services: Service[];
   isFiltering: boolean;
 }
-
 const HomePage = () => {
   const navigate = useNavigate();
   const { services, isFiltering } = useOutletContext<OutletContextType>();
   const [combos, setCombos] = useState<ComboDto[]>([]);
-
+  const { enqueueSnackbar } = useSnackbar();
+  
   useEffect(() => {
     getCombos().then(setCombos).catch(console.error);
   }, []);
@@ -31,16 +25,29 @@ const HomePage = () => {
   const handleBookCombo = (combo: ComboDto) => {
     navigate(`/book-combo/${combo.id}`);
   };
+ const handleBookService = (serviceId: number) => {
+  const existing = JSON.parse(localStorage.getItem('temporaryBookingServices') || '[]') as number[];
+
+  const alreadyExists = existing.includes(serviceId);
+
+  if (alreadyExists) {
+    enqueueSnackbar('Bạn đã có dịch vụ này rồi!', {
+      variant: 'info',
+      autoHideDuration: 3000,
+    });
+    return;
+  }
+
+  existing.push(serviceId);
+  localStorage.setItem('temporaryBookingServices', JSON.stringify(existing));
+  enqueueSnackbar('Bạn đã thêm dịch vụ thành công!', {
+    variant: 'success',
+    autoHideDuration: 2000,
+  });
+};
 
   return (
-    <>
-      <Box
-        sx={{
-          background: 'linear-gradient(to right bottom, #e0f7fa, #ffccbc)',
-          minHeight: '100vh',
-          py: 8,
-        }}
-      >
+      <Box>
         <Container>
           <Typography
             variant="h3"
@@ -71,16 +78,11 @@ const HomePage = () => {
               isFiltering ? 'Dịch vụ theo danh mục đã chọn' : 'Dịch vụ nổi bật'
             }
             linkPrefix="services"
-            showActionButton
-            actionLabel="Đặt ngay"
-            onActionClick={(id) => navigate(`/booking?serviceId=${id}`)}
+            onDragToBook={handleBookService}
           />
         </Container>
         <BookingFab />
-      </Box>
-
-      {/* COMBO */}
-      <Box sx={{ background: '#fff', py: 5 }}>
+        <Box >
         <Container>
           <Typography variant="h5" gutterBottom>
             🎁 Combo Làm Đẹp Hot
@@ -107,8 +109,7 @@ const HomePage = () => {
           )}
         </Container>
       </Box>
-    </>
+      </Box>
   );
 };
-
 export default HomePage;

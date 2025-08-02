@@ -8,6 +8,7 @@ export interface Booking {
     name: string;
     price: number;
   }[];
+  combos: { name: string }[];
 }
 export interface ServiceDto {
   id: number;
@@ -26,4 +27,14 @@ export interface BookingDetailDto {
   userName: string;
   total: number;
   services: ServiceDto[];
+   combos: {
+    id: number;
+    name: string;
+    discountedPrice: number;
+    services: {
+      id: number;
+      name: string;
+      price: number;
+    }[];
+  }[];
 }

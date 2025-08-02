@@ -162,6 +162,7 @@ const Register = () => {
           >
             <MenuItem value="Customer">Khách hàng</MenuItem>
             <MenuItem value="Staff">Nhân viên</MenuItem>
+            <MenuItem value="Admin">Chủ</MenuItem>
           </TextField>
 
           <Button

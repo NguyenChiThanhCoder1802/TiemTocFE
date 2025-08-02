@@ -14,7 +14,7 @@ const UserPointDisplay = () => {
   return (
     <Box mt={2}>
       <Typography variant="h6">
-        🌟 Điểm tích lũy: {points !== null ? points : 'Đang tải...'}
+        🌟 Điểm tích lũy: {points !== null ? points : 'Đang tải...'} điểm
       </Typography>
     </Box>
   );
