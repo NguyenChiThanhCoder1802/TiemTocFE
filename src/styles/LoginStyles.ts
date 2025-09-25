@@ -1,15 +1,21 @@
-import { styled } from '@mui/material/styles';
+import { styled,keyframes  } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-
+const waveAnimation = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
 export const LoginWrapper = styled(Box)(() => ({
   width: '100vw',
   height: '100vh',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: 'linear-gradient(to right bottom, #e0f7fa, #ff7043)',
   overflow: 'hidden',
+  background: 'linear-gradient(-45deg, #d2a679, #f5deb3, #fff8dc, #deb887)',
+  backgroundSize: '400% 400%',
+  animation: `${waveAnimation} 10s ease infinite`,
 }));
 
 

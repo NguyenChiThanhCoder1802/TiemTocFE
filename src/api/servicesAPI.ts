@@ -1,88 +1,79 @@
+// src/api/servicesAPI.ts
 import type { Service } from '../types/Service';
-const BASE_URL = import.meta.env.VITE_API_URL + '/Service';
+import axiosInstance from '../utils/axiosInstance';
+import type { ServicePopularityDto} from '../types/Service'
+const BASE_URL = '/Service';
+
 export async function fetchServices(): Promise<Service[]> {
   try {
-    const res = await fetch(BASE_URL)
-     
-    if (!res.ok) {
-      throw new Error(`Không thể lấy danh sách`);
-    }
-    return await res.json();
+    const res = await axiosInstance.get<Service[]>(BASE_URL);
+    return res.data;
   } catch (error) {
     console.error('❌ Error fetching services:', error);
     throw error;
   }
 }
+export async function GetTopPopularServicesAsync(topN: number = 5): Promise<ServicePopularityDto[]> {
+  try{
+      const res = await axiosInstance.get<ServicePopularityDto[]>(`${BASE_URL}/top-popular`,{ params: { topN },});
+      return res.data
+  }
+  catch (error) {
+    console.error('❌ Error fetching services:', error);
+    throw error;
+  }
+  
+}
 
-export async function createService(formData: FormData,token : string): Promise<Service> {
+export async function createService(formData: FormData): Promise<Service> {
   try {
-    const res = await fetch(`${BASE_URL}/service-post`, {
-      method: 'POST',
-      body: formData,
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.title || `HTTP error! status: ${res.status}`);
+    for (const [key, value] of formData.entries()) {
+      console.log(`FormData => ${key}:`, value);
     }
-
-    return await res.json();
-  } catch (error) {
-    console.error('❌ Lỗi khi tạo dịch vụ:', error);
+    const res = await axiosInstance.post<Service>(`${BASE_URL}/Service-Post`, formData);
+    return res.data;
+  } catch (error: any) {
+    console.error('❌ Lỗi khi tạo dịch vụ:', error.response?.data || error.message);
     throw error;
   }
 }
 
-export async function updateService(id: number, formData: FormData, token: string): Promise<void> {
+export async function updateService(id: number, formData: FormData): Promise<void> {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`, {
-      method: 'PUT',
-      body: formData,
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.title || `HTTP error! status: ${res.status}`);
-    }
-  } catch (error) {
-    console.error('❌ Lỗi khi cập nhật dịch vụ:', error);
+    await axiosInstance.put(`${BASE_URL}/${id}`, formData);
+  } catch (error: any) {
+    console.error('❌ Lỗi khi cập nhật dịch vụ:', error.response?.data || error.message);
     throw error;
   }
 }
+
 export async function fetchServicesByCategory(categoryId: number): Promise<Service[]> {
-  const res = await fetch(`${BASE_URL}/filter?categoryId=${categoryId}`, {
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Không thể tải dịch vụ');
-  return res.json();
-}
-
-export async function deleteService(id: number, token: string): Promise<void> {
   try {
-    
-    const res = await fetch(`${BASE_URL}/${id}`,{
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
+    const res = await axiosInstance.get<Service[]>(`${BASE_URL}/filter`, {
+      params: { categoryId },
     });
-
-    if (!res.ok) throw new Error(await res.text());
+    return res.data;
   } catch (error) {
-    console.error('❌ Lỗi khi xoá dịch vụ:', error);
+    console.error('❌ Lỗi khi lọc dịch vụ:', error);
     throw error;
   }
 }
+
+export async function deleteService(id: number): Promise<void> {
+  try {
+    await axiosInstance.delete(`${BASE_URL}/${id}`);
+  } catch (error: any) {
+    console.error('❌ Lỗi khi xoá dịch vụ:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
 export async function fetchServiceById(id: number): Promise<Service> {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`);
-    if (!res.ok) {
-      throw new Error(`Không thể lấy thông tin dịch vụ với ID: ${id}`);
-    }
-    return await res.json();
-  } catch (error) {
-    console.error('❌ Lỗi khi lấy dịch vụ theo ID:', error);
+    const res = await axiosInstance.get<Service>(`${BASE_URL}/${id}`);
+    return res.data;
+  } catch (error: any) {
+    console.error('❌ Lỗi khi lấy dịch vụ theo ID:', error.response?.data || error.message);
     throw error;
   }
 }
-

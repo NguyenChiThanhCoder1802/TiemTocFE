@@ -13,7 +13,7 @@ import CartPage from '../pages/customer/CartPage';
 import ApplyDiscount from '../pages/DiscountPage';
 import ForgotPassword from '../pages/account/ForgotPassword';
 import ResetPassword from '../pages/account/ResetPassword';
-import ServiceManager from '../pages/admin/ServiceManager';
+import ServiceManager from '../pages/admin/Service/ServiceManager';
 import ProductManager from '../pages/admin/ProductManager';
 import UserManager from '../pages/admin/UserManager';
 import MainLayout from '../components/layouts/MainLayout';
@@ -34,6 +34,8 @@ import CustomerDashBoard from '../pages/customer/CustomerDashBoard';
 import SecuritySettings from '../pages/account/SecuritySettings';
 import ComboListPage from '../pages/ComboListPage';
 import ComboDetailPage from '../pages/Detail/ComboDetailPage';
+
+import HomeStaff from '../pages/staff/HomeStaff';
 const AppRouter = () => {
   return (
     <Routes>
@@ -43,10 +45,6 @@ const AppRouter = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/otp" element={<OtpVerification />} />
-     
-      
-
-      {/* <Route path="/beautycombo" element={<BeautyComboPage />} /> */}
       <Route path="/unauthorized" element={<Unauthorized />} />
 
       {/* Có Header/Footer */}
@@ -63,9 +61,6 @@ const AppRouter = () => {
         <Route path="/combos/:id" element={<ComboDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
          <Route path="/change-password" element={<SecuritySettings />} />
-         <Route path="/booking/:id" element={<BookingPage />} />
-
-
         {/* Admin */}
         <Route element={<PrivateRoute allowedRoles={['Admin']} />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -77,24 +72,25 @@ const AppRouter = () => {
           <Route path="/admin/orders" element={<OrderManager />} />
           <Route path="/admin/users" element={<UserManager />} />
           <Route path="/admin/categories" element={<CategoryManager />} />
+          
+
           <Route path="/admin/beautycombo" element={<BeautyComboPage />} />
         </Route>
-
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['Customer']} />}>
           <Route path="/booking" element={<BookingPage />} />
+           <Route path="/booking/:id" element={<BookingPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/my-orders" element={<OrderHistoryPage />} />
           <Route path="/my-booking" element={<BookingHistoryPage />} />
           <Route path="/my-profile" element={<CustomerDashBoard />} />
-
-
-
+        </Route>
+        <Route element={<PrivateRoute allowedRoles={['Staff']} />}>
+           <Route path="/staff/home" element={<HomeStaff />} />
         </Route>
         <Route path="*" element={<HomePage />} />
       </Route>
     </Routes>
   );
 };
-
 export default AppRouter;

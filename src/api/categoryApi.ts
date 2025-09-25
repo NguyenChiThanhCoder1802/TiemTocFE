@@ -3,11 +3,12 @@ import type { Category } from '../types/Category';
 
 const BASE_URL = import.meta.env.VITE_API_URL + '/Category';
 const API_URL = `${BASE_URL}`;
-
+// Lấy dữ liệu danh mục
 export const fetchCategories = async (): Promise<Category[]> => {
   const res = await axios.get(BASE_URL);
   return res.data;
 };
+//Thêm danh mục mới
 export const addCategory = async (
   category: { name: string; type: string },
   token: string

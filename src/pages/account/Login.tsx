@@ -1,25 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  IconButton,
-  InputAdornment,Box
-} from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  LockOutlined,
-  PersonOutline,
-} from '@mui/icons-material';
+import {TextField, Button, Typography, Alert,InputAdornment, Box, IconButton}from '@mui/material';
+import { LockOutlined, PersonOutline, Visibility, VisibilityOff } from '@mui/icons-material';
 import { getDecodedToken } from '../../services/authService';
-import {
-  LoginWrapper,
-  LoginContainer,
-  AvatarCircle,
-} from '../../styles/LoginStyles';
+import { loginApi } from '../../api/accountAPI';
+import { LoginWrapper, LoginContainer, AvatarCircle } from '../../styles/LoginStyles';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,47 +12,27 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const { token } = await loginApi({ email, password });
+    localStorage.setItem("token", token);
+    const user = getDecodedToken(token);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/account/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Đăng nhập thất bại');
-      }
-
-      const token = data.token;
-      localStorage.setItem('token', token);
-
-      const user = getDecodedToken(token);
-      if (user) {
-      
-
-        if (user.role === 'Admin') {
-          navigate('/admin/dashboard');
-        } else if (user.role === 'Customer') {
-          navigate('/');
-        } else {
-          navigate('/');
-        }
-      }
-
-      setMessage('Đăng nhập thành công!');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setMessage(err.message);
-      } else {
-        setMessage('Có lỗi xảy ra');
-      }
+    if (user?.role === "Admin") {
+      navigate("/admin/dashboard");
+    } else if (user?.role === "Staff") {
+      navigate("/staff/home");
+    } else {
+      navigate("/"); // Khách hàng mặc định
     }
-  };
+
+    setMessage("Đăng nhập thành công!");
+  } catch (err: unknown) {
+    setMessage(err instanceof Error ? err.message : "Có lỗi xảy ra");
+  }
+};
+
 
   return (
     <LoginWrapper>
@@ -75,9 +40,8 @@ const Login = () => {
         <AvatarCircle>
           <LockOutlined fontSize="large" color="primary" />
         </AvatarCircle>
-
         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-          My Account
+          Đăng Nhập        
         </Typography>
 
         <form onSubmit={handleLogin}>
@@ -85,7 +49,7 @@ const Login = () => {
             label="Email"
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => { setEmail(e.target.value); setMessage(''); }}
             fullWidth
             margin="normal"
             required
@@ -101,7 +65,7 @@ const Login = () => {
             label="Mật khẩu"
             type={showPassword ? 'text' : 'password'}
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={e => { setPassword(e.target.value); setMessage(''); }}
             fullWidth
             margin="normal"
             required
@@ -113,51 +77,25 @@ const Login = () => {
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(prev => !prev)}
-                    edge="end"
-                  >
+                  <IconButton onClick={() => setShowPassword(prev => !prev)} edge="end">
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               )
             }}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2, borderRadius: 2 }}
-          >
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2, borderRadius: 8 }}>
             Đăng nhập
           </Button>
-          <Box
-              sx={{
-                mt: 2,
-                display: 'flex',
-                justifyContent: 'center',
-                gap: 4, // khoảng cách giữa hai mục
-               
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{ cursor: 'pointer', color: 'primary.main' }}
-                onClick={() => navigate('/forgot-password')}
-              >
-                Quên mật khẩu?
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ cursor: 'pointer', color: 'primary.main' }}
-                onClick={() => navigate('/register')}
-              >
-                Đăng ký
-              </Typography>
-            </Box>
 
-
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 4 }}>
+            <Typography variant="body2" sx={{ cursor: 'pointer', color: 'primary.main' }} onClick={() => navigate('/forgot-password')}>
+              Quên mật khẩu?
+            </Typography>
+            <Typography variant="body2" sx={{ cursor: 'pointer', color: 'primary.main' }} onClick={() => navigate('/register')}>
+              Đăng ký
+            </Typography>
+          </Box>
         </form>
 
         {message && (
@@ -171,4 +109,3 @@ const Login = () => {
 };
 
 export default Login;
-

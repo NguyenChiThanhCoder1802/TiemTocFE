@@ -63,7 +63,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <Box display="flex" sx={{ background: 'linear-gradient(to right bottom, #e0f7fa, #ff7043)', minHeight: '100vh' }}>
+    <Box display="flex" sx={{minHeight: '100vh' }}>
       <Paper
         elevation={3}
         sx={{

@@ -1,92 +1,57 @@
 import { useEffect, useState } from 'react';
-import {Box, Typography,Container,Button,} from '@mui/material';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import BookingFab from '../components/Common/BookingFab';
+import { Box, Typography, Container} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ItemCardList from '../components/List/ItemCardList';
 import ComboCard from '../components/BeautyCombo/ComboCard';
 import { getCombos } from '../api/comboAPI';
+import { GetTopPopularServicesAsync } from '../api/servicesAPI';
 import type { ComboDto } from '../types/Combo';
-import type { Service } from '../types/Service';
+import type { ServicePopularityDto } from '../types/Service';
 import { useSnackbar } from 'notistack';
-interface OutletContextType {
-  services: Service[];
-  isFiltering: boolean;
-}
+import Banner from '../components/Common/Banner';
+
 const HomePage = () => {
   const navigate = useNavigate();
-  const { services, isFiltering } = useOutletContext<OutletContextType>();
+  const [services, setServices] = useState<ServicePopularityDto[]>([]);
   const [combos, setCombos] = useState<ComboDto[]>([]);
   const { enqueueSnackbar } = useSnackbar();
-  
+
   useEffect(() => {
     getCombos().then(setCombos).catch(console.error);
+    GetTopPopularServicesAsync().then(setServices).catch(console.error);
   }, []);
 
   const handleBookCombo = (combo: ComboDto) => {
     navigate(`/book-combo/${combo.id}`);
   };
- const handleBookService = (serviceId: number) => {
-  const existing = JSON.parse(localStorage.getItem('temporaryBookingServices') || '[]') as number[];
 
-  const alreadyExists = existing.includes(serviceId);
+  const handleBookService = (serviceId: number) => {
+    const existing = JSON.parse(localStorage.getItem('temporaryBookingServices') || '[]') as number[];
 
-  if (alreadyExists) {
-    enqueueSnackbar('Bạn đã có dịch vụ này rồi!', {
-      variant: 'info',
-      autoHideDuration: 3000,
-    });
-    return;
-  }
+    if (existing.includes(serviceId)) {
+      enqueueSnackbar('Bạn đã có dịch vụ này rồi!', { variant: 'info', autoHideDuration: 3000 });
+      return;
+    }
 
-  existing.push(serviceId);
-  localStorage.setItem('temporaryBookingServices', JSON.stringify(existing));
-  enqueueSnackbar('Bạn đã thêm dịch vụ thành công!', {
-    variant: 'success',
-    autoHideDuration: 2000,
-  });
-};
+    localStorage.setItem('temporaryBookingServices', JSON.stringify([...existing, serviceId]));
+    enqueueSnackbar('Bạn đã thêm dịch vụ thành công!', { variant: 'success', autoHideDuration: 2000 });
+  };
 
   return (
+    <Box>
+      <Banner />
+      <Container>
+        <ItemCardList
+          items={services.slice(0, 6)}
+          title="Dịch vụ nổi bật"
+          linkPrefix="services"
+          onDragToBook={handleBookService}
+        />
+      </Container>
+
       <Box>
         <Container>
-          <Typography
-            variant="h3"
-            align="center"
-            gutterBottom
-            fontWeight="bold"
-            color="primary"
-          >
-            Chào mừng đến với Tiệm Tóc Thanh
-          </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" mb={6}>
-            Đẹp mỗi ngày cùng đội ngũ chuyên nghiệp và sản phẩm chất lượng!
-          </Typography>
-
-          <Box textAlign="center" mt={4} mb={4}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => navigate('/booking')}
-            >
-              Đặt lịch ngay
-            </Button>
-          </Box>
-
-          <ItemCardList
-            items={services.slice(0, isFiltering ? services.length : 6)}
-            title={
-              isFiltering ? 'Dịch vụ theo danh mục đã chọn' : 'Dịch vụ nổi bật'
-            }
-            linkPrefix="services"
-            onDragToBook={handleBookService}
-          />
-        </Container>
-        <BookingFab />
-        <Box >
-        <Container>
-          <Typography variant="h5" gutterBottom>
-            🎁 Combo Làm Đẹp Hot
-          </Typography>
+          <Typography variant="h5" gutterBottom>🎁 Combo Làm Đẹp Hot</Typography>
           {combos.length === 0 ? (
             <Typography>Hiện chưa có combo nào.</Typography>
           ) : (
@@ -95,11 +60,7 @@ const HomePage = () => {
                 <Box
                   key={combo.id}
                   sx={{
-                    width: {
-                      xs: '100%',
-                      sm: 'calc(50% - 16px)',
-                      md: 'calc(33.333% - 16px)',
-                    },
+                    width: { xs: '100%', sm: 'calc(50% - 16px)', md: 'calc(33.333% - 16px)' },
                   }}
                 >
                   <ComboCard combo={combo} onBook={handleBookCombo} />
@@ -109,7 +70,8 @@ const HomePage = () => {
           )}
         </Container>
       </Box>
-      </Box>
+    </Box>
   );
 };
+
 export default HomePage;

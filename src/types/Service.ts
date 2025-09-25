@@ -3,16 +3,24 @@ export interface Service {
   name: string;
   description?: string;
   price: number;
-  categoryId: number;
+  categoryId: number,
+
   durationInMinutes: number;
 
   // Media từ backend
   imageUrl?: string;
   additionalImageUrls?: string[];
+  // từ frontend
   videoUrls?: string[];
-
-  // File người dùng chọn để upload (frontend)
   imageFile?: File | null;
   additionalImageFiles?: File[]; // ảnh phụ
   videoFiles?: File[];
+}
+// types/ServicePopularityDto.ts
+export interface ServicePopularityDto {
+  id: number;
+  name: string;
+  bookingCount: number;
+  avgRating: number;
+  score: number;
 }

@@ -5,6 +5,7 @@ import type { Product } from '../../types/Product';
 import type { Category } from '../../types/Category';
 import ProductTable from '../admin/components/ProductTable';
 import SharedForm from './components/SharedForm';
+import BackButton from '../../components/Common/BackButton';
 const ProductManager = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -83,6 +84,7 @@ const ProductManager = () => {
 
   return (
   <>
+  <BackButton/>
     <ProductTable
       products={products}
       categories={categories}

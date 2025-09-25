@@ -1,3 +1,4 @@
+// kiểm tra Authentication cho toàn cục
 import { createContext } from 'react';
 
 export interface AuthContextType {

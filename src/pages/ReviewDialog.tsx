@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { createReview, getReviewsByProductId, getReviewsByServiceId } from '../api/reviewApi';
-import type { ReviewDto } from '../api/reviewApi';
+import type { ReviewDto } from '../types/Review';
 
 interface ReviewDialogProps {
   open: boolean;

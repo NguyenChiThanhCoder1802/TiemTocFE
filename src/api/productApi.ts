@@ -1,15 +1,14 @@
-// api/productApi.ts
+// sửa ko cần token
 import type { Product } from '../types/Product';
-
+import axiosInstance from '../utils/axiosInstance';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  const res = await fetch(`${API_URL}/product`);
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  const res = await axiosInstance.get('/product');
+  return res.data;
 };
 
-export const addProduct = async (product: Omit<Product, 'id' | 'imageUrl'>, token: string): Promise<Product> => {
+export const addProduct = async (product: Omit<Product, 'id' | 'imageUrl'>): Promise<Product> => {
   const formData = new FormData();
   formData.append('Name', product.name);
   formData.append('Price', product.price.toString());
@@ -17,17 +16,13 @@ export const addProduct = async (product: Omit<Product, 'id' | 'imageUrl'>, toke
   formData.append('CategoryId', product.categoryId.toString());
   if (product.imageFile) formData.append('Image', product.imageFile);
 
-  const res = await fetch(`${API_URL}/product`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+   const res = await axiosInstance.post('/product', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
-
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  return res.data;
 };
 
-export const updateProduct = async (product: Product, token: string): Promise<Product> => {
+export const updateProduct = async (product: Product): Promise<Product> => {
   const formData = new FormData();
   formData.append('Name', product.name);
   formData.append('Price', product.price.toString());
@@ -35,30 +30,21 @@ export const updateProduct = async (product: Product, token: string): Promise<Pr
   formData.append('ImageUrl', product.imageUrl || '');
    formData.append('CategoryId', product.categoryId.toString());
   if (product.imageFile) formData.append('Image', product.imageFile);
-
-  const res = await fetch(`${API_URL}/product/${product.id}`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  const res = await axiosInstance.put(`/product/${product.id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
 };
 
-export const deleteProduct = async (id: number, token: string): Promise<void> => {
-  const res = await fetch(`${API_URL}/product/${id}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) throw new Error(await res.text());
+export const deleteProduct = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/product/${id}`);
 };
+
 export const fetchProductById = async (id: number): Promise<Product> => {
-  const res = await fetch(`${API_URL}/product/${id}`);
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  const res = await axiosInstance.get(`/product/${id}`);
+  return res.data;
 };
+
 export async function fetchProductsByCategory(categoryId: number): Promise<Product[]> {
   const res = await fetch(`${API_URL}/filter?categoryId=${categoryId}`, {
     credentials: 'include',

@@ -27,7 +27,7 @@ const ServiceDetail = () => {
   const [openReview, setOpenReview] = useState(false);
   const [reviews, setReviews] = useState<ReviewDto[]>([]);
   const handleBooking = () => {
-  navigate(`/booking/${service.id}`);
+  navigate(`/booking`);
 };
 
   const averageRating =

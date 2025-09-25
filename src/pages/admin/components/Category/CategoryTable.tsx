@@ -28,6 +28,7 @@ const CategoryTable = ({ categories, editingCategory, setEditingCategory, onUpda
       <TableBody>
         {categories.map((cat) => (
           <TableRow key={cat.id}>
+            {/* Cột Tên */}
             <TableCell>
               {editingCategory?.id === cat.id ? (
                 <TextField
@@ -36,6 +37,8 @@ const CategoryTable = ({ categories, editingCategory, setEditingCategory, onUpda
                 />
               ) : cat.name}
             </TableCell>
+
+            {/* Cột Loại */}
             <TableCell>
               {editingCategory?.id === cat.id ? (
                 <TextField
@@ -46,9 +49,18 @@ const CategoryTable = ({ categories, editingCategory, setEditingCategory, onUpda
                 >
                   <option value="Product">Sản phẩm</option>
                   <option value="Service">Dịch vụ</option>
+                  <option value="Combo">Combo</option>
                 </TextField>
-              ) : cat.type === 'Product' ? 'Sản phẩm' : 'Dịch vụ'}
+              ) : (
+                cat.type === 'Product'
+                  ? 'Sản phẩm'
+                  : cat.type === 'Service'
+                    ? 'Dịch vụ'
+                    : 'Combo'
+              )}
             </TableCell>
+
+            {/* Cột Hành động */}
             <TableCell>
               {editingCategory?.id === cat.id ? (
                 <>

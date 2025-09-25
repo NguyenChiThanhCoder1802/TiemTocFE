@@ -80,9 +80,16 @@ const BookingHistoryPage = () => {
                       {allItems.length > 0 ? allItems.join(', ') : 'Không có dịch vụ hoặc combo'}
                     </TableCell>
 
-                    <TableCell>
-                      {dayjs(booking.date).format('DD/MM/YYYY')} - {booking.time}
+                  
+                     <TableCell>
+                      <TableCell>
+                      {dayjs(booking.appointmentTime).format("DD/MM/YYYY HH:mm")}
                     </TableCell>
+
+                    </TableCell>
+
+
+                    
 
                     <TableCell>{booking.status}</TableCell>
                   </TableRow>

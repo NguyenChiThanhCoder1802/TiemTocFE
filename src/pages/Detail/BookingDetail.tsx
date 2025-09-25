@@ -100,7 +100,7 @@ const handleOpenReviewDialog = (
         <Typography><strong>🕒 Thời gian hẹn:</strong> {formatDateTime(booking.appointmentTime)}</Typography>
         <Typography><strong>📌 Trạng thái:</strong> {booking.status}</Typography>
         <Typography><strong>📝 Ghi chú:</strong> {booking.note || "(Không có)"}</Typography>
-        <Typography><strong>👤 Người dùng hệ thống:</strong> {booking.userName}</Typography>
+        <Typography><strong>👤 Email:</strong> {booking.userName}</Typography>
 
         <Typography variant="h6" mt={3} mb={1}>📋 Dịch vụ đã chọn:</Typography>
         <List dense>

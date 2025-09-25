@@ -1,4 +1,4 @@
-// src/api/profileApi.ts
+// Lấy thông tin user
 import axiosInstance from '../utils/axiosInstance';
 import type { ProfileDto } from '../types/ProfileDto';
 
