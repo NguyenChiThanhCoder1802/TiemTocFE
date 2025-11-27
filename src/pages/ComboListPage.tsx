@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getCombos } from '../api/comboAPI';
 import type { ComboDto } from '../types/Combo';
 import { Container, Typography, Box } from '@mui/material';
-import ComboCard from '../components/BeautyCombo/ComboCard';
+import ComboCard from '../components/ComboService/ComboCard';
 import { useNavigate } from 'react-router-dom';
 
 const ComboListPage = () => {

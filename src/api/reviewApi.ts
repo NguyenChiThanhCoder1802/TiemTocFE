@@ -1,8 +1,8 @@
-
+// API cho đánh giá dịch vụ và sản phẩm
 import axiosInstance from '../utils/axiosInstance';
 import type {ReviewDto,CreateReviewDto} from '../types/Review'
 const API_URL = import.meta.env.VITE_API_URL;
-
+// tạo đánh giá mới
 export const createReview = async (data: CreateReviewDto): Promise<ReviewDto> => {
   const response = await axiosInstance.post(`${API_URL}/review`, data, {
     

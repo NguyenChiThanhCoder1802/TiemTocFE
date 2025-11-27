@@ -3,14 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchProductById } from '../../api/productApi';
 import { addToCart } from '../../api/apiService';
 import type { Product } from '../../types/Product';
-import {Box,Typography,Card,CardContent,CardMedia,CircularProgress,Button,} from '@mui/material';
+import { Box, Typography, Card, CardContent, CardMedia, CircularProgress, Button, } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { motion } from 'framer-motion';
 import { useSnackbar } from 'notistack';
 import ReviewDialog from '../ReviewDialog';
 import RateReviewIcon from '@mui/icons-material/RateReview';
-import AverageRating from '../../components/AverageRating';
+import AverageRating from '../../components/Review/AverageRating';
 import { useCart } from '../../hooks/useCart';
 import { getReviewsByProductId, type ReviewDto } from '../../api/reviewApi';
 const ProductDetail = () => {
@@ -42,11 +42,11 @@ const ProductDetail = () => {
     };
 
     loadProduct();
-     if (id) {
-    getReviewsByProductId(Number(id))
-      .then(setReviews)
-      .catch(() => setReviews([]));
-  }
+    if (id) {
+      getReviewsByProductId(Number(id))
+        .then(setReviews)
+        .catch(() => setReviews([]));
+    }
   }, [id]);
 
   const handleAddToCart = async () => {
@@ -58,7 +58,7 @@ const ProductDetail = () => {
     } catch {
       enqueueSnackbar('❌ Không thể thêm vào giỏ hàng', { variant: 'error', autoHideDuration: 1000, });
     }
-    
+
   };
 
   if (loading) {
@@ -159,12 +159,12 @@ const ProductDetail = () => {
               >
                 Đánh giá
               </Button>
-                <ReviewDialog
-                  open={openReview}
-                  onClose={() => setOpenReview(false)}
-                  productId={product.id}
-                  productName={product.name}
-                />
+              <ReviewDialog
+                open={openReview}
+                onClose={() => setOpenReview(false)}
+                productId={product.id}
+                productName={product.name}
+              />
 
             </CardContent>
           </Box>

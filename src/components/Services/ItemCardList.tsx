@@ -16,7 +16,7 @@ interface Props {
   onDragToBook?: (serviceId: number) => void;
 }
 
-const ItemCardList = ({ items, title, linkPrefix,onDragToBook  }: Props) => {
+const ItemCardList = ({ items, title, linkPrefix}: Props) => {
   return (
     <Box sx={{ px: 3, py: 4 }}>
       <Typography variant="h4" gutterBottom fontWeight="bold" align="center">
@@ -25,7 +25,7 @@ const ItemCardList = ({ items, title, linkPrefix,onDragToBook  }: Props) => {
 
       <Box display="flex" flexWrap="wrap" gap={3} justifyContent="center">
         {items.map((item, index) => (
-          <ItemCard key={item.id} item={item} index={index} linkPrefix={linkPrefix} onDragToBook={onDragToBook} />
+          <ItemCard key={item.id} item={item} index={index} linkPrefix={linkPrefix} />
         ))}
         
       </Box>

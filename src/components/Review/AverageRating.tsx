@@ -1,5 +1,6 @@
+// tính đánh giá số sao
 import { Box, Typography, Rating } from '@mui/material';
-import type { ReviewDto } from '../api/reviewApi';
+import type { ReviewDto } from '../../types/Review';
 
 interface Props {
   reviews: ReviewDto[];

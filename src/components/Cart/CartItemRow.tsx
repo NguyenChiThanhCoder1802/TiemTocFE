@@ -1,3 +1,4 @@
+// Hiển thị sản phẩm theo dòng
 import { TableRow, TableCell, Box, Button, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { CartItem } from '../../types/Cart';
@@ -7,12 +8,11 @@ interface Props {
   onRemove: (productId: number) => void;
   onQuantityChange: (productId: number, quantity: number) => void;
 }
-
 const CartItemRow = ({ item, onRemove, onQuantityChange }: Props) => (
   <TableRow>
     <TableCell>
       <img
-        src={item.imageUrl || 'https://via.placeholder.com/80x80?text=No+Image'}
+        src={item.imageUrl || 'Không có hình ảnh'}
         alt={item.productName}
         style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }}
       />

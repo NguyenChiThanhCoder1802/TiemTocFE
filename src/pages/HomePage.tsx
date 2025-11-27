@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Container} from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ItemCardList from '../components/List/ItemCardList';
-import ComboCard from '../components/BeautyCombo/ComboCard';
+import ItemCardList from '../components/Services/ItemCardList';
+import ComboCard from '../components/ComboService/ComboCard';
 import { getCombos } from '../api/comboAPI';
 import { GetTopPopularServicesAsync } from '../api/servicesAPI';
 import type { ComboDto } from '../types/Combo';
@@ -51,10 +51,8 @@ const HomePage = () => {
 
       <Box>
         <Container>
-          <Typography variant="h5" gutterBottom>🎁 Combo Làm Đẹp Hot</Typography>
-          {combos.length === 0 ? (
-            <Typography>Hiện chưa có combo nào.</Typography>
-          ) : (
+          <Typography variant="h5" textAlign={'center'} gutterBottom>Combo Làm Đẹp Hot</Typography>
+          {combos.length === 0 ? (<Typography>Hiện chưa có combo nào.</Typography>) : (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
               {combos.map((combo) => (
                 <Box

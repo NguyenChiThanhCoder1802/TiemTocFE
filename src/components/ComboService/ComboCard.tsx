@@ -45,13 +45,11 @@ const ComboCard = ({ combo, onBook }: Props) => {
             ))}
           </ul>
         </Box>
-
-        {/* Nút đặt combo riêng, không bị ảnh hưởng bởi click card */}
         <Box mt={2}>
           <Button
             variant="contained"
             onClick={(e) => {
-              e.stopPropagation(); // Ngăn click lan sang card
+              e.stopPropagation();
               onBook(combo);
             }}
           >

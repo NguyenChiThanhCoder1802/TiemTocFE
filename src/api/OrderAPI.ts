@@ -1,25 +1,7 @@
 import axios from 'axios';
-
+import type { Order } from '../types/Order';
 const BASE_URL = import.meta.env.VITE_API_URL + '/order';
 
-export interface OrderItem {
-  productId: number;
-  productName: string;
-  quantity: number;
-  price: number;
-  imageUrl?: string;
-}
-
-export interface Order {
-  id: number;
-  userId: string;
-  customerEmail: string;
-  orderDate: string;
-  totalPrice: number;
-  status: string;
-  discountCode?: string;
-  items: OrderItem[];
-}
 
 export async function fetchAllOrders(): Promise<Order[]> {
   const token = localStorage.getItem('token');

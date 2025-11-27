@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { getAllDiscounts } from '../services/discountService';
+import { getAllDiscounts } from '../api/discountAPI';
 import type { Discount} from '../types/Discount';
 import {StyledBox,Title,DiscountCard,DiscountBadge,DiscountDetails,DiscountCode,SaveButton,} from '../styles/discount';
 
@@ -46,9 +46,18 @@ const DiscountListPage = () => {
               </Typography>
             </DiscountDetails>
 
-            <SaveButton onClick={() => navigator.clipboard.writeText(discount.code)}>
-              Sao chép mã
-            </SaveButton>
+           <SaveButton
+                onClick={() => {
+                  navigator.clipboard.writeText(discount.code).then(() => {
+                    enqueueSnackbar('Sao chép mã thành công!', { variant: 'success',  });
+                  }).catch(() => {
+                    enqueueSnackbar('❌ Sao chép thất bại', { variant: 'error' });
+                  });
+                }}
+              >
+                Sao chép mã
+              </SaveButton>
+
           </DiscountCard>
         ))
       )}

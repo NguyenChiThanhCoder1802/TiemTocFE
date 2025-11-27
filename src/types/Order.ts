@@ -6,7 +6,6 @@ export interface OrderItem {
   discountCode?: string;
   imageUrl?: string;
 }
-
 export interface Order {
   id: number;
   orderDate: string;

@@ -1,3 +1,4 @@
+// Khung chọn mã giảm giá và áp dụng
 import { Box, TextField, Button } from '@mui/material';
 
 interface Props {

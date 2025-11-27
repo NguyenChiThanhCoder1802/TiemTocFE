@@ -4,7 +4,7 @@ import { addToCart, fetchProducts } from '../../api/apiService';
 import type { Product } from '../../types/Product';
 import { useSnackbar } from 'notistack';
 import { useCart } from '../../hooks/useCart';
-import ItemCardList from '../../components/List/ItemCardList';
+import ProductList from '../../components/Products/ProductList';
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -58,7 +58,7 @@ const ProductPage = () => {
   };
 
   return (
-    <ItemCardList
+    <ProductList
       items={filteredProducts}
       title="Danh sách sản phẩm"
       linkPrefix="product"

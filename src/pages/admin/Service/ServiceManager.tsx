@@ -11,6 +11,7 @@ import ServiceTable from './ServiceTable';
 import type { Service } from '../../../types/Service';
 import type { Category } from '../../../types/Category';
 import BackButton from '../../../components/Common/BackButton';
+import { useSnackbar } from 'notistack';
 
 export default function ServiceManager() {
   const [services, setServices] = useState<Service[]>([]);
@@ -18,10 +19,27 @@ export default function ServiceManager() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
-    fetchServices().then(setServices);
-    fetchCategories().then(setCategories);
-  }, []);
+    fetchServices()
+      .then(setServices)
+      .catch(() =>
+        enqueueSnackbar('Không thể tải danh sách dịch vụ', {
+          variant: 'error',
+          autoHideDuration: 2000,
+        })
+      );
+
+    fetchCategories()
+      .then(setCategories)
+      .catch(() =>
+        enqueueSnackbar('Không thể tải danh mục', {
+          variant: 'error',
+          autoHideDuration: 2000,
+        })
+      );
+  }, [enqueueSnackbar]);
 
   const handleOpenDialog = () => setDialogOpen(true);
 
@@ -33,13 +51,18 @@ export default function ServiceManager() {
   // ✅ Thêm mới
   const handleCreateService = async (formData: FormData) => {
     try {
-      
       await createService(formData);
-      alert('✅ Thêm dịch vụ thành công');
+      enqueueSnackbar('Thêm dịch vụ thành công', {
+        variant: 'success',
+        autoHideDuration: 2000,
+      });
       handleCloseDialog();
       fetchServices().then(setServices);
     } catch {
-      alert('❌ Lỗi khi thêm dịch vụ');
+      enqueueSnackbar('Lỗi khi thêm dịch vụ', {
+        variant: 'error',
+        autoHideDuration: 2000,
+      });
     }
   };
 
@@ -47,37 +70,51 @@ export default function ServiceManager() {
   const handleUpdateService = async (formData: FormData) => {
     try {
       if (!editingService) return;
-      
       await updateService(editingService.id, formData);
-      alert('✅ Cập nhật thành công');
+      enqueueSnackbar('Cập nhật dịch vụ thành công', {
+        variant: 'success',
+        autoHideDuration: 2000,
+      });
       handleCloseDialog();
       fetchServices().then(setServices);
     } catch {
-      alert('❌ Cập nhật thất bại');
+      enqueueSnackbar('Cập nhật thất bại', {
+        variant: 'error',
+        autoHideDuration: 2000,
+      });
     }
   };
 
+  // ✅ Sửa
   const handleEdit = (service: Service) => {
     setEditingService(service);
     setDialogOpen(true);
   };
 
+  // ✅ Xóa
   const handleDelete = async (id: number) => {
     if (!confirm('Bạn có chắc muốn xoá dịch vụ này?')) return;
     try {
-      
-      await deleteService(id,);
-      alert('🗑️ Xoá thành công');
+      await deleteService(id);
+      enqueueSnackbar('Xoá dịch vụ thành công', {
+        variant: 'success',
+        autoHideDuration: 2000,
+      });
       fetchServices().then(setServices);
     } catch {
-      alert('❌ Xoá thất bại');
+      enqueueSnackbar('Xoá thất bại', {
+        variant: 'error',
+        autoHideDuration: 2000,
+      });
     }
   };
 
   return (
     <Box>
       <BackButton />
-      <Typography variant="h4" gutterBottom>Quản lý Dịch Vụ</Typography>
+      <Typography variant="h4" gutterBottom>
+        Quản lý Dịch Vụ
+      </Typography>
 
       <Button variant="contained" onClick={handleOpenDialog}>
         + Thêm Dịch Vụ
@@ -92,7 +129,7 @@ export default function ServiceManager() {
 
       <ServiceDialog
         open={dialogOpen}
-        service={editingService}
+        editingService={editingService}
         categories={categories}
         onClose={handleCloseDialog}
         onSubmit={editingService ? handleUpdateService : handleCreateService}

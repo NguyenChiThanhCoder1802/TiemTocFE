@@ -1,4 +1,4 @@
-// src/api/loyaltyAPI.ts
+//điểm thưởng
 import axiosInstance from '../utils/axiosInstance';
 // Lấy điểm tích lũy của mỗi user
 export const getMyPoints = async (): Promise<number> => {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { fetchServices, fetchServicesByCategory} from '../../api/servicesAPI';
-import{fetchCategories} from '../../api/categoryApi'
+import { fetchServices, fetchServicesByCategory } from '../../api/servicesAPI';
+import { fetchCategories } from '../../api/categoryApi'
 import type { Service } from '../../types/Service';
 import type { Category } from '../../types/Category';
-import ItemCardList from '../../components/List/ItemCardList';
+import ItemCardList from '../../components/Services/ItemCardList';
 import BackButton from '../../components/Common/BackButton';
 
 const ServicesPage = () => {
