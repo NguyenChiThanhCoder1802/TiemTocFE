@@ -1,133 +1,123 @@
-import {Box,Typography,Button,Card,List,ListItemButton,ListItemIcon,ListItemText,Divider,Paper,} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {Dashboard,Brush,Store,ShoppingCart,Group,CalendarToday,LocalOffer,BarChart,Category}from '@mui/icons-material';
-import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+} from '@mui/material'
+import {
+  ResponsiveContainer,
+  BarChart as ReBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts'
+import LogoutIcon from '@mui/icons-material/Logout'
+import { useNavigate } from 'react-router-dom'
+import useAuth from '../../hooks/useAuth'
+
+// DỮ LIỆU GIẢ
+const chartData = [
+  { name: 'T1', revenue: 120 },
+  { name: 'T2', revenue: 200 },
+  { name: 'T3', revenue: 150 },
+  { name: 'T4', revenue: 300 },
+  { name: 'T5', revenue: 280 },
+  { name: 'T6', revenue: 350 },
+]
+
+const StatCard = ({
+  label,
+  value,
+}: {
+  label: string
+  value: number
+}) => (
+  <Card sx={{ flex: 1 }}>
+    <CardContent>
+      <Typography color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="h4" fontWeight={700}>
+        {value}
+      </Typography>
+    </CardContent>
+  </Card>
+)
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { logout, isAdmin, loading } = useAuth()
+  const navigate = useNavigate()
 
-  const sidebarItems = [
-    { text: 'Tổng Quan', icon: <Dashboard />, path: '/admin' },
-    { text: 'Dịch Vụ', icon: <Brush />, path: '/admin/services' },
-    { text: 'Combo làm đẹp', icon: <FaceRetouchingNaturalIcon />, path: '/admin/beautycombo' },
-    { text: 'Sản Phẩm', icon: <Store />, path: '/admin/products' },
-    { text: 'Đơn Hàng', icon: <ShoppingCart />, path: '/admin/orders' },
-    { text: 'Người Dùng', icon: <Group />, path: '/admin/users' },
-    { text: 'Lịch Đặt', icon: <CalendarToday />, path: '/admin/bookings' },
-    { text: 'Mã Giảm Giá', icon: <LocalOffer />, path: '/admin/discount' },
-    { text: 'Doanh Thu', icon: <BarChart />, path: '/admin/revenue' },
-  ];
+  if (loading) return null
 
-  const dashboardCards = [
-    {
-      title: 'Quản Lý Dịch Vụ',
-      icon: <Brush fontSize="large" color="primary" />,
-      path: '/admin/services',
-    },
-    {
-      title: 'Quản Lý Sản Phẩm',
-      icon: <Store fontSize="large" color="secondary" />,
-      path: '/admin/products',
-    },
-    {
-      title: 'Quản Lý Danh Mục',
-      icon: <Category fontSize="large" sx={{ color: '#9c27b0' }} />,
-      path: '/admin/categories',
-    },
-    {
-      title: 'Quản Lý Đơn Hàng',
-      icon: <ShoppingCart fontSize="large" color="success" />,
-      path: '/admin/orders',
-    },
-    {
-      title: 'Quản Lý Người Dùng',
-      icon: <Group fontSize="large" color="error" />,
-      path: '/admin/users',
-    },
-    {
-      title: 'Quản Lý Lịch Đặt',
-      icon: <CalendarToday fontSize="large" color="warning" />,
-      path: '/admin/bookings',
-    },
-    {
-      title: 'Mã Giảm Giá',
-      icon: <LocalOffer fontSize="large" color="info" />,
-      path: '/admin/discount',
-    },
-    {
-      title: 'Doanh Thu',
-      icon: <BarChart fontSize="large" sx={{ color: '#9c27b0' }} />, // tím
-      path: '/admin/revenue',
-    },
-  ];
+  if (!isAdmin) {
+    navigate('/403')
+    return null
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   return (
-    <Box display="flex" sx={{minHeight: '100vh' }}>
-      <Paper
-        elevation={3}
+    <Box>
+      {/* HEADER */}
+      <Box
         sx={{
-          width: 240,
-          minHeight: '100vh',
-          paddingTop: 3,
-          backgroundColor: '#f5f5f5',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
         }}
       >
-        <Typography variant="h6" align="center" gutterBottom>
-          🛠 Quản Trị
-        </Typography>
-        <Divider />
-        <List>
-          {sidebarItems.map((item) => (
-            <ListItemButton
-              key={item.text}
-              selected={location.pathname === item.path}
-              onClick={() => navigate(item.path)}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
-        </List>
-      </Paper>
-
-      {/* Main content */}
-      <Box flex={1} p={4}>
-        <Typography variant="h4" gutterBottom>
-          Bảng Điều Khiển
+        <Typography variant="h5" fontWeight={700}>
+          Dashboard
         </Typography>
 
-        <Box display="flex" flexWrap="wrap" gap={3}>
-          {dashboardCards.map((item, index) => (
-            <Card
-              key={index}
-              sx={{
-                width: 260,
-                height: 160,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: 2,
-              }}
-              elevation={4}
-            >
-              <Box display="flex" alignItems="center" gap={1}>
-                {item.icon}
-                <Typography variant="h6">{item.title}</Typography>
-              </Box>
-              <Button
-                variant="contained"
-                onClick={() => navigate(item.path)}
-                sx={{ mt: 2 }}
-              >
-                Quản lý
-              </Button>
-            </Card>
-          ))}
-        </Box>
+        <LogoutIcon
+          onClick={handleLogout}
+          sx={{
+            cursor: 'pointer',
+            color: 'error.main',
+          }}
+        />
       </Box>
-    </Box>
-  );
-};
 
-export default AdminDashboard;
+      {/* STATS */}
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 3,
+          flexWrap: 'wrap',
+          mb: 4,
+        }}
+      >
+        <StatCard label="Tổng dịch vụ" value={24} />
+        <StatCard label="Người dùng" value={312} />
+        <StatCard label="Doanh thu (triệu)" value={128} />
+      </Box>
+
+      {/* CHART */}
+      <Card>
+        <CardContent>
+          <Typography fontWeight={600} mb={2}>
+            Doanh thu 6 tháng
+          </Typography>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <ReBarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="revenue" fill="#d2a679" />
+            </ReBarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </Box>
+  )
+}
+
+export default AdminDashboard

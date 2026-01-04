@@ -1,37 +1,74 @@
-import type { Discount, CreateDiscountDto, AppliedDiscount } from '../types/Discount';
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from '../utils/axiosInstance'
 
-// Lấy tất cả mã giảm giá
-export const getAllDiscounts = async (): Promise<Discount[]> => {
-  const res = await axiosInstance.get('/discount');
-  if (!res.data.success) throw new Error(res.data.message || 'Lỗi khi lấy danh sách mã');
-  return res.data.data;
-};
+import type {
+  DiscountCard,
+  CreateDiscountCardPayload,
+  UpdateDiscountCardPayload
+} from '../types/Discount/Discount'
 
-// Tạo mã giảm giá mới
-export const createDiscount = async (data: CreateDiscountDto): Promise<Discount> => {
-  const res = await axiosInstance.post('/discount', data);
-  if (!res.data.success) throw new Error(res.data.message || 'Không thể tạo mã giảm giá');
-  return res.data.data;
-};
+const BASE_URL = '/discount-cards'
 
-// Cập nhật mã giảm giá
-export const updateDiscount = async (id: number, data: CreateDiscountDto): Promise<void> => {
-  const body = { id, ...data }; // API backend yêu cầu id trong body
-  const res = await axiosInstance.put('/discount', body);
-  if (!res.data.success) throw new Error(res.data.message || 'Không thể cập nhật mã giảm giá');
-};
 
-// Xoá mã giảm giá
-export const deleteDiscount = async (id: number): Promise<string> => {
-  const res = await axiosInstance.delete(`/discount/${id}`);
-  if (!res.data.success) throw new Error(res.data.message || 'Không thể xoá mã giảm giá');
-  return res.data.message;
-};
+export const getDiscountCards = async (): Promise<DiscountCard[]> => {
+  const res = await axiosInstance.get<DiscountCard[]>(
+    BASE_URL
+  )
+  return res.data
+}
 
-// Áp dụng mã giảm giá (không cần token nếu public)
-export const applyDiscountCode = async (code: string): Promise<AppliedDiscount> => {
-  const res = await axiosInstance.post(`/discount/apply/${code}`);
-  if (!res.data.success) throw new Error(res.data.message || 'Không thể áp dụng mã giảm giá');
-  return res.data.data;
-};
+/* ======================
+   CREATE DISCOUNT CARD (ADMIN)
+====================== */
+export const createDiscountCard = async (
+  payload: CreateDiscountCardPayload
+): Promise<DiscountCard> => {
+  const res = await axiosInstance.post<DiscountCard>(
+    BASE_URL,
+    payload
+  )
+  return res.data
+}
+
+/* ======================
+   UPDATE DISCOUNT CARD (ADMIN)
+====================== */
+export const updateDiscountCard = async (
+  id: string,
+  payload: UpdateDiscountCardPayload
+): Promise<DiscountCard> => {
+  const res = await axiosInstance.put<DiscountCard>(
+    `${BASE_URL}/${id}`,
+    payload
+  )
+  return res.data
+}
+
+/* ======================
+   DELETE DISCOUNT CARD (ADMIN)
+====================== */
+export const deleteDiscountCard = async (id: string): Promise<void> => {
+  await axiosInstance.delete(`${BASE_URL}/${id}`)
+}
+
+/* ======================
+   APPLY DISCOUNT (USER)
+====================== */
+export const applyDiscountCard = async (
+  code: string,
+  orderTotal: number
+): Promise<{
+  discountAmount: number
+  finalTotal: number
+}> => {
+  const res = await axiosInstance.post<
+    {
+      discountAmount: number
+      finalTotal: number
+    }
+  >(`${BASE_URL}/apply`, {
+    code,
+    orderTotal
+  })
+
+  return res.data
+}

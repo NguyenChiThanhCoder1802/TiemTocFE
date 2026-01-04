@@ -5,7 +5,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute = ({ allowedRoles }: PrivateRouteProps) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
 
   if (!token) return <Navigate to="/login" replace />;
 

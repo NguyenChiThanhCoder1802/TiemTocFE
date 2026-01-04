@@ -1,50 +1,81 @@
-// hàm API có Token
-import axios from 'axios';
+import axios from 'axios'
+import type { AxiosRequestHeaders } from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-});
+  withCredentials: false
+})
 
-// Interceptor request
+const logoutAndRedirect = () => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  localStorage.removeItem('auth_user')
+  window.location.href = '/login'
+}
+
+/* ======================================================
+   REQUEST INTERCEPTOR
+   - Gửi accessToken + refreshToken
+====================================================== */
 axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  config => {
+    const accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
+
+    const headers = (config.headers ?? {}) as AxiosRequestHeaders
+
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`
     }
 
-    // Nếu chưa có Content-Type thì tự set
+    if (refreshToken) {
+      headers['X-Refresh-Token'] = refreshToken
+    }
+
     if (config.data instanceof FormData) {
-      // Để trống, Axios sẽ tự thêm boundary cho multipart/form-data
-      config.headers['Content-Type'] = 'multipart/form-data';
+      delete headers['Content-Type']
     } else {
-      config.headers['Content-Type'] = 'application/json';
+      headers['Content-Type'] = 'application/json'
     }
 
-    return config;
+    config.headers = headers
+    return config
   },
-  (error) => Promise.reject(error)
-);
+  error => Promise.reject(error)
+)
 
-// Interceptor response
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403)
-    ) {
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/login') {
-        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+  response => {
+    const newAccessToken =
+      response.headers['x-new-access-token'] ||
+      response.headers['X-New-Access-Token']
 
-export default axiosInstance;
+    if (newAccessToken) {
+      console.log('🔄 UPDATE ACCESS TOKEN FROM BE')
+      localStorage.setItem('accessToken', newAccessToken)
+    }
+
+    return response
+  },
+  error => {
+    const status = error.response?.status
+    const message = error.response?.data?.message
+
+    if (
+      status === 401 &&
+      (
+        message === 'INVALID_ACCESS_TOKEN' ||
+        message === 'REFRESH_TOKEN_EXPIRED_OR_INVALID' ||
+        message === 'REFRESH_TOKEN_NOT_PROVIDED'
+      )
+    ) {
+      logoutAndRedirect()
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+export default axiosInstance

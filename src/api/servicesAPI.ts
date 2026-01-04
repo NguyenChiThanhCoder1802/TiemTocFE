@@ -1,76 +1,105 @@
-//api dịch vụ
-import type { Service } from '../types/Service';
-import axiosInstance from '../utils/axiosInstance';
-import type { ServicePopularityDto} from '../types/Service'
-const BASE_URL = '/Service';
+import axiosInstance from '../utils/axiosInstance'
+import type { Service } from '../types/HairService/Service'
+import type { ApiResponse } from '../types/ApiResponse'
 
-export async function fetchServices(): Promise<Service[]> {
-  try {
-    const res = await axiosInstance.get<Service[]>(BASE_URL);
-    return res.data;
-  } catch (error) {
-    console.error('❌ Error fetching services:', error);
-    throw error;
-  }
-}
-export async function GetTopPopularServicesAsync(topN: number = 5): Promise<ServicePopularityDto[]> {
-  try{
-      const res = await axiosInstance.get<ServicePopularityDto[]>(`${BASE_URL}/top-popular`,{ params: { topN },});
-      return res.data
-  }
-  catch (error) {
-    console.error('❌ Error fetching services:', error);
-    throw error;
-  }
-  
+const BASE_URL = '/hairservices'
+
+/* ======================
+   GET ALL SERVICES
+====================== */
+export const fetchServices = async (): Promise<Service[]> => {
+  const res = await axiosInstance.get<ApiResponse<Service[]>>(BASE_URL)
+  return res.data.data
 }
 
-export async function createService(formData: FormData): Promise<Service> {
-  try {
-    const res = await axiosInstance.post<Service>(`${BASE_URL}/Service-Post`, formData);
-    return res.data;
-  } catch (error) {
-    console.error('❌ Lỗi khi tạo dịch vụ:', error);
-    throw error;
-  }
+/* ======================
+   GET SERVICE BY ID
+====================== */
+export const fetchServiceById = async (id: string): Promise<Service> => {
+  const res = await axiosInstance.get<ApiResponse<Service>>(
+    `${BASE_URL}/${id}`
+  )
+  return res.data.data
 }
 
-export async function updateService(id: number, formData: FormData): Promise<void> {
-  try {
-    await axiosInstance.put(`${BASE_URL}/${id}`, formData);
-  } catch (error) {
-    console.error('❌ Lỗi khi cập nhật dịch vụ:', error);
-    throw error;
-  }
-}
+/* ======================
+   CREATE SERVICE (ADMIN)
+====================== */
+export const createService = async (
+  formData: FormData
+): Promise<Service> => {
+  const transformFormData = (fd: FormData) => {
+    const out = new FormData()
+    const sd: Record<string, any> = {}
 
-export async function fetchServicesByCategory(categoryId: number): Promise<Service[]> {
-  try {
-    const res = await axiosInstance.get<Service[]>(`${BASE_URL}/filter`, {
-      params: { categoryId },
-    });
-    return res.data;
-  } catch (error) {
-    console.error('❌ Lỗi khi lọc dịch vụ:', error);
-    throw error;
-  }
-}
+    for (const [k, v] of Array.from(fd.entries())) {
+      if (k.startsWith('serviceDiscount.')) {
+        const key = k.split('.')[1]
+        sd[key] = v
+        out.append(`serviceDiscount[${key}]`, v as any)
+      } else {
+        out.append(k, v as any)
+      }
+    }
 
-export async function deleteService(id: number): Promise<void> {
+    return out
+  }
+
+  const payload = transformFormData(formData)
+
   try {
-    await axiosInstance.delete(`${BASE_URL}/${id}`);
-  } catch (error) {
-    console.error('❌ Lỗi khi xoá dịch vụ:', error);
-    throw error;
+    const res = await axiosInstance.post<ApiResponse<Service>>(BASE_URL, payload)
+    return res.data.data
+  } catch (err: any) {
+    console.error('createService error response:', err.response?.data ?? err)
+    throw err
   }
 }
 
-export async function fetchServiceById(id: number): Promise<Service> {
-  try {
-    const res = await axiosInstance.get<Service>(`${BASE_URL}/${id}`);
-    return res.data;
-  } catch (error) {
-    console.error('❌ Lỗi khi lấy dịch vụ theo ID:', error);
-    throw error;
+/* ======================
+   UPDATE SERVICE (ADMIN)
+====================== */
+export const updateService = async (
+  id: string,
+  formData: FormData
+): Promise<Service> => {
+  // Chuyển FormData sang payload
+  const transformFormData = (fd: FormData) => {
+    const payload: Record<string, any> = {}
+    const serviceDiscount: Record<string, any> = {}
+
+    for (const [key, value] of fd.entries()) {
+      // Tách serviceDiscount
+      if (key.startsWith('serviceDiscount.')) {
+        const sdKey = key.split('.')[1]
+        serviceDiscount[sdKey] = value
+      } else {
+        payload[key] = value
+      }
+    }
+
+    // Nếu có serviceDiscount, giữ nguyên kiểu object
+    if (Object.keys(serviceDiscount).length) {
+      payload.serviceDiscount = serviceDiscount
+    }
+
+    return payload
   }
+
+  const payload = transformFormData(formData)
+
+  return axiosInstance
+    .put<ApiResponse<Service>>(`${BASE_URL}/${id}`, payload)
+    .then(res => res.data.data)
+}
+
+/* ======================
+   DELETE SERVICE (ADMIN)
+====================== */
+export const deleteService = async (id: string): Promise<void> => {
+  await axiosInstance.delete(`${BASE_URL}/${id}`)
+}
+export const fetchServiceStatistics = async () => {
+  const res = await axiosInstance.get(`${BASE_URL}/statistics`)
+  return res.data.data
 }
