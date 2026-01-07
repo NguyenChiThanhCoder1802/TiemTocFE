@@ -19,15 +19,18 @@ import type { Review } from '../../../types/Review/Review'
 interface ReviewFormDialogProps {
   open: boolean
   onClose: () => void
-  serviceId: string
   onSuccess: () => void
+  serviceId?: string
+  staffId?: string
   review?: Review
 }
+
 
 const ReviewFormDialog = ({
   open,
   onClose,
   serviceId,
+  staffId,
   onSuccess,
   review,
 }: ReviewFormDialogProps) => {
@@ -68,29 +71,30 @@ const ReviewFormDialog = ({
   }
 
   const handleSubmit = async () => {
-    const formData = new FormData()
-    formData.append('service', serviceId)
-    formData.append('rating', String(rating))
-    formData.append('comment', comment)
+  const formData = new FormData()
 
-    // Gửi ảnh cũ còn giữ lại
-    oldImages.forEach(url => formData.append('oldImages[]', url))
-    // Gửi ảnh mới
-    newImages.forEach(file => formData.append('images', file))
+  if (serviceId) formData.append('service', serviceId)
+  if (staffId) formData.append('staff', staffId)
 
-    setLoading(true)
-    try {
-      if (isEdit && review) {
-        await updateReview(review._id, formData)
-      } else {
-        await createReview(formData)
-      }
-      onSuccess()
-      onClose()
-    } finally {
-      setLoading(false)
+  formData.append('rating', String(rating))
+  formData.append('comment', comment)
+
+  newImages.forEach(file => formData.append('images', file))
+
+  setLoading(true)
+  try {
+    if (isEdit && review) {
+      await updateReview(review._id, formData)
+    } else {
+      await createReview(formData)
     }
+    onSuccess()
+    onClose()
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">

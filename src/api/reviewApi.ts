@@ -15,7 +15,14 @@ export const fetchReviewsByService = async (
   )
   return res.data.data
 }
-
+export const fetchReviewsByStaff = async (
+  staffId: string
+): Promise<Review[]> => {
+  const res = await axiosInstance.get<ApiResponse<Review[]>>(
+    `${BASE_URL}/staff/${staffId}`
+  )
+  return res.data.data
+}
 /* ======================
    CREATE REVIEW
 ====================== */

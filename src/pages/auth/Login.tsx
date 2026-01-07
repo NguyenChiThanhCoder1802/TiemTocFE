@@ -117,6 +117,18 @@ const Login = () => {
         </Button>
 
       </form>
+          <Typography
+            mt={2}
+            textAlign="center"
+            sx={{
+              cursor: 'pointer',
+              color: 'secondary.main',
+              fontWeight: 500
+            }}
+            onClick={() => navigate('/register?applyAsStaff=true')}
+          >
+            Đăng ký thành nhân viên
+          </Typography>
 
       {message && (
         <Alert severity={message.includes('thành công') ? 'success' : 'error'} sx={{ mt: 2 }}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   TextField,
   Button,
@@ -7,7 +7,9 @@ import {
   Alert,
   InputAdornment,
   IconButton,
-  Box
+  Box,
+  MenuItem,
+  CircularProgress
 } from '@mui/material'
 import {
   PersonOutline,
@@ -16,21 +18,56 @@ import {
   VisibilityOff,
   EmailOutlined
 } from '@mui/icons-material'
-import { CircularProgress } from '@mui/material'
 
-import { registerApi } from '../../api/AuthAPI'
+import { registerApi, staffRegisterApi } from '../../api/AuthAPI'
+
+/* ================= TYPES ================= */
+
+type StaffPosition = 'stylist' | 'assistant' | 'manager'
+
+interface StaffRegisterPayload {
+  email: string
+  name: string
+  password: string
+  confirmpassword: string
+  experienceYears: number
+  skills: string[]
+  position: StaffPosition
+}
+
+/* ================= CONSTANTS ================= */
+
+const STAFF_POSITIONS: { label: string; value: StaffPosition }[] = [
+  { label: 'Stylist', value: 'stylist' },
+  { label: 'Assistant', value: 'assistant' },
+  { label: 'Manager', value: 'manager' }
+]
+
+/* ================= COMPONENT ================= */
+
 const Register = () => {
-  const [email, setEmail] = useState('')
-  const [name, setFullName] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [searchParams] = useSearchParams()
+  const isStaff = searchParams.get('applyAsStaff') === 'true'
 
   const navigate = useNavigate()
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const [email, setEmail] = useState<string>('')
+  const [name, setName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [confirm, setConfirm] = useState<string>('')
+
+  // Staff-only
+  const [experienceYears, setExperienceYears] = useState<number>(0)
+  const [skillsInput, setSkillsInput] = useState<string>('')
+  const [position, setPosition] = useState<StaffPosition>('stylist')
+
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
+
+  /* ================= HANDLERS ================= */
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (password !== confirm) {
@@ -41,31 +78,56 @@ const Register = () => {
     try {
       setLoading(true)
       setMessage('')
-      await registerApi({
-        email,
-        name,
-        password,
-        role: 'customer'
-      })
 
-      
+      if (isStaff) {
+        const payload: StaffRegisterPayload = {
+          email,
+          name,
+          password,
+          confirmpassword: confirm,
+          experienceYears,
+          skills: skillsInput
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+          position
+        }
+
+        await staffRegisterApi(payload)
+      } else {
+        await registerApi({
+          email,
+          name,
+          password,
+          role: 'customer'
+        })
+      }
 
       localStorage.setItem('pendingEmail', email)
       navigate('/otp', { state: { email } })
     } catch (err: unknown) {
-      setMessage(err instanceof Error ? err.message : 'Có lỗi xảy ra')
+      if (err instanceof Error) {
+        setMessage(err.message)
+      } else {
+        setMessage('Có lỗi xảy ra')
+      }
+    } finally {
+      setLoading(false)
     }
   }
+
+  /* ================= RENDER ================= */
 
   return (
     <>
       <Box textAlign="center" mb={3}>
-        <Typography variant="h5" mt={1}>
-          Đăng ký
+        <Typography variant="h5">
+          {isStaff ? 'Đăng ký nhân viên' : 'Đăng ký'}
         </Typography>
       </Box>
 
       <form onSubmit={handleRegister}>
+        {/* EMAIL */}
         <TextField
           label="Email"
           type="email"
@@ -83,10 +145,11 @@ const Register = () => {
           }}
         />
 
+        {/* NAME */}
         <TextField
           label="Họ và tên"
           value={name}
-          onChange={(e) => setFullName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           fullWidth
           margin="normal"
           required
@@ -99,6 +162,48 @@ const Register = () => {
           }}
         />
 
+        {/* STAFF FIELDS */}
+        {isStaff && (
+          <>
+            <TextField
+              label="Số năm kinh nghiệm"
+              type="number"
+              value={experienceYears}
+              onChange={(e) => setExperienceYears(Number(e.target.value))}
+              fullWidth
+              margin="normal"
+              inputProps={{ min: 0 }}
+            />
+
+            <TextField
+              label="Kỹ năng (cách nhau bằng dấu ,)"
+              value={skillsInput}
+              onChange={(e) => setSkillsInput(e.target.value)}
+              fullWidth
+              margin="normal"
+              placeholder="Cắt tóc nam, uốn, nhuộm..."
+            />
+
+            <TextField
+              select
+              label="Vị trí"
+              value={position}
+              onChange={(e) =>
+                setPosition(e.target.value as StaffPosition)
+              }
+              fullWidth
+              margin="normal"
+            >
+              {STAFF_POSITIONS.map(p => (
+                <MenuItem key={p.value} value={p.value}>
+                  {p.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </>
+        )}
+
+        {/* PASSWORD */}
         <TextField
           label="Mật khẩu"
           type={showPassword ? 'text' : 'password'}
@@ -115,7 +220,7 @@ const Register = () => {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword((p) => !p)}>
+                <IconButton onClick={() => setShowPassword(p => !p)}>
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -123,6 +228,7 @@ const Register = () => {
           }}
         />
 
+        {/* CONFIRM */}
         <TextField
           label="Xác nhận mật khẩu"
           type={showPassword ? 'text' : 'password'}
@@ -131,30 +237,20 @@ const Register = () => {
           fullWidth
           margin="normal"
           required
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockOutlined />
-              </InputAdornment>
-            )
-          }}
         />
+
         <Button
           type="submit"
           fullWidth
           variant="contained"
-          sx={{
-            mt: 3,
-            py: 1.2,
-            fontWeight: 600,
-            borderRadius: 3
-          }}
+          sx={{ mt: 3, py: 1.2, fontWeight: 600, borderRadius: 3 }}
+          disabled={loading}
         >
-         {loading ? (
-          <CircularProgress size={22} color="inherit" />
-        ) : (
-          'Đăng ký'
-        )}
+          {loading ? (
+            <CircularProgress size={22} color="inherit" />
+          ) : (
+            isStaff ? 'Đăng ký nhân viên' : 'Đăng ký'
+          )}
         </Button>
       </form>
 

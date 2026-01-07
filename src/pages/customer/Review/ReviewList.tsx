@@ -2,15 +2,20 @@ import { useCallback, useEffect, useState } from 'react'
 import { Stack, CircularProgress, Typography } from '@mui/material'
 import ReviewItem from './ReviewItem'
 import ReviewFormDialog from './ReviewFormDialog'
-import { fetchReviewsByService, deleteReview } from '../../../api/ReviewAPI'
+import {
+  fetchReviewsByService,
+  fetchReviewsByStaff,
+  deleteReview
+} from '../../../api/ReviewAPI'
 import type { Review } from '../../../types/Review/Review'
 
 interface ReviewListProps {
-  serviceId: string
+  serviceId?: string
+  staffId?: string
   reloadKey: number
 }
 
-const ReviewList = ({ serviceId, reloadKey }: ReviewListProps) => {
+const ReviewList = ({ serviceId, staffId, reloadKey }: ReviewListProps) => {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [editReview, setEditReview] = useState<Review | null>(null)
@@ -18,12 +23,16 @@ const ReviewList = ({ serviceId, reloadKey }: ReviewListProps) => {
   const loadReviews = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await fetchReviewsByService(serviceId)
+      const data = serviceId
+        ? await fetchReviewsByService(serviceId)
+        : staffId
+        ? await fetchReviewsByStaff(staffId)
+        : []
       setReviews(data)
     } finally {
       setLoading(false)
     }
-  }, [serviceId])
+  }, [serviceId, staffId])
 
   useEffect(() => {
     loadReviews()
@@ -32,16 +41,7 @@ const ReviewList = ({ serviceId, reloadKey }: ReviewListProps) => {
   const handleDelete = async (id: string) => {
     if (!confirm('Bạn chắc chắn muốn xoá đánh giá này?')) return
     await deleteReview(id)
-    await loadReviews() // reload sau delete
-  }
-
-  const handleEdit = (review: Review) => {
-    setEditReview(review)
-  }
-
-  const handleEditSuccess = async () => {
-    setEditReview(null)
-    await loadReviews() // reload sau edit
+    await loadReviews()
   }
 
   if (loading) return <CircularProgress />
@@ -56,7 +56,7 @@ const ReviewList = ({ serviceId, reloadKey }: ReviewListProps) => {
           <ReviewItem
             key={r._id}
             review={r}
-            onEdit={handleEdit}
+            onEdit={setEditReview}
             onDelete={handleDelete}
           />
         ))}
@@ -64,11 +64,12 @@ const ReviewList = ({ serviceId, reloadKey }: ReviewListProps) => {
 
       {editReview && (
         <ReviewFormDialog
-          open={true}
+          open
           onClose={() => setEditReview(null)}
-          serviceId={serviceId}
           review={editReview}
-          onSuccess={handleEditSuccess}
+          serviceId={serviceId}
+          staffId={staffId}
+          onSuccess={loadReviews}
         />
       )}
     </>

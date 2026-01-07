@@ -5,10 +5,14 @@ export interface Review {
     name: string
     avatar?: string
   }
-  service: string
+
+  service?: string | null
+  staff?: string | null
+
   rating: number
   comment?: string
   images: string[]
+
   createdAt: string
   updatedAt: string
 }

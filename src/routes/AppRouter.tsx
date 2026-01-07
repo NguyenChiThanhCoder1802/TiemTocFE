@@ -20,7 +20,9 @@ import Account from '../pages/admin/AccountManager/Account';
 import CustomerLayout from '../layouts/CustomerLayout';
 import ProfilePage from '../pages/customer/Profile/ProfilePage';
 import BookingPage from '../pages/customer/Booking/BookingPage';
-import DiscountManager from '../pages/admin/DiscountManager/DiscountManager';
+import StaffList from '../pages/admin/StaffManager/StaffList';
+import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
+
 
 const AppRouter = () => {
   return (
@@ -42,23 +44,17 @@ const AppRouter = () => {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/ServiceManager/HairSalonService" element={<HairSalonService />} />
           <Route path="/admin/AccountManager/Accounts" element={<Account />} />
-          <Route path="/admin/DiscountManager" element={<DiscountManager />} />
+
+          <Route path="/admin/StaffManager/StaffList" element={<StaffList />} />
+          <Route path="/admin/stats" element={<AdminDashboard />} />
         </Route>
       </Route>
       {/* Có Header/Footer */}
       <Route element={<MainLayout />}>
-        {/* public */}
-        {/* <Route path="/booking/:id" element={<BookingDetail />} />
-        {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
-        {/* <Route path="/services/:id" element={<ServiceDetail />} /> */}
-        {/* <Route path="/product" element={<ProductPage />} /> */}
+       
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:id" element={<ServiceDetailPage />} />
-        {/* <Route path="/orderdetail" element={<OrderDetailPage />} />
-        <Route path="/applydiscount" element={<ApplyDiscount />} />
-        <Route path="/combos" element={<ComboListPage />} />
-        <Route path="/combos/:id" element={<ComboDetailPage />} />
-        <Route path="/profile" element={<ProfilePage />} /> */}
+        <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
 
         {/* Customer */}

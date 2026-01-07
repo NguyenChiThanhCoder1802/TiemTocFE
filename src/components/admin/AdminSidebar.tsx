@@ -18,11 +18,11 @@ import { NavLink } from 'react-router-dom'
 const drawerWidth = 240
 
 const menu = [
-  { text: 'Tổng quan', icon: <Dashboard />, path: '/admin' },
+  { text: 'Tổng quan', icon: <Dashboard />, path: '/admin/stats' },
   { text: 'Dịch vụ', icon: <ContentCut />, path: '/admin/ServiceManager/HairSalonService' },
+  { text: 'Nhân viên', icon: <People />, path: '/admin/StaffManager/StaffList' },
   { text: 'Tài khoản', icon: <People />, path: '/admin/AccountManager/Accounts' },
   { text: 'Thẻ Giảm Giá', icon: <BarChart />, path: '/admin/DiscountManager' },
-  { text: 'Thống kê', icon: <BarChart />, path: '/admin/stats' }
 ]
 
 const AdminSidebar = () => {
