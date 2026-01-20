@@ -20,14 +20,15 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import TimerIcon from '@mui/icons-material/Timer'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
+import { getCategoryName } from '../../utils/CategoryHelper'
 
 import { fetchServiceById } from '../../api/servicesAPI'
 import type { Service } from '../../types/HairService/Service'
 import ReviewList from '../../pages/customer/Review/ReviewList'
 import ReviewFormDialog from '../../pages/customer/Review/ReviewFormDialog'
-import { useBooking } from '../../hooks/useBooking'
+
 
 
 
@@ -46,8 +47,7 @@ const isExpiringSoon = (endAt?: string, days = 3) => {
 const ServiceDetailPage = () => {
   const { id } = useParams<{ id: string }>()
   const theme = useTheme()
-  const navigate = useNavigate()
-  const booking = useBooking()
+  // const navigate = useNavigate()
   const [service, setService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
   const [openReview, setOpenReview] = useState(false)
@@ -225,27 +225,31 @@ const ServiceDetailPage = () => {
             )}
           </Box>
 
-          {/* META */}
           <Stack direction="row" spacing={1} mb={2} flexWrap="wrap">
-            {service.category && (
-              <Chip icon={<CategoryIcon />} label={service.category} />
+            {getCategoryName(service.category) && (
+              <Chip
+                icon={<CategoryIcon />}
+                label={getCategoryName(service.category)}
+              />
             )}
+
             <Chip
               icon={<AccessTimeIcon />}
               label={`${service.duration} phút`}
             />
           </Stack>
-           <Button
-  fullWidth
-  size="large"
-  variant="contained"
-  onClick={() => {
-    booking.addService(service._id)
-    navigate('/customer/booking')
-  }}
->
-  Đặt lịch ngay
-</Button>
+
+          {/* <Button
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={() => {
+              booking.addService(service._id)
+              navigate('/customer/booking')
+            }}
+          >
+            Đặt lịch ngay
+          </Button> */}
 
 
 

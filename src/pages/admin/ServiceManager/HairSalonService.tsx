@@ -1,5 +1,5 @@
-import { Box, Typography, Button } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { Box, Typography, Button, Stack } from '@mui/material'
+import { Add, Layers } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
 import {
   fetchServices,
@@ -12,14 +12,16 @@ import type { Service } from '../../../types/HairService/Service'
 import type { Category } from '../../../types/Category/Category'
 import ServiceTable from './ServiceTable'
 import ServiceFormDialog from './ServiceFormDialog'
+import ComboDialog from './ComboDialog'
 
 const HairSalonService = () => {
   const [services, setServices] = useState<Service[]>([])
   const [categories, setCategories] = useState<Category[]>([])
-  const [openDialog, setOpenDialog] = useState(false)
+  const [openServiceDialog, setOpenServiceDialog] = useState(false)
+  const [openComboDialog, setOpenComboDialog] = useState(false)
   const [editingService, setEditingService] = useState<Service | null>(null)
 
-   const loadData = async () => {
+  const loadData = async () => {
     const [serviceData, categoryData] = await Promise.all([
       fetchServices(),
       fetchCategories({ isActive: true })
@@ -32,13 +34,19 @@ const HairSalonService = () => {
     loadData()
   }, [])
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleServiceSubmit = async (formData: FormData) => {
     if (editingService) {
       await updateService(editingService._id, formData)
     } else {
       await createService(formData)
     }
-    setOpenDialog(false)
+    setOpenServiceDialog(false)
+    loadData()
+  }
+
+  const handleCreateCombo = async (formData: FormData) => {
+    await createService(formData)
+    setOpenComboDialog(false)
     loadData()
   }
 
@@ -57,16 +65,26 @@ const HairSalonService = () => {
           Quản lý dịch vụ
         </Typography>
 
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => {
-            setEditingService(null)
-            setOpenDialog(true)
-          }}
-        >
-          Thêm dịch vụ
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="outlined"
+            startIcon={<Layers />}
+            onClick={() => setOpenComboDialog(true)}
+          >
+            Tạo combo
+          </Button>
+
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => {
+              setEditingService(null)
+              setOpenServiceDialog(true)
+            }}
+          >
+            Thêm dịch vụ
+          </Button>
+        </Stack>
       </Box>
 
       {/* TABLE */}
@@ -75,7 +93,7 @@ const HairSalonService = () => {
         categories={categories}
         onEdit={(s) => {
           setEditingService(s)
-          setOpenDialog(true)
+          setOpenServiceDialog(true)
         }}
         onDelete={async (id) => {
           if (confirm('Bạn có chắc muốn xoá dịch vụ này?')) {
@@ -85,13 +103,22 @@ const HairSalonService = () => {
         }}
       />
 
-      {/* DIALOG */}
+      {/* SERVICE DIALOG */}
       <ServiceFormDialog
-        open={openDialog}
+        open={openServiceDialog}
         service={editingService}
         categories={categories}
-        onClose={() => setOpenDialog(false)}
-        onSubmit={handleSubmit}
+        onClose={() => setOpenServiceDialog(false)}
+        onSubmit={handleServiceSubmit}
+      />
+
+      {/* COMBO DIALOG */}
+      <ComboDialog
+        open={openComboDialog}
+        services={services}
+        categories={categories}
+        onClose={() => setOpenComboDialog(false)}
+        onSubmit={handleCreateCombo}
       />
     </Box>
   )

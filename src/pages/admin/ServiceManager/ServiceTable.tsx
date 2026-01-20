@@ -15,6 +15,8 @@ import { Edit, Delete, Star } from '@mui/icons-material'
 import type { Service } from '../../../types/HairService/Service'
 import { formatTagLabel } from '../../../utils/formatTag'
 import type { Category } from '../../../types/Category/Category'
+import { getCategoryName } from '../../../utils/CategoryHelper'
+
 interface Props {
   services: Service[]
   categories: Category[]
@@ -32,16 +34,10 @@ const isDiscountActive = (service: Service) => {
     (!d.endAt || new Date(d.endAt) >= now)
   )
 }
-const getCategoryName = (
-  categoryId?: string,
-  categories: Category[] = []
-) => {
-  if (!categoryId) return '—'
-  return categories.find(c => c._id === categoryId)?.name || '—'
-}
 
 
-const ServiceTable = ({ services, categories, onEdit, onDelete }: Props) => {
+
+const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
   return (
     <Table size="small">
       <TableHead>
@@ -92,10 +88,11 @@ const ServiceTable = ({ services, categories, onEdit, onDelete }: Props) => {
               <TableCell>
                 <Chip
                   size="small"
-                  label={getCategoryName(s.category, categories)}
+                  label={getCategoryName(s.category) || '—'}
                   variant="outlined"
                 />
               </TableCell>
+
 
 
               {/* Giá */}
@@ -115,16 +112,16 @@ const ServiceTable = ({ services, categories, onEdit, onDelete }: Props) => {
                   </Typography>
 
                   {discountActive && (
-                      <Chip
-                        size="small"
-                        label={`-${s.serviceDiscount?.percent}%`}
-                        color="primary"
-                        sx={{
-                          width: 'fit-content',
-                          fontWeight: 500
-                        }}
-                      />
-                    )}
+                    <Chip
+                      size="small"
+                      label={`-${s.serviceDiscount?.percent}%`}
+                      color="primary"
+                      sx={{
+                        width: 'fit-content',
+                        fontWeight: 500
+                      }}
+                    />
+                  )}
 
                 </Stack>
               </TableCell>

@@ -4,6 +4,11 @@ export interface ServiceDiscount {
   endAt?: string
   isActive: boolean
 }
+export interface ServiceCombo {
+  originalPrice?: number
+  comboPrice?: number
+  endAt?: string | Date
+}
 
 export interface Service {
   _id: string
@@ -11,7 +16,12 @@ export interface Service {
   slug: string
 
   description?: string
-  category?: string
+  category:
+    | string
+    | {
+        _id: string
+        name: string
+      }
   tags?: string[]
 
   images: string[]
@@ -26,8 +36,9 @@ export interface Service {
 
   /* ================== COMBO ================== */
   isCombo: boolean
-  includedServices: string[]
-
+  
+  combo?: ServiceCombo
+  includedServices: Array<string | Service>
   /* ================== STATS ================== */
   bookingCount: number
   weeklyBookingCount: number

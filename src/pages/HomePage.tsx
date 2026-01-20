@@ -5,8 +5,9 @@ import StaffCardList from '../components/staff/StaffCardList'
 import ItemCardList from '../components/Services/ItemCardList';
 import { fetchServices } from '../api/servicesAPI';
 import type { ServiceCard } from '../types/HairService/ServiceCard';
-import CategoryStrip from '../components/category/CategoryStrip'
+
 import type { Staff } from '../types/Staff/Staff'
+import CategorySidebar from '../components/category/CategorySidebar'
 const HomePage = () => {
 
   const [services, setServices] = useState<ServiceCard[]>([]);
@@ -56,36 +57,50 @@ const [loadingServices, setLoadingServices] = useState(false) // đổi category
 
 
 
-  return (
-    <Box>
+ return (
+  <Box>
+    {error && (
+      <Typography color="error" sx={{ mt: 2, ml: 2 }}>
+        {error}
+      </Typography>
+    )}
 
+    {!loadingPage && (
+      <Box display="flex">
+        {/* ===== SIDEBAR SÁT TRÁI ===== */}
+        <Box
+          sx={{
+            width: 260,
+            px: 2,
+            pt: 2,            // sát header
+            borderRight: '1px solid #eee'
+          }}
+        >
+          <CategorySidebar
+            value={categoryId}
+            onChange={setCategoryId}
+          />
+        </Box>
 
-     <Container sx={{ mt: 4 }}>
-        {error && <Typography color="error">{error}</Typography>}
+        {/* ===== MAIN CONTENT ===== */}
+        <Container sx={{ mt: 2 }}>
+          <ItemCardList
+            items={services}
+            title="🌟 Dịch vụ nổi bật"
+            linkPrefix="services"
+            loading={loadingServices}
+          />
 
-        {!loadingPage && (
-          <>
-            <CategoryStrip
-              value={categoryId}
-              onChange={setCategoryId}
-            />
+          <StaffCardList
+            staffs={staffs}
+            title="👨‍💼 Đội ngũ nhân viên"
+          />
+        </Container>
+      </Box>
+    )}
+  </Box>
+)
 
-            <ItemCardList
-              items={services}
-              title="🌟 Dịch vụ nổi bật"
-              linkPrefix="services"
-              loading={loadingServices} 
-            />
-
-            <StaffCardList
-              staffs={staffs}
-              title="👨‍💼 Đội ngũ nhân viên"
-            />
-          </>
-        )}
-      </Container>
-    </Box>
-  );
 };
 
 export default HomePage;

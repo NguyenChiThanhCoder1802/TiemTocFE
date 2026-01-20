@@ -19,10 +19,8 @@ import ServiceDetailPage from '../pages/DetailPage/ServiceDetailPage';
 import Account from '../pages/admin/AccountManager/Account';
 import CustomerLayout from '../layouts/CustomerLayout';
 import ProfilePage from '../pages/customer/Profile/ProfilePage';
-import BookingPage from '../pages/customer/Booking/BookingPage';
 import StaffList from '../pages/admin/StaffManager/StaffList';
 import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
-import BookingHistoryPage from '../pages/customer/Booking/BookingHistory';
 import BookingManager from '../pages/admin/BookingManager/BookingManager';
 import Category from '../pages/admin/CategoryManager/Category';
 
@@ -61,15 +59,14 @@ const AppRouter = () => {
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
-
+<Route path="/services/:id" element={<ServiceDetailPage />} />
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['customer']} />}>
         <Route element={<CustomerLayout />}>
-          <Route path="/services/:id" element={<ServiceDetailPage />} />
+          
           <Route path="/customer/profile" element={<ProfilePage />} />
           <Route path="/customer/home" element={<HomePage />} />
-          <Route path="/customer/booking" element={<BookingPage />} />
-          <Route path="/customer/booking/history" element={<BookingHistoryPage />} />
+       
         </Route>
          
         </Route>

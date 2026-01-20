@@ -14,9 +14,10 @@ import {
   CalendarMonth,
   Star,
   Person,
-  Favorite
+  Favorite,
+  Logout
 } from '@mui/icons-material'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 
 const drawerWidth = 260
@@ -40,13 +41,21 @@ const CustomerSidebar = ({
   onClose,
   variant = 'temporary'
 }: Props) => {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    await logout()
+    onClose()
+    navigate('/login')
+  }
 
   return (
     <Drawer
       open={open}
       onClose={onClose}
       variant={variant}
+      anchor="right" // 👉 MỞ TỪ BÊN PHẢI
       sx={{
         width: drawerWidth,
         [`& .MuiDrawer-paper`]: {
@@ -54,18 +63,22 @@ const CustomerSidebar = ({
         }
       }}
     >
+      {/* ===== USER INFO ===== */}
       <Box p={3} display="flex" gap={2} alignItems="center">
         <Avatar src={user?.avatar} />
         <Box>
           <Typography fontWeight={600}>{user?.name}</Typography>
-          <Typography fontSize={13}>Customer</Typography>
+          <Typography fontSize={13} color="text.secondary">
+            Customer
+          </Typography>
         </Box>
       </Box>
 
       <Divider />
 
+      {/* ===== MENU ===== */}
       <List>
-        {menu.map((item) => (
+        {menu.map(item => (
           <ListItemButton
             key={item.text}
             component={NavLink}
@@ -82,6 +95,24 @@ const CustomerSidebar = ({
           </ListItemButton>
         ))}
       </List>
+
+      {/* ===== LOGOUT ===== */}
+      <Box mt="auto">
+        <Divider />
+        <List>
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              color: 'error.main'
+            }}
+          >
+            <ListItemIcon sx={{ color: 'error.main' }}>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText primary="Đăng xuất" />
+          </ListItemButton>
+        </List>
+      </Box>
     </Drawer>
   )
 }

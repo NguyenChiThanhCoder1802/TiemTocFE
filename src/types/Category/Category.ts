@@ -9,9 +9,6 @@ export interface Category {
   updatedAt: string
 }
 
-/* ======================
-   CATEGORY WITH SERVICES
-====================== */
 import type { Service } from '../HairService/Service'
 
 export interface CategoryWithServices extends Category {
@@ -19,9 +16,6 @@ export interface CategoryWithServices extends Category {
   serviceCount: number
 }
 
-/* ======================
-   CATEGORY STATS
-====================== */
 export interface CategoryStats {
   category: Category
   stats: {
@@ -33,9 +27,6 @@ export interface CategoryStats {
   }
 }
 
-/* ======================
-   CREATE / UPDATE PAYLOAD
-====================== */
 export interface CreateCategoryPayload {
   name: string
   description?: string

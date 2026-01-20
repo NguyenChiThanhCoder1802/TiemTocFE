@@ -74,7 +74,7 @@ const AuthSlider = () => {
       >
         <Box
           component={motion.img}
-          src="/iconnen.jpg"
+          src="/iconNen.png"
           alt="HairSalon Logo"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

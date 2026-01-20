@@ -19,6 +19,8 @@ import { Delete } from '@mui/icons-material'
 import type { Service } from '../../../types/HairService/Service'
 import type { Category } from '../../../types/Category/Category'
 import { useServiceForm } from '../../../hooks/useServiceForm'
+import { getCategoryId } from '../../../utils/CategoryHelper'
+
 
 interface Props {
   open: boolean
@@ -67,11 +69,14 @@ const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Pro
             required
             fullWidth
           />
-            <Autocomplete
+          <Autocomplete
             options={categories}
             getOptionLabel={(o) => o.name}
             value={
-              categories.find(c => c._id === service?.category) || null
+              (() => {
+                const categoryId = getCategoryId(service?.category)
+                return categories.find(c => c._id === categoryId) || null
+              })()
             }
             onChange={(_, value) => {
               if (value) formData.set('category', value._id)
@@ -80,6 +85,8 @@ const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Pro
               <TextField {...params} label="Danh mục" required />
             )}
           />
+
+
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
@@ -128,8 +135,8 @@ const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Pro
               defaultValue={
                 service?.serviceDiscount?.startAt
                   ? new Date(service.serviceDiscount.startAt)
-                      .toISOString()
-                      .slice(0, 16)
+                    .toISOString()
+                    .slice(0, 16)
                   : ''
               }
               onChange={(e) =>
@@ -145,8 +152,8 @@ const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Pro
               defaultValue={
                 service?.serviceDiscount?.endAt
                   ? new Date(service.serviceDiscount.endAt)
-                      .toISOString()
-                      .slice(0, 16)
+                    .toISOString()
+                    .slice(0, 16)
                   : ''
               }
               onChange={(e) =>
@@ -248,7 +255,7 @@ const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Pro
 export default ServiceFormDialog
 
 /* ================== HELPER ================== */
-const Section = ({ title, children }: any) => (
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <Stack spacing={2}>
     <Divider />
     <Typography fontWeight={600}>{title}</Typography>
