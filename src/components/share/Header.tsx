@@ -9,24 +9,25 @@ import {
   Avatar,
   InputBase,
   alpha,
-  Dialog,
-  DialogContent,
-  DialogTitle
+
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
-
+// import EditCalendarOutlinedIcon from '@mui/icons-material/EditCalendarOutlined';
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
-import CustomerSidebar from '../../components/customer/Sidebar/CustomerSidebar' 
+import CustomerSidebar from '../../components/customer/Sidebar/CustomerSidebar'
+
 
 const Header = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
 
+
+
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [openCalendar, setOpenCalendar] = useState(false)
   const [openSidebar, setOpenSidebar] = useState(false)
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -64,8 +65,8 @@ const Header = () => {
             justifyContent: 'space-between'
           }}
         >
-          {/* ===== LEFT: MENU + LOGO ===== */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* LEFT */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {isAuthenticated && !isAdmin && (
               <IconButton
                 onClick={() => setOpenSidebar(true)}
@@ -91,94 +92,89 @@ const Header = () => {
                 Tiệm Tóc
               </Typography>
             </Box>
+
+            {/* 🔔 LỊCH HẸN */}
+            {isAuthenticated && !isAdmin && (
+              <Box
+                onClick={() => navigate('/customer/booking')}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  cursor: 'pointer',
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 2,
+                  '&:hover': { backgroundColor: alpha('#000', 0.05) }
+                }}
+              >
+                {/* <Badge
+                  badgeContent={bookingCount}
+                  color="primary"
+                  invisible={bookingCount === 0}
+                >
+                  <EditCalendarOutlinedIcon sx={{ color: '#5D4037' }} />
+                </Badge> */}
+
+                <Typography sx={{ color: '#5D4037', fontWeight: 500 }}>
+                  Lịch hẹn
+                </Typography>
+              </Box>
+            )}
           </Box>
 
-          {/* ===== RIGHT: SEARCH + AVATAR ===== */}
+          {/* RIGHT */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box
               sx={{
                 borderRadius: 2,
                 backgroundColor: alpha('#FFF', 0.5),
-                '&:hover': { backgroundColor: alpha('#FFF', 0.7) },
                 display: 'flex',
                 alignItems: 'center',
                 px: 2,
-                py: 0.5,
-                maxWidth: 250
+                py: 0.5
               }}
             >
               <SearchIcon sx={{ mr: 1, color: '#5D4037' }} />
-              <InputBase
-                placeholder="Tìm kiếm..."
-                sx={{ fontSize: '0.95rem', color: '#5D4037' }}
-              />
+              <InputBase placeholder="Tìm kiếm..." />
             </Box>
 
             <IconButton onClick={handleMenuOpen}>
               {isAuthenticated ? (
-                <Avatar src={user?.avatar || ''} sx={{ width: 36, height: 36 }} />
+                <Avatar src={user?.avatar || ''} />
               ) : (
-                <MenuIcon sx={{ color: '#4E342E' }} />
+                <MenuIcon />
               )}
             </IconButton>
           </Box>
 
-          {/* ===== AVATAR MENU ===== */}
+          {/* MENU */}
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-            {!isAuthenticated ? (
-              <>
-                <MenuItem onClick={() => handleNavigate('/login')}>
-                  Đăng nhập
-                </MenuItem>
-                <MenuItem onClick={() => handleNavigate('/register')}>
-                  Đăng ký
-                </MenuItem>
-              </>
-            ) : isAdmin ? (
-              <>
-                <MenuItem onClick={() => handleNavigate('/admin/dashboard')}>
-                  Dashboard
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
-              </>
-            ) : (
-              <>
-                <MenuItem onClick={() => handleNavigate('/my-profile')}>
-                  Hồ sơ cá nhân
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setOpenCalendar(true)
-                    handleMenuClose()
-                  }}
-                >
-                  Lịch của bạn
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
-              </>
-            )}
+            {!isAuthenticated ? [
+              <MenuItem key="login" onClick={() => handleNavigate('/login')}>
+                Đăng nhập
+              </MenuItem>,
+              <MenuItem key="register" onClick={() => handleNavigate('/register')}>
+                Đăng ký
+              </MenuItem>
+            ] : [
+              <MenuItem key="profile" onClick={() => handleNavigate('/my-profile')}>
+                Hồ sơ cá nhân
+              </MenuItem>,
+              <MenuItem key="logout" onClick={handleLogout}>
+                Đăng xuất
+              </MenuItem>
+            ]}
           </Menu>
         </Toolbar>
       </AppBar>
 
-      {/* ===== CUSTOMER SIDEBAR (GỌI COMPONENT) ===== */}
       {isAuthenticated && !isAdmin && (
         <CustomerSidebar
           open={openSidebar}
           onClose={() => setOpenSidebar(false)}
         />
       )}
-
-      {/* ===== CALENDAR ===== */}
-      <Dialog
-        open={openCalendar}
-        onClose={() => setOpenCalendar(false)}
-        maxWidth="lg"
-        fullWidth
-      >
-        <DialogTitle>Lịch của bạn</DialogTitle>
-        <DialogContent />
-      </Dialog>
     </>
   )
 }

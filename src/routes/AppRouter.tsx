@@ -22,6 +22,10 @@ import ProfilePage from '../pages/customer/Profile/ProfilePage';
 import BookingPage from '../pages/customer/Booking/BookingPage';
 import StaffList from '../pages/admin/StaffManager/StaffList';
 import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
+import BookingHistoryPage from '../pages/customer/Booking/BookingHistory';
+import BookingManager from '../pages/admin/BookingManager/BookingManager';
+import Category from '../pages/admin/CategoryManager/Category';
+
 
 
 const AppRouter = () => {
@@ -44,8 +48,9 @@ const AppRouter = () => {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/ServiceManager/HairSalonService" element={<HairSalonService />} />
           <Route path="/admin/AccountManager/Accounts" element={<Account />} />
-
           <Route path="/admin/StaffManager/StaffList" element={<StaffList />} />
+          <Route path="/admin/BookingManager" element={<BookingManager />} />
+          <Route path="/admin/CategoryManager" element={<Category />} />
           <Route path="/admin/stats" element={<AdminDashboard />} />
         </Route>
       </Route>
@@ -53,16 +58,18 @@ const AppRouter = () => {
       <Route element={<MainLayout />}>
        
         <Route path="/services" element={<ServicesPage />} />
-        <Route path="/services/:id" element={<ServiceDetailPage />} />
+        {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
 
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['customer']} />}>
         <Route element={<CustomerLayout />}>
+          <Route path="/services/:id" element={<ServiceDetailPage />} />
           <Route path="/customer/profile" element={<ProfilePage />} />
           <Route path="/customer/home" element={<HomePage />} />
           <Route path="/customer/booking" element={<BookingPage />} />
+          <Route path="/customer/booking/history" element={<BookingHistoryPage />} />
         </Route>
          
         </Route>

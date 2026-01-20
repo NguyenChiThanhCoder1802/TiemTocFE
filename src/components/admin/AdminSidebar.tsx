@@ -19,7 +19,9 @@ const drawerWidth = 240
 
 const menu = [
   { text: 'Tổng quan', icon: <Dashboard />, path: '/admin/stats' },
+  { text: 'Lịch của khách', icon: <ContentCut />, path: '/admin/BookingManager' },
   { text: 'Dịch vụ', icon: <ContentCut />, path: '/admin/ServiceManager/HairSalonService' },
+  { text: 'Danh mục', icon: <ContentCut />, path: '/admin/CategoryManager' },
   { text: 'Nhân viên', icon: <People />, path: '/admin/StaffManager/StaffList' },
   { text: 'Tài khoản', icon: <People />, path: '/admin/AccountManager/Accounts' },
   { text: 'Thẻ Giảm Giá', icon: <BarChart />, path: '/admin/DiscountManager' },

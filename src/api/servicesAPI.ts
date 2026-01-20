@@ -7,8 +7,13 @@ const BASE_URL = '/hairservices'
 /* ======================
    GET ALL SERVICES
 ====================== */
-export const fetchServices = async (): Promise<Service[]> => {
-  const res = await axiosInstance.get<ApiResponse<Service[]>>(BASE_URL)
+export const fetchServices = async (
+  categoryId?: string
+): Promise<Service[]> => {
+  const res = await axiosInstance.get<ApiResponse<Service[]>>(BASE_URL, {
+    params: categoryId ? { category: categoryId } : {}
+  })
+
   return res.data.data
 }
 

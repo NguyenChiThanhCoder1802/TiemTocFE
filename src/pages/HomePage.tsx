@@ -5,33 +5,54 @@ import StaffCardList from '../components/staff/StaffCardList'
 import ItemCardList from '../components/Services/ItemCardList';
 import { fetchServices } from '../api/servicesAPI';
 import type { ServiceCard } from '../types/HairService/ServiceCard';
+import CategoryStrip from '../components/category/CategoryStrip'
 import type { Staff } from '../types/Staff/Staff'
 const HomePage = () => {
 
   const [services, setServices] = useState<ServiceCard[]>([]);
    const [staffs, setStaffs] = useState<Staff[]>([])
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [loadingPage, setLoadingPage] = useState(true)     // load lần đầu
+const [loadingServices, setLoadingServices] = useState(false) // đổi category
+
 
    useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true)
-        const [serviceData, staffData] = await Promise.all([
-          fetchServices(),
-          fetchPublicStaffs()
-        ])
-        setServices(serviceData)
-        setStaffs(staffData)
-      } catch {
-        setError('Không thể tải dữ liệu')
-      } finally {
-        setLoading(false)
-      }
+  const loadInitial = async () => {
+    try {
+      setLoadingPage(true)
+      const [serviceData, staffData] = await Promise.all([
+        fetchServices(),
+        fetchPublicStaffs()
+      ])
+      setServices(serviceData)
+      setStaffs(staffData)
+    } catch {
+      setError('Không thể tải dữ liệu')
+    } finally {
+      setLoadingPage(false)
     }
+  }
 
-    loadData()
-  }, [])
+  loadInitial()
+}, [])
+
+ useEffect(() => {
+  const loadServicesByCategory = async () => {
+    try {
+      setLoadingServices(true)
+      const data = await fetchServices(categoryId ?? undefined)
+      setServices(data)
+    } catch {
+      setError('Không thể tải dịch vụ')
+    } finally {
+      setLoadingServices(false)
+    }
+  }
+
+  loadServicesByCategory()
+}, [categoryId])
+
 
 
 
@@ -39,16 +60,21 @@ const HomePage = () => {
     <Box>
 
 
-      <Container sx={{ mt: 4 }}>
-        {loading && <Typography align="center">Đang tải dịch vụ...</Typography>}
+     <Container sx={{ mt: 4 }}>
         {error && <Typography color="error">{error}</Typography>}
 
-        {!loading && !error && (
-           <>
+        {!loadingPage && (
+          <>
+            <CategoryStrip
+              value={categoryId}
+              onChange={setCategoryId}
+            />
+
             <ItemCardList
               items={services}
               title="🌟 Dịch vụ nổi bật"
               linkPrefix="services"
+              loading={loadingServices} 
             />
 
             <StaffCardList

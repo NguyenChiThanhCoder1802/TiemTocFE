@@ -20,11 +20,16 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import TimerIcon from '@mui/icons-material/Timer'
+import { useNavigate } from 'react-router-dom'
+
 
 import { fetchServiceById } from '../../api/servicesAPI'
 import type { Service } from '../../types/HairService/Service'
 import ReviewList from '../../pages/customer/Review/ReviewList'
 import ReviewFormDialog from '../../pages/customer/Review/ReviewFormDialog'
+import { useBooking } from '../../hooks/useBooking'
+
+
 
 /* ================= HELPERS ================= */
 const formatDate = (date?: string) =>
@@ -41,7 +46,8 @@ const isExpiringSoon = (endAt?: string, days = 3) => {
 const ServiceDetailPage = () => {
   const { id } = useParams<{ id: string }>()
   const theme = useTheme()
-
+  const navigate = useNavigate()
+  const booking = useBooking()
   const [service, setService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
   const [openReview, setOpenReview] = useState(false)
@@ -229,22 +235,20 @@ const ServiceDetailPage = () => {
               label={`${service.duration} phút`}
             />
           </Stack>
+           <Button
+  fullWidth
+  size="large"
+  variant="contained"
+  onClick={() => {
+    booking.addService(service._id)
+    navigate('/customer/booking')
+  }}
+>
+  Đặt lịch ngay
+</Button>
 
-          {/* CTA */}
-          <Button
-            fullWidth
-            size="large"
-            variant="contained"
-            color="primary"
-            sx={{
-              mt: 2,
-              py: 1.5,
-              borderRadius: 3,
-              fontWeight: 600,
-            }}
-          >
-            Đặt lịch ngay
-          </Button>
+
+
         </Box>
       </Box>
 

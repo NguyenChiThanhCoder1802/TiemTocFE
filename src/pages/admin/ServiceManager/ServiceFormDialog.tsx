@@ -12,20 +12,23 @@ import {
   IconButton,
   Box,
   Divider,
-  Typography
+  Typography,
+  Autocomplete
 } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 import type { Service } from '../../../types/HairService/Service'
+import type { Category } from '../../../types/Category/Category'
 import { useServiceForm } from '../../../hooks/useServiceForm'
 
 interface Props {
   open: boolean
   service: Service | null
+  categories: Category[]
   onClose: () => void
   onSubmit: (formData: FormData) => void
 }
 
-const ServiceFormDialog = ({ open, service, onClose, onSubmit }: Props) => {
+const ServiceFormDialog = ({ open, service, categories, onClose, onSubmit }: Props) => {
   const {
     formData,
     previewImages,
@@ -64,13 +67,18 @@ const ServiceFormDialog = ({ open, service, onClose, onSubmit }: Props) => {
             required
             fullWidth
           />
-
-          <TextField
-            label="Danh mục"
-            name="category"
-            defaultValue={service?.category || ''}
-            onChange={handleChange}
-            fullWidth
+            <Autocomplete
+            options={categories}
+            getOptionLabel={(o) => o.name}
+            value={
+              categories.find(c => c._id === service?.category) || null
+            }
+            onChange={(_, value) => {
+              if (value) formData.set('category', value._id)
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Danh mục" required />
+            )}
           />
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>

@@ -7,42 +7,39 @@ import {
   updateService,
   deleteService
 } from '../../../api/servicesAPI'
+import { fetchCategories } from '../../../api/CategoryAPI'
 import type { Service } from '../../../types/HairService/Service'
+import type { Category } from '../../../types/Category/Category'
 import ServiceTable from './ServiceTable'
 import ServiceFormDialog from './ServiceFormDialog'
 
 const HairSalonService = () => {
   const [services, setServices] = useState<Service[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [openDialog, setOpenDialog] = useState(false)
   const [editingService, setEditingService] = useState<Service | null>(null)
 
-  const loadServices = async () => {
-    const data = await fetchServices()
-    setServices(data)
+   const loadData = async () => {
+    const [serviceData, categoryData] = await Promise.all([
+      fetchServices(),
+      fetchCategories({ isActive: true })
+    ])
+    setServices(serviceData)
+    setCategories(categoryData)
   }
 
   useEffect(() => {
-    loadServices()
+    loadData()
   }, [])
 
   const handleSubmit = async (formData: FormData) => {
-    // Log FormData entries for debugging server 400 errors
-    for (const [k, v] of Array.from(formData.entries())) {
-      try {
-        if (v instanceof File) console.log('formData', k, v.name)
-        else console.log('formData', k, v)
-      } catch (e) {
-        console.log('formData', k, v)
-      }
-    }
-
     if (editingService) {
       await updateService(editingService._id, formData)
     } else {
       await createService(formData)
     }
     setOpenDialog(false)
-    loadServices()
+    loadData()
   }
 
   return (
@@ -75,6 +72,7 @@ const HairSalonService = () => {
       {/* TABLE */}
       <ServiceTable
         services={services}
+        categories={categories}
         onEdit={(s) => {
           setEditingService(s)
           setOpenDialog(true)
@@ -82,7 +80,7 @@ const HairSalonService = () => {
         onDelete={async (id) => {
           if (confirm('Bạn có chắc muốn xoá dịch vụ này?')) {
             await deleteService(id)
-            loadServices()
+            loadData()
           }
         }}
       />
@@ -91,6 +89,7 @@ const HairSalonService = () => {
       <ServiceFormDialog
         open={openDialog}
         service={editingService}
+        categories={categories}
         onClose={() => setOpenDialog(false)}
         onSubmit={handleSubmit}
       />

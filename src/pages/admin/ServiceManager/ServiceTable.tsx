@@ -14,9 +14,10 @@ import {
 import { Edit, Delete, Star } from '@mui/icons-material'
 import type { Service } from '../../../types/HairService/Service'
 import { formatTagLabel } from '../../../utils/formatTag'
-
+import type { Category } from '../../../types/Category/Category'
 interface Props {
   services: Service[]
+  categories: Category[]
   onEdit: (service: Service) => void
   onDelete: (id: string) => void
 }
@@ -31,8 +32,16 @@ const isDiscountActive = (service: Service) => {
     (!d.endAt || new Date(d.endAt) >= now)
   )
 }
+const getCategoryName = (
+  categoryId?: string,
+  categories: Category[] = []
+) => {
+  if (!categoryId) return '—'
+  return categories.find(c => c._id === categoryId)?.name || '—'
+}
 
-const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
+
+const ServiceTable = ({ services, categories, onEdit, onDelete }: Props) => {
   return (
     <Table size="small">
       <TableHead>
@@ -81,8 +90,13 @@ const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
 
               {/* Category */}
               <TableCell>
-                <Chip size="small" label={s.category} variant="outlined" />
+                <Chip
+                  size="small"
+                  label={getCategoryName(s.category, categories)}
+                  variant="outlined"
+                />
               </TableCell>
+
 
               {/* Giá */}
               <TableCell>

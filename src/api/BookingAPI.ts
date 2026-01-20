@@ -1,6 +1,10 @@
 import axiosInstance from '../utils/axiosInstance'
 import type { ApiResponse } from '../types/ApiResponse'
-import type { Booking, CreateBookingPayload } from '../types/Booking/Booking'
+import type {
+  Booking,
+  BookingEstimateResponse,
+  CreateBookingPayload
+} from '../types/Booking/Booking'
 
 const BASE_URL = '/bookings'
 
@@ -9,21 +13,44 @@ const BASE_URL = '/bookings'
 ====================== */
 export const fetchMyBookings = async (): Promise<Booking[]> => {
   const res = await axiosInstance.get<ApiResponse<Booking[]>>(
-    `${BASE_URL}/me`
+    `${BASE_URL}/my-bookings`
   )
   return res.data.data
 }
 
 /* ======================
-   CREATE BOOKING
+   GET BOOKING DETAIL
 ====================== */
+export const fetchBookingDetail = async (
+  bookingId: string
+): Promise<Booking> => {
+  const res = await axiosInstance.get<ApiResponse<Booking>>(
+    `${BASE_URL}/${bookingId}`
+  )
+  return res.data.data
+}
 
+/* ======================
+   ESTIMATE BOOKING
+====================== */
+export const estimateBooking = async (
+  payload: CreateBookingPayload
+): Promise<BookingEstimateResponse> => {
+  const res = await axiosInstance.post<ApiResponse<BookingEstimateResponse>>(
+    `${BASE_URL}/estimate`,
+    payload
+  )
+  return res.data.data
+}
 
-export const createBooking = async (
+/* ======================
+   CONFIRM BOOKING (CREATE)
+====================== */
+export const confirmBooking = async (
   payload: CreateBookingPayload
 ): Promise<Booking> => {
   const res = await axiosInstance.post<ApiResponse<Booking>>(
-    BASE_URL,
+    `${BASE_URL}/confirm`,
     payload
   )
   return res.data.data
