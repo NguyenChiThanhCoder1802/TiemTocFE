@@ -68,35 +68,31 @@ export const updateService = async (
   id: string,
   formData: FormData
 ): Promise<Service> => {
-  // Chuyển FormData sang payload
   const transformFormData = (fd: FormData) => {
-    const payload: Record<string, any> = {}
-    const serviceDiscount: Record<string, any> = {}
+    const out = new FormData()
 
-    for (const [key, value] of fd.entries()) {
-      // Tách serviceDiscount
-      if (key.startsWith('serviceDiscount.')) {
-        const sdKey = key.split('.')[1]
-        serviceDiscount[sdKey] = value
+    for (const [k, v] of fd.entries()) {
+      if (k.startsWith('serviceDiscount.')) {
+        const key = k.split('.')[1]
+        out.append(`serviceDiscount[${key}]`, v)
       } else {
-        payload[key] = value
+        out.append(k, v)
       }
     }
 
-    // Nếu có serviceDiscount, giữ nguyên kiểu object
-    if (Object.keys(serviceDiscount).length) {
-      payload.serviceDiscount = serviceDiscount
-    }
-
-    return payload
+    return out
   }
 
   const payload = transformFormData(formData)
 
-  return axiosInstance
-    .put<ApiResponse<Service>>(`${BASE_URL}/${id}`, payload)
-    .then(res => res.data.data)
+  const res = await axiosInstance.put<ApiResponse<Service>>(
+    `${BASE_URL}/${id}`,
+    payload
+  )
+
+  return res.data.data
 }
+
 
 /* ======================
    DELETE SERVICE (ADMIN)

@@ -15,9 +15,10 @@ interface UseServiceFormResult {
 export const useServiceForm = (
   service: Service | null
 ): UseServiceFormResult => {
-  /** Giữ 1 instance FormData duy nhất */
+  /** Luôn giữ 1 FormData instance duy nhất */
   const formDataRef = useRef<FormData>(new FormData())
 
+  /** Preview ảnh (URL hoặc blob) */
   const [previewImages, setPreviewImages] = useState<string[]>([])
 
   /* ======================
@@ -32,31 +33,61 @@ export const useServiceForm = (
       return
     }
 
+    /* ===== BASIC ===== */
     fd.append('name', service.name)
     fd.append('price', String(service.price))
     fd.append('duration', String(service.duration))
     fd.append('isActive', String(service.isActive))
-    fd.append('serviceDiscount.percent', String(service.serviceDiscount?.percent ?? 0))
-    if (service.serviceDiscount?.startAt)
-      fd.append('serviceDiscount.startAt', service.serviceDiscount.startAt)
-    if (service.serviceDiscount?.endAt)
-      fd.append('serviceDiscount.endAt', service.serviceDiscount.endAt)
-    fd.append('isCombo', String(service.isCombo ?? false))
-    fd.append('category', service.category ?? '')
+    fd.append(
+      'category',
+      typeof service.category === 'string'
+        ? service.category
+        : service.category?._id ?? ''
+    )
     fd.append('description', service.description ?? '')
 
-    // keep tags as JSON string to match form change handler
-    if (service.tags && service.tags.length > 0) fd.append('tags', JSON.stringify(service.tags))
-    service.includedServices?.forEach((id) =>
-      fd.append('includedServices[]', id)
-    )
+    /* ===== TAGS (GỬI JSON STRING - BE SUPPORT) ===== */
+    if (service.tags && service.tags.length > 0) {
+      fd.append('tags', JSON.stringify(service.tags))
+    }
 
+    /* ===== SERVICE DISCOUNT ===== */
+    if (service.serviceDiscount?.percent !== undefined) {
+      fd.append(
+        'serviceDiscount.percent',
+        String(service.serviceDiscount.percent)
+      )
+    }
+
+    if (service.serviceDiscount?.startAt) {
+      fd.append(
+        'serviceDiscount.startAt',
+        service.serviceDiscount.startAt
+      )
+    }
+
+    if (service.serviceDiscount?.endAt) {
+      fd.append(
+        'serviceDiscount.endAt',
+        service.serviceDiscount.endAt
+      )
+    }
+
+    /**
+     * ❗ QUAN TRỌNG
+     * - KHÔNG append images cũ vào FormData
+     * - Ảnh cũ chỉ dùng để preview
+     */
     setPreviewImages(service.images || [])
   }, [service])
 
   /* ======================
      HANDLERS
   ====================== */
+
+  /**
+   * Input thường (text, number, textarea...)
+   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -64,21 +95,36 @@ export const useServiceForm = (
     formDataRef.current.set(name, value)
   }
 
+  /**
+   * Upload ảnh mới
+   * - Chỉ append khi có file
+   * - Multer sẽ xử lý và set req.body.images = string[]
+   */
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (!files) return
+    if (!files || files.length === 0) return
 
     Array.from(files).forEach((file) => {
       formDataRef.current.append('images', file)
       setPreviewImages((prev) => [...prev, URL.createObjectURL(file)])
     })
+
+    /** reset input để chọn lại cùng file */
+    e.target.value = ''
   }
 
+  /**
+   * Remove ảnh (FE preview)
+   * - Không gửi images cũ lên BE
+   * - BE hiện chưa xử lý removedImages
+   */
   const handleRemoveImage = (img: string) => {
     setPreviewImages((prev) => prev.filter((i) => i !== img))
-    formDataRef.current.append('removedImages[]', img)
   }
 
+  /**
+   * Reset toàn bộ form
+   */
   const resetForm = () => {
     formDataRef.current = new FormData()
     setPreviewImages([])

@@ -9,7 +9,12 @@ export interface ServiceCombo {
   comboPrice?: number
   endAt?: string | Date
 }
-
+export interface ServiceLite {
+  _id: string
+  name: string
+  finalPrice: number
+  duration: number
+}
 export interface Service {
   _id: string
   name: string

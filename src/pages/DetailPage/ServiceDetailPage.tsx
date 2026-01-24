@@ -48,6 +48,8 @@ const ServiceDetailPage = () => {
   const { id } = useParams<{ id: string }>()
   const theme = useTheme()
   // const navigate = useNavigate()
+  const [mainImage, setMainImage] = useState<string | null>(null)
+
   const [service, setService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
   const [openReview, setOpenReview] = useState(false)
@@ -59,6 +61,7 @@ const ServiceDetailPage = () => {
       try {
         const data = await fetchServiceById(id)
         setService(data)
+        setMainImage(data.images?.[0] || null)
       } finally {
         setLoading(false)
       }
@@ -100,47 +103,85 @@ const ServiceDetailPage = () => {
       {/* ================= TOP ================= */}
       <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={5}>
         {/* IMAGE */}
-        <Box flex={1} position="relative">
-          <Box
-            component="img"
-            src={service.images?.[0] || '/placeholder.png'}
-            alt={service.name}
-            sx={{
-              width: '100%',
-              height: 420,
-              objectFit: 'cover',
-              borderRadius: 4,
-              boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
-            }}
-          />
+        <Box flex={1}>
+  {/* MAIN IMAGE */}
+  <Box position="relative">
+    <Box
+      component="img"
+      src={mainImage || '/placeholder.png'}
+      alt={service.name}
+      sx={{
+        width: '100%',
+        height: 420,
+        objectFit: 'cover',
+        borderRadius: 4,
+        boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
+      }}
+    />
 
-          {/* BADGES */}
-          <Stack direction="row" spacing={1} position="absolute" top={16} left={16}>
-            {service.isFeatured && (
-              <Chip
-                icon={<WorkspacePremiumIcon />}
-                label="FEATURED"
-                sx={{
-                  bgcolor: '#000',
-                  color: '#fff',
-                  fontWeight: 600,
-                }}
-              />
-            )}
+    {/* BADGES */}
+    <Stack
+      direction="row"
+      spacing={1}
+      position="absolute"
+      top={16}
+      left={16}
+    >
+      {service.isFeatured && (
+        <Chip
+          icon={<WorkspacePremiumIcon />}
+          label="FEATURED"
+          sx={{ bgcolor: '#000', color: '#fff', fontWeight: 600 }}
+        />
+      )}
 
-            {isHot && (
-              <Chip
-                icon={<LocalFireDepartmentIcon />}
-                label="HOT"
-                sx={{
-                  bgcolor: '#e53935',
-                  color: '#fff',
-                  fontWeight: 600,
-                }}
-              />
-            )}
-          </Stack>
-        </Box>
+      {isHot && (
+        <Chip
+          icon={<LocalFireDepartmentIcon />}
+          label="HOT"
+          sx={{ bgcolor: '#e53935', color: '#fff', fontWeight: 600 }}
+        />
+      )}
+    </Stack>
+  </Box>
+
+  {/* THUMBNAILS */}
+  {service.images && service.images.length > 1 && (
+    <Stack
+      direction="row"
+      spacing={1}
+      mt={2}
+      sx={{ overflowX: 'auto' }}
+    >
+      {service.images.map((img, idx) => (
+        <Box
+          key={idx}
+          component="img"
+          src={img}
+          alt={`thumb-${idx}`}
+          onClick={() => setMainImage(img)}
+          sx={{
+            width: 90,
+            height: 70,
+            objectFit: 'cover',
+            borderRadius: 2,
+            cursor: 'pointer',
+            border:
+              img === mainImage
+                ? `2px solid ${theme.palette.primary.main}`
+                : '2px solid transparent',
+            opacity: img === mainImage ? 1 : 0.7,
+            transition: 'all 0.2s',
+            '&:hover': {
+              opacity: 1,
+            },
+          }}
+        />
+      ))}
+    </Stack>
+  )}
+</Box>
+
 
         {/* INFO */}
         <Box flex={1}>

@@ -23,6 +23,7 @@ import StaffList from '../pages/admin/StaffManager/StaffList';
 import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
 import BookingManager from '../pages/admin/BookingManager/BookingManager';
 import Category from '../pages/admin/CategoryManager/Category';
+import ComboManager from '../pages/admin/ComboManager/Combo';
 
 
 
@@ -45,6 +46,7 @@ const AppRouter = () => {
         <Route path="/admin" element={<AdminLayout />} >
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/ServiceManager/HairSalonService" element={<HairSalonService />} />
+          <Route path="/admin/ComboManager/Combo" element={<ComboManager />} />
           <Route path="/admin/AccountManager/Accounts" element={<Account />} />
           <Route path="/admin/StaffManager/StaffList" element={<StaffList />} />
           <Route path="/admin/BookingManager" element={<BookingManager />} />
