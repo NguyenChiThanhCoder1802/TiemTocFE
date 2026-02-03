@@ -62,12 +62,7 @@ export interface Service {
   isFeatured: boolean
   priority: number
 
-  /* ================== SEO ================== */
-  seo?: {
-    title?: string
-    description?: string
-    keywords?: string[]
-  }
+
 
   /* ================== STATUS ================== */
   isActive: boolean

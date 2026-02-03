@@ -24,6 +24,14 @@ import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
 import BookingManager from '../pages/admin/BookingManager/BookingManager';
 import Category from '../pages/admin/CategoryManager/Category';
 import ComboManager from '../pages/admin/ComboManager/Combo';
+import ComboServiceDetailPage from '../pages/DetailPage/ComboServiceDetailPage';
+// import BookingPage from '../pages/customer/Booking/BookingPage';
+import DiscountCardManager from '../pages/admin/DiscountManager/DiscountCardManager';
+import DiscountListPage from '../components/discount/DiscountList';
+import BookingHistory from '../pages/customer/Booking/BookingHistory';
+import BookingForm from '../components/booking/BookingForm';
+import BookingDetailPage from '../pages/DetailPage/BookingDetailPage';
+import FavoriteServicesPage from '../pages/customer/Profile/FavoriteServicesPage';
 
 
 
@@ -47,6 +55,7 @@ const AppRouter = () => {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/ServiceManager/HairSalonService" element={<HairSalonService />} />
           <Route path="/admin/ComboManager/Combo" element={<ComboManager />} />
+          <Route path="/admin/DiscountManager" element={<DiscountCardManager />} />
           <Route path="/admin/AccountManager/Accounts" element={<Account />} />
           <Route path="/admin/StaffManager/StaffList" element={<StaffList />} />
           <Route path="/admin/BookingManager" element={<BookingManager />} />
@@ -61,14 +70,21 @@ const AppRouter = () => {
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
-<Route path="/services/:id" element={<ServiceDetailPage />} />
+        <Route path="/services/:id" element={<ServiceDetailPage />} />
+        <Route path="/combos/:id" element={<ComboServiceDetailPage />} /> 
+        {/* <Route path="/customer/booking" element={<BookingPage />} /> */}
+        <Route path="/discounts" element={<DiscountListPage />} />
+        <Route path="/customer/booking/:serviceId" element={<BookingForm />} />
+        <Route path="/customer/BookingHistory" element={<BookingHistory />} />
+        <Route path="/bookings/:id" element={<BookingDetailPage />} />
+
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['customer']} />}>
         <Route element={<CustomerLayout />}>
-          
+         
           <Route path="/customer/profile" element={<ProfilePage />} />
           <Route path="/customer/home" element={<HomePage />} />
-       
+          <Route path="/customer/profile/favorites" element={<FavoriteServicesPage />} />
         </Route>
          
         </Route>

@@ -1,76 +1,50 @@
-export type DiscountTargetType = 'service' | 'order'
-
 export type DiscountType = 'percent' | 'fixed'
 
-/* ================= SERVICE DISCOUNT ================= */
-
-export interface ServiceDiscount {
-  percent: number
-  startAt?: string
-  endAt?: string
-  isActive: boolean
+export interface UsedByUser {
+  userId: string
+  usedCount: number
+  lastUsedAt: string
 }
-
-/* ================= DISCOUNT CARD ================= */
 
 export interface DiscountCard {
   _id: string
 
-  /* ===== BASIC ===== */
   code: string
   name: string
   description?: string
 
-  /* ===== TYPE ===== */
-  targetType: DiscountTargetType
   discountType: DiscountType
-
-  /* ===== VALUE ===== */
   discountValue: number
   maxDiscountAmount?: number
 
-  /* ===== APPLY CONDITION ===== */
   minValue: number
-  hairSalonIds?: string[]
+  serviceIds?: string[]
 
-  serviceDiscount?: ServiceDiscount
-
-  /* ===== LIMIT ===== */
   quantity: number
   usedQuantity: number
-
   userLimit: number
-  userCount: number
+  usedByUsers: UsedByUser[]
 
-  appliedUsers?: string[]
-
-  /* ===== TIME ===== */
   startDate: string
   endDate: string
 
-  /* ===== STATUS ===== */
   isActive: boolean
   isDeleted: boolean
 
   createdAt: string
   updatedAt: string
 }
-
-/* ================= PAYLOAD ================= */
-
 export interface CreateDiscountCardPayload {
   code: string
   name: string
   description?: string
 
-  targetType: DiscountTargetType
   discountType: DiscountType
-
   discountValue: number
   maxDiscountAmount?: number
 
-  minValue: number
-  hairSalonIds?: string[]
+  minValue?: number
+  serviceIds?: string[]
 
   quantity: number
   userLimit: number

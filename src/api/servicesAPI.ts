@@ -1,21 +1,49 @@
 import axiosInstance from '../utils/axiosInstance'
 import type { Service } from '../types/HairService/Service'
 import type { ApiResponse } from '../types/ApiResponse'
-
+import type { PaginatedApiResponse } from '../types/PaginatedResponse'
+import type { FetchServicesParams } from '../types/SearchParams/Params'
+import type { ServiceCard } from '../types/HairService/ServiceCard'
 const BASE_URL = '/hairservices'
 
-/* ======================
-   GET ALL SERVICES
-====================== */
-export const fetchServices = async (
-  categoryId?: string
-): Promise<Service[]> => {
-  const res = await axiosInstance.get<ApiResponse<Service[]>>(BASE_URL, {
-    params: categoryId ? { category: categoryId } : {}
-  })
-
+export const fetchServices = async():Promise<Service[]> => {
+  const res = await axiosInstance.get<ApiResponse<Service[]>>(
+    `${BASE_URL}`
+  )
   return res.data.data
 }
+export const getMostFavoritedServices = async (
+  limit = 8
+): Promise<ServiceCard[]> => {
+  const res = await axiosInstance.get<ApiResponse<ServiceCard[]>>(
+    `${BASE_URL}/popular/favorites`,
+    { params: { limit } }
+  )
+  return res.data.data
+}
+
+/* ======================
+   GET ALL SERVICES admin
+====================== */
+  export const fetchServiceAdmin = async (params?:FetchServicesParams):Promise<PaginatedApiResponse<Service>> => {
+    const res = await axiosInstance.get<PaginatedApiResponse<Service>>(
+      `${BASE_URL}`,
+      {
+        params: {
+          page: params?.page,
+          limit: params?.limit,
+          search: params?.search,
+          minPrice: params?.minPrice,
+          maxPrice: params?.maxPrice,
+          sort: params?.sort,
+          discountOnly: params?.discountOnly,
+          ...(params?.categoryId && { category: params.categoryId })
+        }
+      }
+    )
+
+    return res.data
+  }
 
 /* ======================
    GET SERVICE BY ID

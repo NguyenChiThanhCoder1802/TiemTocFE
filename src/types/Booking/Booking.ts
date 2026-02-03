@@ -1,130 +1,54 @@
-/* =========================
-   BASIC ENUMS
-========================= */
-
-export type BookingType = 'normal' | 'urgent'
-
+// types/Booking/Booking.ts
+import type {User} from '../Auth/User'
+import type {Staff} from '../Staff/Staff'
 export type BookingStatus =
   | 'pending'
   | 'confirmed'
-  | 'in_progress'
   | 'completed'
   | 'cancelled'
-  | 'no_show'
-
-/* =========================
-   SERVICE
-========================= */
+export type BookingPaymentStatus =
+  | 'unpaid'
+  | 'paid'
+  | 'failed'
+export type BookingType = 'service' | 'combo'
 
 export interface BookingServiceItem {
   service: string
-  name: string
-  images: string[]
-  price: number
-  finalPrice: number
-  duration: number
+  quantity?: number
 }
 
-export interface BookingServiceInput {
-  serviceId: string
+export interface BookingPrice {
+  original: number
+  final: number
 }
 
-/* =========================
-   DISCOUNT
-========================= */
-
-export interface BookingDiscountInfo {
-  discountPercent: number
-  discountAmount: number
-  totalDiscount: number
-  discountCode?: string | null
+export interface BookingStaffLite {
+  _id: string
+  user: {
+    _id: string
+    name?: string
+    email?: string
+  }
+  position: string
 }
-
-/* =========================
-   BOOKING ENTITY
-========================= */
 
 export interface Booking {
   _id: string
-
-  customer: string
-
-  staff?: {
-    _id: string
-    name?: string
-  } | null
-
-  autoAssigned: boolean
-
+  customer: User | string
+  staff: Staff | string
+  bookingType: BookingType
   services: BookingServiceItem[]
-
-  bookingDate: string
+  combo?: {
+    _id: string
+    name: string
+  }
   startTime: string
   endTime: string
-
-  bookingType: BookingType
-
-  discountCard?: string | null
-  discountCode?: string | null
-  discountPercent: number
-  discountAmount: number
-
-  subTotal: number
-  totalDiscount: number
-  totalPrice: number
-  urgentFee: number
-
-  note?: string | null
-
-  bookingStatus: BookingStatus
-
-  createdAt: string
-  updatedAt: string
-}
-
-/* =========================
-   ESTIMATE RESPONSE (BE)
-========================= */
-
-export interface BookingEstimateResponse {
-  services: BookingServiceItem[]
-
-  totalDuration: number
-
-  pricing: {
-    subTotal: number
-    urgentFee: number
-    discount: BookingDiscountInfo
-    totalPrice: number
-  }
-
-  time: {
-    startTime: string | null
-    endTime: string | null
-  }
-}
-
-/* =========================
-   DRAFT (FE STATE)
-========================= */
-
-export interface BookingDraft {
-  services: BookingServiceInput[]
-
-  bookingType: BookingType
-
-  bookingDate?: string
-  startTime?: string
-
-  staffId?: string | null
-
-  discountCardId?: string | null
-
+  duration: number
+  price: BookingPrice
+  payment?: string
+  paymentStatus: BookingPaymentStatus
+  status: BookingStatus
   note?: string
+  createdAt: string
 }
-
-/* =========================
-   API PAYLOAD
-========================= */
-
-export type CreateBookingPayload = BookingDraft

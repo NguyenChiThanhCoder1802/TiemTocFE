@@ -7,7 +7,7 @@ import type { Staff } from '../types/Staff/Staff'
  * Public: danh sách nhân viên (đã duyệt)
  */
 export const fetchPublicStaffs = async (): Promise<Staff[]> => {
-  const res = await axiosInstance.get('/staffs')
+  const res = await axiosInstance.get('/staffs/')
   return res.data.data
 }
 

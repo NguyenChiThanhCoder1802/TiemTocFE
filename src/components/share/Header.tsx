@@ -33,7 +33,8 @@ const Header = () => {
       >
         <Toolbar
           sx={{
-            minHeight: 72,
+            minHeight: 52,
+            px: 2,
             display: 'flex',
             justifyContent: 'space-between'
           }}
@@ -61,7 +62,7 @@ const Header = () => {
             {/* ===== ĐÃ ĐĂNG NHẬP (CUSTOMER) ===== */}
             {isAuthenticated && !isAdmin && (
               <Box
-                onClick={() => navigate('/customer/booking')}
+                onClick={() => navigate('/customer/bookinghistory')}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -78,6 +79,29 @@ const Header = () => {
                 </Typography>
               </Box>
             )}
+            {/* ===== ƯU ĐÃI (CUSTOMER) ===== */}
+            {isAuthenticated && !isAdmin && (
+              <Box
+                onClick={() => navigate('/discounts')}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  cursor: 'pointer',
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 2,
+                  fontWeight: 500,
+                  color: '#5D4037',
+                  '&:hover': {
+                    backgroundColor: alpha('#000', 0.05)
+                  }
+                }}
+              >
+                 Ưu đãi
+              </Box>
+            )}
+
           </Box>
           {/* ===== RIGHT ===== */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -88,8 +112,8 @@ const Header = () => {
               backgroundColor: alpha('#FFF', 0.5),
               display: 'flex',
               alignItems: 'center',
-              px: 2,
-              py: 0.5
+              px: 1.5,
+              py: 0.25
             }}
           >
             <SearchIcon sx={{ mr: 1, color: '#5D4037' }} />

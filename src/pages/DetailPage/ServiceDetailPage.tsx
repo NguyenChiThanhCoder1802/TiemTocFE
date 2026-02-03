@@ -11,6 +11,7 @@ import {
   Stack
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import { useNavigate } from 'react-router-dom'
 
 import StarIcon from '@mui/icons-material/Star'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -29,6 +30,10 @@ import type { Service } from '../../types/HairService/Service'
 import ReviewList from '../../pages/customer/Review/ReviewList'
 import ReviewFormDialog from '../../pages/customer/Review/ReviewFormDialog'
 
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import { toggleFavoriteService } from '../../api/UserAPI'
+import  useAuth  from '../../hooks/useAuth'
 
 
 
@@ -47,13 +52,18 @@ const isExpiringSoon = (endAt?: string, days = 3) => {
 const ServiceDetailPage = () => {
   const { id } = useParams<{ id: string }>()
   const theme = useTheme()
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const [mainImage, setMainImage] = useState<string | null>(null)
 
   const [service, setService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
   const [openReview, setOpenReview] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
+const { user } = useAuth()
+
+const [isFavorited, setIsFavorited] = useState(false)
+const [favoriteCount, setFavoriteCount] = useState(0)
+const [favLoading, setFavLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -68,8 +78,34 @@ const ServiceDetailPage = () => {
     }
     loadService()
   }, [id])
+  useEffect(() => {
+  if (!service || !user) return
+
+  setFavoriteCount(service.favoriteCount || 0)
+  setIsFavorited(
+    user.favoriteServices?.includes(service._id) ?? false
+  )
+}, [service, user])
 
   const reloadReviews = () => setReloadKey(k => k + 1)
+  const handleToggleFavorite = async () => {
+  if (!user) {
+    navigate('/login')
+    return
+  }
+
+  if (!service) return
+
+  try {
+    setFavLoading(true)
+    const res = await toggleFavoriteService(service._id)
+
+    setIsFavorited(res.isFavorited)
+    setFavoriteCount(res.favoriteCount)
+  } finally {
+    setFavLoading(false)
+  }
+}
 
   /* ================= BADGES ================= */
   const isHot = useMemo(() => {
@@ -263,6 +299,7 @@ const ServiceDetailPage = () => {
                   />
                 )}
               </Stack>
+              
             )}
           </Box>
 
@@ -280,19 +317,34 @@ const ServiceDetailPage = () => {
             />
           </Stack>
 
-          {/* <Button
+          <Button
             fullWidth
             size="large"
             variant="contained"
-            onClick={() => {
-              booking.addService(service._id)
-              navigate('/customer/booking')
-            }}
+            onClick={() => navigate(`/customer/booking/${service._id}`)}
           >
             Đặt lịch ngay
-          </Button> */}
+          </Button>
+            <Stack direction="row" spacing={2} mt={2}>
+          <Button
+            fullWidth
+            size="large"
+            variant={isFavorited ? 'outlined' : 'contained'}
+            color="error"
+            startIcon={
+              isFavorited ? <FavoriteIcon /> : <FavoriteBorderIcon />
+            }
+            disabled={favLoading}
+            onClick={handleToggleFavorite}
+            sx={{ fontWeight: 600 }}
+          >
+            {isFavorited ? 'Đã yêu thích' : 'Yêu thích'}
+            {favoriteCount > 0 && ` (${favoriteCount})`}
+          </Button>
+        </Stack>
 
 
+   
 
         </Box>
       </Box>

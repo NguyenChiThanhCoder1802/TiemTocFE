@@ -39,6 +39,7 @@ export interface Combo {
   name: string
   slug: string
   description?: string
+  category?: string
   images: string[]
   tags: string[]
 

@@ -1,27 +1,35 @@
 import axiosInstance from '../utils/axiosInstance'
 import type { ApiResponse } from '../types/ApiResponse'
-import type {
-  Booking,
-  BookingEstimateResponse,
-  CreateBookingPayload
-} from '../types/Booking/Booking'
-
+import type { Booking } from '../types/Booking/Booking'
+import type { CreateBookingPayload } from '../types/Booking/CreateBookingPayload'
+import type { PaginatedApiResponse } from '../types/PaginatedResponse'
 const BASE_URL = '/bookings'
 
-/* ======================
-   GET MY BOOKINGS
-====================== */
-export const fetchMyBookings = async (): Promise<Booking[]> => {
-  const res = await axiosInstance.get<ApiResponse<Booking[]>>(
-    `${BASE_URL}/my-bookings`
+export const createBooking = async (
+  payload: CreateBookingPayload
+): Promise<Booking > => {
+  const res = await axiosInstance.post<ApiResponse<Booking>>(
+    BASE_URL,
+    payload
   )
-  return res.data.data
+  return res.data.data  
 }
 
-/* ======================
-   GET BOOKING DETAIL
-====================== */
-export const fetchBookingDetail = async (
+export const getMyBookings = async (params?: {
+  status?: string
+  page?: number
+  limit?: number
+}): Promise<PaginatedApiResponse<Booking>> => {
+  const res = await axiosInstance.get<PaginatedApiResponse<Booking>>(
+    `${BASE_URL}/my`,
+    { params }
+  )
+
+  return res.data
+}
+
+
+export const getBookingDetail = async (
   bookingId: string
 ): Promise<Booking> => {
   const res = await axiosInstance.get<ApiResponse<Booking>>(
@@ -29,29 +37,11 @@ export const fetchBookingDetail = async (
   )
   return res.data.data
 }
-
-/* ======================
-   ESTIMATE BOOKING
-====================== */
-export const estimateBooking = async (
-  payload: CreateBookingPayload
-): Promise<BookingEstimateResponse> => {
-  const res = await axiosInstance.post<ApiResponse<BookingEstimateResponse>>(
-    `${BASE_URL}/estimate`,
-    payload
-  )
-  return res.data.data
-}
-
-/* ======================
-   CONFIRM BOOKING (CREATE)
-====================== */
-export const confirmBooking = async (
-  payload: CreateBookingPayload
+export const cancelBooking = async (
+  bookingId: string
 ): Promise<Booking> => {
-  const res = await axiosInstance.post<ApiResponse<Booking>>(
-    `${BASE_URL}/confirm`,
-    payload
+  const res = await axiosInstance.patch<ApiResponse<Booking>>(
+    `${BASE_URL}/${bookingId}/cancel`
   )
   return res.data.data
 }

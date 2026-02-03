@@ -12,10 +12,17 @@ import type { Staff } from '../../types/Staff/Staff'
 
 interface Props {
   staffs: Staff[]
+  selectedStaffId?: string
+  onSelect: (staff: Staff | null) => void
   title?: string
 }
 
-const StaffCardList = ({ staffs, title }: Props) => {
+const StaffCardList = ({
+  staffs,
+  selectedStaffId,
+  onSelect,
+  title
+}: Props) => {
   const navigate = useNavigate()
 
   return (
@@ -26,55 +33,79 @@ const StaffCardList = ({ staffs, title }: Props) => {
         </Typography>
       )}
 
-      <Stack
-        direction="row"
-        flexWrap="wrap"
-        gap={3}
-      >
-        {staffs.map(staff => (
-          <Card
-            key={staff._id}
-            sx={{
-              width: 280,
-              cursor: 'pointer',
-              transition: '0.25s',
-              '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: 6
-              }
-            }}
-            onClick={() => navigate(`/staffs/${staff._id}`)}
-          >
-            <CardContent>
-              <Stack alignItems="center" spacing={1.2}>
-                <Avatar
-                  src={staff.user.avatar}
-                  alt={staff.user.name}
-                  sx={{ width: 72, height: 72 }}
-                />
+      <Stack direction="row" flexWrap="wrap" gap={3}>
+        {staffs.map(staff => {
+          const isSelected = staff._id === selectedStaffId
 
-                <Typography fontWeight={600}>
-                  {staff.user.name}
-                </Typography>
+         
+          return (
+            <Card
+              key={staff._id}
+               onClick={() =>
+  onSelect(isSelected ? null : staff)
+}
 
-                <Chip
-                  label={staff.position}
-                  size="small"
-                  color="secondary"
-                />
+             sx={{
+                width: 280,
+                cursor: 'pointer',
+                border: isSelected
+                  ? '2px solid'
+                  : '1px solid #e0e0e0',
+                borderColor: isSelected ? 'primary.main' : '#e0e0e0',
+                boxShadow: isSelected ? 6 : 1,
+                transition: '0.25s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6
+                }
+              }}
 
-                <Typography variant="body2" color="text.secondary">
-                  {staff.experienceYears} năm kinh nghiệm
-                </Typography>
+            >
+              <CardContent>
+                <Stack alignItems="center" spacing={1.2}>
+                  {/* Avatar → xem profile */}
+                  <Avatar
+                     src={staff.user?.avatar || ''}
+  alt={staff.user?.name || 'Staff'}
+                    sx={{ width: 72, height: 72, cursor: 'pointer' }}
+                    onClick={e => {
+                      e.stopPropagation()
+                      navigate(`/staffs/${staff._id}`)
+                    }}
+                  />
 
-                <Typography variant="body2">
-                  ⭐ {staff.ratingAverage.toFixed(1)} •{' '}
-                  {staff.completedBookings} lượt
-                </Typography>
-              </Stack>
-            </CardContent>
-          </Card>
-        ))}
+                  <Typography fontWeight={600}>
+                    {staff.user.name}
+                  </Typography>
+
+                  <Chip
+                    label={staff.position}
+                    size="small"
+                    color="secondary"
+                  />
+
+                  <Typography variant="body2" color="text.secondary">
+                    {staff.experienceYears} năm kinh nghiệm
+                  </Typography>
+
+                  <Typography variant="body2">
+                    ⭐ {staff.ratingAverage.toFixed(1)} •{' '}
+                    {staff.completedBookings} lượt
+                  </Typography>
+
+                  {/* Trạng thái */}
+                 {isSelected && (
+                    <Chip
+                      label="Đã chọn"
+                      color="primary"
+                      size="small"
+                    />
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
+          )
+        })}
       </Stack>
     </Box>
   )

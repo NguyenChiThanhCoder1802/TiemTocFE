@@ -4,4 +4,5 @@ export interface User {
   email: string
   role: 'customer'| 'admin' | 'staff'
   avatar?: string
+  favoriteServices?: string[] 
 }

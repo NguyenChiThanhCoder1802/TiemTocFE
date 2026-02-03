@@ -55,20 +55,14 @@ export const deleteDiscountCard = async (id: string): Promise<void> => {
 ====================== */
 export const applyDiscountCard = async (
   code: string,
-  orderTotal: number
+  serviceId: string
 ): Promise<{
   discountAmount: number
-  finalTotal: number
+  finalPrice: number
 }> => {
-  const res = await axiosInstance.post<
-    {
-      discountAmount: number
-      finalTotal: number
-    }
-  >(`${BASE_URL}/apply`, {
-    code,
-    orderTotal
-  })
-
+  const res = await axiosInstance.post(
+    `${BASE_URL}/apply`,
+    { code, serviceId }
+  )
   return res.data
 }

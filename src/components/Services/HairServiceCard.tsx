@@ -2,75 +2,75 @@ import {
   Box,
   Typography,
   Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Button,
-} from '@mui/material';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import type { ServiceCard } from '../../types/HairService/ServiceCard';
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import StarIcon from '@mui/icons-material/Star'
+  CardMedia
+} from '@mui/material'
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import type { ServiceCard } from '../../types/HairService/ServiceCard'
 
-const MotionBox = motion(Box);
+import StarIcon from '@mui/icons-material/Star'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+
+const MotionBox = motion(Box)
 
 interface HairServiceCardProps {
-  item: ServiceCard;
-  index: number;
-  linkPrefix: string;
-  onBookNow?: (serviceId: string) => void;
+  item: ServiceCard
+  index: number
+  linkPrefix: string
 }
 
 const HairServiceCard = ({
   item,
   index,
-  linkPrefix,
-  onBookNow,
+  linkPrefix
 }: HairServiceCardProps) => {
-  const imageUrl = item.images?.[0] || '/placeholder.png';
+  const imageUrl = item.images?.[0] || '/placeholder.png'
+
+  /* ================= BADGE LOGIC ================= */
+  const isSale = item.finalPrice < item.price
+
+  const discountPercent = isSale
+    ? Math.round(((item.price - item.finalPrice) / item.price) * 100)
+    : 0
+
+  const badgeLabel = isSale ? `-${discountPercent}%` : 'HOT'
+  const badgeColor = isSale ? '#d32f2f' : '#f57c00'
 
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, duration: 0.45 }}
+      transition={{ delay: index * 0.06 }}
       sx={{
         flex: {
           xs: '1 1 100%',
-          sm: '1 1 calc(50% - 24px)',
-          md: '1 1 calc(25% - 24px)',
+          sm: '1 1 calc(50% - 16px)',
+          md: '1 1 calc(25% - 16px)'
         },
         maxWidth: {
-          sm: 'calc(50% - 24px)',
-          md: 'calc(25% - 24px)',
-        },
+          sm: 'calc(50% - 16px)',
+          md: 'calc(25% - 16px)'
+        }
       }}
     >
       <Card
         sx={{
-          borderRadius: 4,
+          borderRadius: 3,
           overflow: 'hidden',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-          transition: 'all 0.35s ease',
+          boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+          transition: '0.3s',
           height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
           '&:hover': {
-            transform: 'translateY(-8px)',
-            boxShadow: '0 16px 36px rgba(0,0,0,0.12)',
-            '& img': {
-              transform: 'scale(1.05)',
-            },
-          },
+            transform: 'translateY(-6px)',
+            boxShadow: '0 14px 32px rgba(0,0,0,0.12)',
+            '& img': { transform: 'scale(1.06)' }
+          }
         }}
       >
-        {/* IMAGE */}
-        <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-          <Link
-            to={`/${linkPrefix}/${item._id}`}
-            style={{ textDecoration: 'none' }}
-          >
+        {/* ================= IMAGE ================= */}
+        <Box sx={{ position: 'relative' }}>
+          <Link to={`/${linkPrefix}/${item._id}`}>
             <CardMedia
               component="img"
               image={imageUrl}
@@ -78,114 +78,110 @@ const HairServiceCard = ({
               sx={{
                 height: 220,
                 objectFit: 'cover',
-                transition: 'transform 0.5s ease',
+                transition: 'transform 0.5s ease'
               }}
             />
           </Link>
 
-          {/* Gradient overlay */}
+          {/* BADGE */}
           <Box
             sx={{
               position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              background:
-                'linear-gradient(to top, rgba(0,0,0,0.35), transparent 60%)',
+              top: 12,
+              left: 12,
+              px: 1.1,
+              py: 0.25,
+              borderRadius: 999,
+              fontSize: 11,
+              fontWeight: 700,
+              color: '#fff',
+              backgroundColor: badgeColor,
+              boxShadow: '0 4px 10px rgba(0,0,0,0.25)',
+              backdropFilter: 'blur(4px)'
             }}
-          />
+          >
+            {badgeLabel}
+          </Box>
         </Box>
 
-        {/* CONTENT */}
-        <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            noWrap
-            sx={{ mb: 0.5 }}
+        {/* ================= INFO ================= */}
+        <Box sx={{ p: 2 }}>
+          {/* NAME + PRICE */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              justifyContent: 'space-between'
+            }}
           >
-            {item.name}
-          </Typography>
-
-          {item.description && (
             <Typography
-              variant="body2"
-              color="text.secondary"
+              fontWeight={600}
               noWrap
-              sx={{ mb: 1 }}
+              sx={{ flex: 1 }}
             >
-              {item.description}
+              {item.name}
             </Typography>
-          )}
 
-          {/* PRICE */}
-          <Typography
-            variant="h6"
+            <Typography
+              fontWeight={700}
+              sx={{
+                color: 'primary.main',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {new Intl.NumberFormat('vi-VN').format(
+                item.finalPrice ?? item.price
+              )}đ
+            </Typography>
+          </Box>
+
+          {/* META */}
+          <Box
             sx={{
               mt: 1,
-              fontWeight: 700,
-              color: 'primary.main', // 🔥 #d2a679
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 1.2,
+              color: 'text.secondary'
             }}
           >
-            {new Intl.NumberFormat('vi-VN').format(
-              item.finalPrice ?? item.price
-            )}
-            đ
-          </Typography>
-        </CardContent>
-            {/* RATING + VIEW */}
-<Box
-  sx={{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 1.5,
-    mt: 0.5,
-  }}
->
-  {/* Rating */}
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-    <StarIcon sx={{ fontSize: 18, color: '#f5a623' }} />
-    <Typography variant="body2" fontWeight={600}>
-      {item.ratingAverage?.toFixed(1) || '0.0'}
-    </Typography>
-    <Typography variant="caption" color="text.secondary">
-      ({item.ratingCount || 0})
-    </Typography>
-  </Box>
+            {/* Rating */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <StarIcon sx={{ fontSize: 16, color: '#f5a623' }} />
+              <Typography variant="body2" fontWeight={600}>
+                {item.ratingAverage?.toFixed(1) || '0.0'}
+              </Typography>
+              <Typography variant="caption">
+                ({item.ratingCount || 0})
+              </Typography>
+            </Box>
 
-  {/* Divider */}
-  <Typography color="text.secondary">•</Typography>
+            <Typography>•</Typography>
 
-  {/* View */}
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-    <VisibilityIcon sx={{ fontSize: 18 }} />
-    <Typography variant="body2" color="text.secondary">
-      {item.viewCount || 0}
-    </Typography>
-  </Box>
-</Box>
+            {/* View */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <VisibilityIcon sx={{ fontSize: 16 }} />
+              <Typography variant="body2">
+                {item.viewCount || 0}
+              </Typography>
+            </Box>
 
-        {/* ACTION */}
-        <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{
-              borderRadius: 3,
-              py: 1,
-              fontWeight: 600,
-              textTransform: 'none',
-            }}
-            onClick={() => onBookNow?.(item._id)}
-          >
-            Đặt ngay
-          </Button>
-        </CardActions>
-        
+            <Typography>•</Typography>
+
+            {/* Booking */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <EventAvailableIcon sx={{ fontSize: 16 }} />
+              <Typography variant="body2">
+                {item.bookingCount || 0}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
       </Card>
     </MotionBox>
-  );
-};
+  )
+}
 
-export default HairServiceCard;
+export default HairServiceCard
