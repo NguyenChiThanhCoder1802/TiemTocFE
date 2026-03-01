@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   Box,
   Container,
   Typography,
   Stack,
-  Chip,
   CircularProgress,
   Button,
   Dialog,
@@ -13,8 +12,7 @@ import {
   DialogContent,
   DialogActions,
   Snackbar,
-  Alert,
-  Divider
+  Alert
 } from '@mui/material'
 
 import {
@@ -22,19 +20,11 @@ import {
   cancelBooking
 } from '../../api/BookingAPI'
 
-import type { Booking, BookingStatus } from '../../types/Booking/Booking'
-import type { ChipProps } from '@mui/material'
+import type { Booking } from '../../types/Booking/Booking'
 
-
-type ChipColor = NonNullable<ChipProps['color']>
-
-/* ===== STATUS COLOR ===== */
-const statusColorMap: Record<BookingStatus, ChipColor> = {
-  pending: 'warning',
-  confirmed: 'info',
-  completed: 'success',
-  cancelled: 'error'
-}
+import BookingInfoCard from '../../components/BookingHistory/BookingInfoCard'
+import BookingServiceCard from '../../components/BookingHistory/BookingServiceCard'
+import BookingPaymentCard from '../../components/BookingHistory/BookingPaymentCard'
 
 export default function BookingDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -42,25 +32,38 @@ export default function BookingDetailPage() {
 
   const [booking, setBooking] = useState<Booking | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  /* ===== CANCEL ===== */
   const [openCancel, setOpenCancel] = useState(false)
   const [canceling, setCanceling] = useState(false)
-
-  /* ===== TOAST ===== */
   const [toastOpen, setToastOpen] = useState(false)
 
-  /* ===== FETCH ===== */
+  /* ================= FETCH ================= */
   useEffect(() => {
-    if (!id) return
+    let mounted = true
 
-    getBookingDetail(id)
-      .then(setBooking)
-      .finally(() => setLoading(false))
+    const fetchBooking = async () => {
+      if (!id) return
+
+      try {
+        const data = await getBookingDetail(id)
+        if (mounted) setBooking(data)
+      } catch (err) {
+        if (mounted) setError('Không thể tải dữ liệu')
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+
+    fetchBooking()
+
+    return () => {
+      mounted = false
+    }
   }, [id])
 
-  /* ===== CANCEL HANDLER ===== */
-  const handleCancel = async () => {
+  /* ================= CANCEL ================= */
+  const handleCancel = useCallback(async () => {
     if (!booking) return
 
     try {
@@ -68,18 +71,29 @@ export default function BookingDetailPage() {
       const updated = await cancelBooking(booking._id)
       setBooking(updated)
       setToastOpen(true)
+    } catch {
+      setError('Huỷ lịch thất bại')
     } finally {
       setCanceling(false)
       setOpenCancel(false)
     }
-  }
+  }, [booking])
 
-  /* ===== LOADING ===== */
+  /* ================= STATES ================= */
+
   if (loading) {
     return (
       <Box textAlign="center" mt={8}>
         <CircularProgress />
       </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Container sx={{ mt: 6 }}>
+        <Typography color="error">{error}</Typography>
+      </Container>
     )
   }
 
@@ -91,101 +105,23 @@ export default function BookingDetailPage() {
     )
   }
 
-  /* ===== RENDER ===== */
+  /* ================= RENDER ================= */
+
   return (
-    <Container sx={{ mt: 6 }}>
+    <Container sx={{ mt: 6, mb: 8 }}>
       <Stack spacing={3}>
-        {/* ===== HEADER ===== */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h5" fontWeight={700}>
-            Chi tiết đặt lịch
-          </Typography>
 
-          <Chip
-            label={booking.status}
-            color={statusColorMap[booking.status]}
-          />
-        </Stack>
+        {/* HEADER */}
+        <Typography variant="h5" fontWeight={700}>
+          Chi tiết đặt lịch
+        </Typography>
 
-        <Divider />
+        {/* CARDS */}
+        <BookingInfoCard booking={booking} />
+        <BookingServiceCard booking={booking} />
+        <BookingPaymentCard booking={booking} />
 
-        {/* ===== TIME ===== */}
-        <Box>
-          <Typography fontWeight={600}>Thời gian</Typography>
-          <Typography>
-            {new Date(booking.startTime).toLocaleString('vi-VN')}
-          </Typography>
-        </Box>
-
-        {/* ===== STAFF ===== */}
-        <Box>
-          <Typography fontWeight={600}>Nhân viên</Typography>
-          <Typography>
-            {booking.staff?.user?.name ?? 'Chưa gán'}
-          </Typography>
-        </Box>
-
-        {/* ===== SERVICES / COMBO ===== */}
-        <Box>
-          <Typography fontWeight={600}>
-            {booking.bookingType === 'service'
-              ? 'Dịch vụ'
-              : 'Combo'}
-          </Typography>
-
-          {booking.bookingType === 'service' &&
-            booking.services.map(s => (
-                <Typography
-                key={s.service._id}
-                variant="body2"
-                sx={{
-                    cursor: 'pointer',
-                    color: 'primary.main',
-                    '&:hover': { textDecoration: 'underline' }
-                }}
-                onClick={() =>
-                    navigate(`/services/${s.service._id}`)
-                }
-                >
-                • {s.service.name} ({s.service.duration} phút)
-                </Typography>
-            ))}
-
-
-          {booking.bookingType === 'combo' && (
-            <Typography>
-              {booking.combo?.name} (
-              {booking.combo?.duration} phút)
-            </Typography>
-          )}
-        </Box>
-
-        {/* ===== PRICE ===== */}
-        <Box>
-          <Typography fontWeight={600}>Thanh toán</Typography>
-          <Typography>
-            Giá gốc:{' '}
-            {booking.price.original.toLocaleString('vi-VN')}đ
-          </Typography>
-          <Typography fontWeight={700}>
-            Thành tiền:{' '}
-            {booking.price.final.toLocaleString('vi-VN')}đ
-          </Typography>
-        </Box>
-
-        {/* ===== NOTE ===== */}
-        {booking.note && (
-          <Box>
-            <Typography fontWeight={600}>Ghi chú</Typography>
-            <Typography>{booking.note}</Typography>
-          </Box>
-        )}
-
-        {/* ===== ACTION ===== */}
+        {/* ACTION */}
         <Stack direction="row" spacing={2}>
           <Button variant="outlined" onClick={() => navigate(-1)}>
             Quay lại
@@ -203,7 +139,7 @@ export default function BookingDetailPage() {
         </Stack>
       </Stack>
 
-      {/* ===== CONFIRM DIALOG ===== */}
+      {/* CANCEL DIALOG */}
       <Dialog open={openCancel} onClose={() => setOpenCancel(false)}>
         <DialogTitle>Huỷ lịch đặt?</DialogTitle>
         <DialogContent>
@@ -226,7 +162,7 @@ export default function BookingDetailPage() {
         </DialogActions>
       </Dialog>
 
-      {/* ===== TOAST ===== */}
+      {/* SUCCESS TOAST */}
       <Snackbar
         open={toastOpen}
         autoHideDuration={3000}

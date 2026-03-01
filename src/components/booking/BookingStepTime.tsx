@@ -14,10 +14,10 @@ export default function BookingStepTime({ startTime, onChange }: Props) {
 
       <TextField
         type="datetime-local"
-        fullWidth
         value={startTime}
         onChange={e => onChange(e.target.value)}
         InputLabelProps={{ shrink: true }}
+        sx={{ width: 600 }} 
       />
     </Box>
   )

@@ -16,7 +16,17 @@ const ComboCardList = ({ items, title, linkPrefix, loading }: Props) => {
         {title}
       </Typography>
 
-      <Box display="flex" flexWrap="wrap" gap={3} justifyContent="center">
+          <Box
+  sx={{
+    display: 'grid',
+    gridTemplateColumns: {
+      xs: '1fr',
+      sm: 'repeat(2, 1fr)',
+      md: 'repeat(4, 1fr)'
+    },
+    gap: 2.5
+  }}
+>
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
               <Skeleton

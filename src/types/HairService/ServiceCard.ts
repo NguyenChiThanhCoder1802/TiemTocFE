@@ -1,6 +1,7 @@
 export interface ServiceCard {
   _id: string;
   name: string;
+  slug: string;
   duration?: number;
   price: number;
   images: string[];

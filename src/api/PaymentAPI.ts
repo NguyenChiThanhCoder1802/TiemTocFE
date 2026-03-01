@@ -1,7 +1,7 @@
 // api/PaymentAPI.ts
 import axiosInstance from '../utils/axiosInstance'
 import type { ApiResponse } from '../types/ApiResponse'
-import type { Payment, PaymentMethod } from '../types/Payment/Payment'
+import type { Payment } from '../types/Payment/Payment'
 import type { CreatePaymentResponse } from '../types/Payment/CreatePaymentResponse'
 import type { PaymentRevenue } from '../types/Payment/PaymentRevenue'
 
@@ -12,14 +12,12 @@ const BASE_URL = '/payments'
  * POST /payments/booking/vnpay
  * ===================================================== */
 export const createBookingPayment = async (
-  bookingId: string,
-  method: PaymentMethod
+  bookingId: string
 ): Promise<CreatePaymentResponse> => {
   const res = await axiosInstance.post<
     ApiResponse<CreatePaymentResponse>
-  >(`${BASE_URL}/booking/vnpay`, {
-    bookingId,
-    paymentMethod: method
+  >('/payments/vnpay', {
+    bookingId
   })
 
   return res.data.data

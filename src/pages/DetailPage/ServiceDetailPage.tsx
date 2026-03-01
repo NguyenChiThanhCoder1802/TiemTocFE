@@ -8,11 +8,11 @@ import {
   Chip,
   Button,
   Divider,
-  Stack
+  Stack,IconButton, Tooltip
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
-
+import ShareIcon from '@mui/icons-material/Share'
 import StarIcon from '@mui/icons-material/Star'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -21,19 +21,19 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import TimerIcon from '@mui/icons-material/Timer'
-// import { useNavigate } from 'react-router-dom'
-
 import { getCategoryName } from '../../utils/CategoryHelper'
+import { fetchServiceBySlug } from '../../api/servicesAPI'
 
-import { fetchServiceById } from '../../api/servicesAPI'
 import type { Service } from '../../types/HairService/Service'
 import ReviewList from '../../pages/customer/Review/ReviewList'
 import ReviewFormDialog from '../../pages/customer/Review/ReviewFormDialog'
-
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import { toggleFavoriteService } from '../../api/UserAPI'
 import  useAuth  from '../../hooks/useAuth'
+import type { ServiceCard } from '../../types/HairService/ServiceCard'
+import ItemCardList from '../../components/Services/ItemCardList'
+
 
 
 
@@ -50,7 +50,7 @@ const isExpiringSoon = (endAt?: string, days = 3) => {
 
 /* ================= COMPONENT ================= */
 const ServiceDetailPage = () => {
-  const { id } = useParams<{ id: string }>()
+  const { slug } = useParams<{ slug: string }>()
   const theme = useTheme()
   const navigate = useNavigate()
   const [mainImage, setMainImage] = useState<string | null>(null)
@@ -59,6 +59,8 @@ const ServiceDetailPage = () => {
   const [loading, setLoading] = useState(true)
   const [openReview, setOpenReview] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
+  const [relatedServices, setRelatedServices] = useState<ServiceCard[]>([])
+const [loadingRelated, setLoadingRelated] = useState(true)
 const { user } = useAuth()
 
 const [isFavorited, setIsFavorited] = useState(false)
@@ -66,18 +68,21 @@ const [favoriteCount, setFavoriteCount] = useState(0)
 const [favLoading, setFavLoading] = useState(false)
 
   useEffect(() => {
-    if (!id) return
+    if (!slug) return
     const loadService = async () => {
       try {
-        const data = await fetchServiceById(id)
-        setService(data)
-        setMainImage(data.images?.[0] || null)
+        const data = await fetchServiceBySlug(slug)
+        
+        setService(data.service)
+        setRelatedServices(data.relatedServices)
+        setMainImage(data.service.images?.[0] || null)
       } finally {
         setLoading(false)
+        setLoadingRelated(false) 
       }
     }
     loadService()
-  }, [id])
+  }, [slug])
   useEffect(() => {
   if (!service || !user) return
 
@@ -221,9 +226,45 @@ const [favLoading, setFavLoading] = useState(false)
 
         {/* INFO */}
         <Box flex={1}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            {service.name}
-          </Typography>
+         <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography variant="h4" fontWeight={700}>
+              {service.name}
+            </Typography>
+
+            <Stack direction="row" spacing={1}>
+              {/* FAVORITE */}
+              <Tooltip title={isFavorited ? 'Bỏ yêu thích' : 'Yêu thích'}>
+                <IconButton
+                  color="error"
+                  disabled={favLoading}
+                  onClick={handleToggleFavorite}
+                >
+                  {isFavorited ? <FavoriteIcon /> : <FavoriteBorderIcon />}  
+                  {favoriteCount > 0 && (
+                <Typography fontSize={14} color="text.secondary">
+                  {favoriteCount}
+                </Typography>
+              )}
+
+                </IconButton>
+              </Tooltip>
+            
+              {/* SHARE */}
+              <Tooltip title="Chia sẻ">
+                <IconButton
+                  onClick={() => {
+                    navigator.share?.({
+                      title: service.name,
+                      url: window.location.href
+                    }) || navigator.clipboard.writeText(window.location.href)
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Box>
+
 
           {/* STATS */}
           <Stack direction="row" spacing={2} mb={2} alignItems="center">
@@ -317,35 +358,18 @@ const [favLoading, setFavLoading] = useState(false)
             />
           </Stack>
 
-          <Button
-            fullWidth
-            size="large"
-            variant="contained"
-            onClick={() => navigate(`/customer/booking/${service._id}`)}
-          >
-            Đặt lịch ngay
-          </Button>
-            <Stack direction="row" spacing={2} mt={2}>
-          <Button
-            fullWidth
-            size="large"
-            variant={isFavorited ? 'outlined' : 'contained'}
-            color="error"
-            startIcon={
-              isFavorited ? <FavoriteIcon /> : <FavoriteBorderIcon />
-            }
-            disabled={favLoading}
-            onClick={handleToggleFavorite}
-            sx={{ fontWeight: 600 }}
-          >
-            {isFavorited ? 'Đã yêu thích' : 'Yêu thích'}
-            {favoriteCount > 0 && ` (${favoriteCount})`}
-          </Button>
-        </Stack>
-
-
-   
-
+         <Button
+          fullWidth
+          size="large"
+          variant="contained"
+          onClick={() =>
+            navigate('/customer/booking', {
+              state: { serviceId: service._id }
+            })
+          }
+        >
+          Đặt lịch ngay
+        </Button>
         </Box>
       </Box>
 
@@ -387,8 +411,19 @@ const [favLoading, setFavLoading] = useState(false)
           serviceId={service._id}
           onSuccess={reloadReviews}
         />
+      </Box> 
+      {relatedServices.length > 0 && (
+      <Box mt={8}>
+        <ItemCardList
+          title="Có thể bạn sẽ thích"
+          items={relatedServices}
+          linkPrefix="services"
+          loading={loadingRelated}
+        />
       </Box>
+    )}
     </Container>
+   
   )
 }
 

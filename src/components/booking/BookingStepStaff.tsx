@@ -6,22 +6,31 @@ interface Props {
   staffs: Staff[]
   selectedStaff: Staff | null
   onSelect: (staff: Staff | null) => void
+   availability: Record<string, boolean>
+    error?: string | null
 }
 
 export default function BookingStepStaff({
   staffs,
   selectedStaff,
-  onSelect
+  onSelect,
+  availability,
+  error
 }: Props) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={600} mb={1}>
         2. Chọn nhân viên (không bắt buộc)
       </Typography>
-
+      {error && (
+        <Typography color="error" mb={2}>
+          {error}
+        </Typography>
+      )}
       <StaffCardList
         staffs={staffs}
         selectedStaffId={selectedStaff?._id}
+        availability={availability}
         onSelect={onSelect}
       />
     </Box>

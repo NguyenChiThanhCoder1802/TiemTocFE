@@ -42,41 +42,34 @@ const HairServiceCard = ({
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      sx={{
-        flex: {
-          xs: '1 1 100%',
-          sm: '1 1 calc(50% - 16px)',
-          md: '1 1 calc(25% - 16px)'
-        },
-        maxWidth: {
-          sm: 'calc(50% - 16px)',
-          md: 'calc(25% - 16px)'
-        }
+     sx={{
+        width: '100%'
       }}
+
     >
       <Card
         sx={{
-          borderRadius: 3,
+          borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
           transition: '0.3s',
           height: '100%',
           '&:hover': {
-            transform: 'translateY(-6px)',
-            boxShadow: '0 14px 32px rgba(0,0,0,0.12)',
+            transform: 'translateY(-4px)',
+            boxShadow: '0 10px 24px rgba(0,0,0,0.12)',
             '& img': { transform: 'scale(1.06)' }
           }
         }}
       >
         {/* ================= IMAGE ================= */}
         <Box sx={{ position: 'relative' }}>
-          <Link to={`/${linkPrefix}/${item._id}`}>
+          <Link to={`/${linkPrefix}/${item.slug}`}>
             <CardMedia
               component="img"
               image={imageUrl}
               alt={item.name}
               sx={{
-                height: 220,
+                height: 200,
                 objectFit: 'cover',
                 transition: 'transform 0.5s ease'
               }}
@@ -91,8 +84,8 @@ const HairServiceCard = ({
               left: 12,
               px: 1.1,
               py: 0.25,
-              borderRadius: 999,
-              fontSize: 11,
+              borderRadius: 6,
+              fontSize: 10,
               fontWeight: 700,
               color: '#fff',
               backgroundColor: badgeColor,

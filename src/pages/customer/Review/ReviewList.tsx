@@ -1,50 +1,30 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Stack, CircularProgress, Typography } from '@mui/material'
 import ReviewItem from './ReviewItem'
 import ReviewFormDialog from './ReviewFormDialog'
-import {
-  fetchReviewsByService,
-  fetchReviewsByStaff,
-  deleteReview
-} from '../../../api/ReviewAPI'
-import type { Review } from '../../../types/Review/Review'
-
+import { useReview } from '../../../hooks/useReview'
 interface ReviewListProps {
   serviceId?: string
   staffId?: string
   reloadKey: number
 }
-
+ 
 const ReviewList = ({ serviceId, staffId, reloadKey }: ReviewListProps) => {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editReview, setEditReview] = useState<Review | null>(null)
-
-  const loadReviews = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = serviceId
-        ? await fetchReviewsByService(serviceId)
-        : staffId
-        ? await fetchReviewsByStaff(staffId)
-        : []
-      setReviews(data)
-    } finally {
-      setLoading(false)
-    }
-  }, [serviceId, staffId])
+ const {
+  reviews,
+  loading,
+  editReview,
+  setEditReview,
+  loadReviews,
+  removeReview
+} = useReview({ serviceId, staffId })
+  
 
   useEffect(() => {
     loadReviews()
   }, [loadReviews, reloadKey])
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Bạn chắc chắn muốn xoá đánh giá này?')) return
-    await deleteReview(id)
-    await loadReviews()
-  }
-
   if (loading) return <CircularProgress />
+
 
   if (reviews.length === 0)
     return <Typography color="text.secondary">Chưa có đánh giá nào</Typography>
@@ -57,7 +37,7 @@ const ReviewList = ({ serviceId, staffId, reloadKey }: ReviewListProps) => {
             key={r._id}
             review={r}
             onEdit={setEditReview}
-            onDelete={handleDelete}
+            onDelete={removeReview}
           />
         ))}
       </Stack>

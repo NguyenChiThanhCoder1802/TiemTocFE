@@ -7,15 +7,19 @@ export type PaymentStatus = 'pending' | 'success' | 'failed'
 export interface Payment {
   _id: string
 
-  booking: string | {
-    _id: string
-    status: string
-    startTime: string
-    endTime: string
-    price: {
-      final: number
+  booking:
+  | string
+  | {
+      _id: string
+      services: {
+        nameSnapshot: string
+      }[]
+      price: {
+        final: number
+      }
+      paymentStatus: string
+      status: string
     }
-  }
 
   user: string
 

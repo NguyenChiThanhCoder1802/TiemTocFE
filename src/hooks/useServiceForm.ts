@@ -73,11 +73,6 @@ export const useServiceForm = (
       )
     }
 
-    /**
-     * ❗ QUAN TRỌNG
-     * - KHÔNG append images cũ vào FormData
-     * - Ảnh cũ chỉ dùng để preview
-     */
     setPreviewImages(service.images || [])
   }, [service])
 

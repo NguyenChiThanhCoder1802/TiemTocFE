@@ -23,6 +23,11 @@ export const fetchReviewsByStaff = async (
   )
   return res.data.data
 }
+export const fetchMyReviews = async () => {
+  const res = await axiosInstance.get('/reviews/me')
+  return res.data.data
+}
+
 /* ======================
    CREATE REVIEW
 ====================== */

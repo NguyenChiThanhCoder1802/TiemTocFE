@@ -2,7 +2,6 @@ export interface ServiceDiscount {
   percent: number
   startAt?: string
   endAt?: string
-  isActive: boolean
 }
 export interface ServiceCombo {
   originalPrice?: number

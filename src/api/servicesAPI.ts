@@ -4,6 +4,7 @@ import type { ApiResponse } from '../types/ApiResponse'
 import type { PaginatedApiResponse } from '../types/PaginatedResponse'
 import type { FetchServicesParams } from '../types/SearchParams/Params'
 import type { ServiceCard } from '../types/HairService/ServiceCard'
+import type { ServiceDetailResponse } from '../types/HairService/ServiceDetailResponse'
 const BASE_URL = '/hairservices'
 
 export const fetchServices = async():Promise<Service[]> => {
@@ -21,7 +22,18 @@ export const getMostFavoritedServices = async (
   )
   return res.data.data
 }
+export const getFeaturedServices = async (
+  limit = 8
+): Promise<ServiceCard[]> => {
+  const res = await axiosInstance.get<ApiResponse<ServiceCard[]>>(
+    `${BASE_URL}/featured`,
+    {
+      params: { limit }
+    }
+  )
 
+  return res.data.data
+}
 /* ======================
    GET ALL SERVICES admin
 ====================== */
@@ -48,13 +60,28 @@ export const getMostFavoritedServices = async (
 /* ======================
    GET SERVICE BY ID
 ====================== */
-export const fetchServiceById = async (id: string): Promise<Service> => {
-  const res = await axiosInstance.get<ApiResponse<Service>>(
-    `${BASE_URL}/${id}`
-  )
-  return res.data.data
-}
+export const fetchServiceById = async (
+  id: string
+): Promise<ServiceDetailResponse> => {
+  const res = await axiosInstance.get(`${BASE_URL}/${id}`)
 
+  return {
+    service: res.data.data,
+    relatedServices: res.data.relatedServices ?? []
+  }
+}
+export const fetchServiceBySlug = async (
+  slug: string
+): Promise<ServiceDetailResponse> => {
+  const res = await axiosInstance.get(
+    `${BASE_URL}/slug/${slug}`
+  )
+
+  return {
+    service: res.data.data,
+    relatedServices: res.data.relatedServices ?? []
+  }
+}
 /* ======================
    CREATE SERVICE (ADMIN)
 ====================== */
@@ -130,5 +157,24 @@ export const deleteService = async (id: string): Promise<void> => {
 }
 export const fetchServiceStatistics = async () => {
   const res = await axiosInstance.get(`${BASE_URL}/statistics`)
+  return res.data.data
+}
+interface GetAvailableServicesParams {
+  startTime: string
+  staffId?: string
+}
+
+export const getAvailableServices = async (
+  params: GetAvailableServicesParams
+): Promise<Service[]> => {
+  const res = await axiosInstance.get<
+    ApiResponse<Service[]>
+  >(`${BASE_URL}/available`, {
+    params: {
+      startTime: params.startTime,
+      ...(params.staffId && { staffId: params.staffId })
+    }
+  })
+
   return res.data.data
 }

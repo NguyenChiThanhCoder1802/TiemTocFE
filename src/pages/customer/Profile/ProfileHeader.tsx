@@ -2,33 +2,26 @@ import { Box, Typography } from '@mui/material'
 import useAuth from '../../../hooks/useAuth'
 import AvatarSection from './AvatarSection'
 import ProfileTabs from './ProfileTabs'
-
-const ProfileHeader = () => {
+import type { ProfileTab } from '../../../types/Profile/ProfileTab'
+interface ProfileHeaderProps {
+  activeTab: ProfileTab
+  onTabChange: (tab: ProfileTab) => void
+}
+const ProfileHeader = ({ activeTab, onTabChange }: ProfileHeaderProps) => {
   const { user } = useAuth()
   if (!user) return null
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        bgcolor: '#f5f5f5',
-        pb: 3,
-        borderRadius: 3
-      }}
-    >
-      {/* AVATAR */}
+    <Box sx={{ bgcolor: '#f5f5f5', pb: 3, borderRadius: 3 }}>
       <AvatarSection user={user} />
 
-      {/* NAME + ROLE */}
       <Box textAlign="center" mt={1}>
         <Typography fontWeight={700} fontSize={20}>
           {user.name} - {user.role}
         </Typography>
-       
       </Box>
 
-      {/* TABS */}
-      <ProfileTabs />
+      <ProfileTabs value={activeTab} onChange={onTabChange} />
     </Box>
   )
 }

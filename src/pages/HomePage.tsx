@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { fetchPublicStaffs } from '../api/staffAPI'
 import StaffCardList from '../components/staff/StaffCardList'
 import ItemCardList from '../components/Services/ItemCardList';
-import { fetchServices ,getMostFavoritedServices} from '../api/servicesAPI';
+import { fetchServices ,getMostFavoritedServices, getFeaturedServices} from '../api/servicesAPI';
 import type { ServiceCard } from '../types/HairService/ServiceCard';
 
 import type { Staff } from '../types/Staff/Staff'
@@ -25,26 +25,35 @@ const [loadingCombos, setLoadingCombos] = useState(false)
 const [loadingFavorites, setLoadingFavorites] = useState(false)
 
 const [loadingServices, setLoadingServices] = useState(false) // đổi category
+const [featuredServices, setFeaturedServices] = useState<ServiceCard[]>([])
+const [loadingFeatured, setLoadingFeatured] = useState(false)
 
 
    useEffect(() => {
   const loadInitial = async () => {
     try {
       setLoadingPage(true)
-      const [serviceData, staffData, comboData,favoriteData] = await Promise.all([
+      setLoadingFeatured(true)
+      setLoadingFavorites(true)
+
+      const [serviceData, staffData, comboData,favoriteData, featuredData] = await Promise.all([
         fetchServices(),
         fetchPublicStaffs(),
         fetchCombos({ isActive: true }),
-        getMostFavoritedServices(8)
+        getMostFavoritedServices(8),
+        getFeaturedServices(8)
       ])
       setServices(serviceData)
       setStaffs(staffData)
       setCombos(comboData)
        setFavoriteServices(favoriteData)
+        setFeaturedServices(featuredData)
     } catch {
       setError('Không thể tải dữ liệu')
     } finally {
       setLoadingPage(false)
+      setLoadingFeatured(false)
+      setLoadingFavorites(false)
     }
   }
 
@@ -96,31 +105,37 @@ const [loadingServices, setLoadingServices] = useState(false) // đổi category
         </Box>
 
         {/* ===== MAIN CONTENT ===== */}
-        <Container sx={{ mt: 2 }}>
+       <Box
+          sx={{
+            flex: 1,
+            px: 3,        // padding ngang vừa phải
+            pt: 2
+          }}
+        >
            <ComboCardList
             items={combos}
-            title="🔥 Combo tiết kiệm"
+            title="Combo tiết kiệm"
             linkPrefix="combos"
             loading={loadingCombos}
           />
            <ItemCardList
               items={favoriteServices}
-              title="❤️ Được yêu thích nhất"
+              title="Được yêu thích nhất"
               linkPrefix="services"
               loading={loadingFavorites}
             />
           <ItemCardList
-            items={services}
-            title="🌟 Dịch vụ nổi bật"
+            items={featuredServices}
+            title="Dịch vụ nổi bật"
             linkPrefix="services"
-            loading={loadingServices}
+            loading={loadingFeatured}
           />
 
           <StaffCardList
             staffs={staffs}
             title="👨‍💼 Đội ngũ nhân viên"
           />
-        </Container>
+        </Box>
       </Box>
     )}
   </Box>

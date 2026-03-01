@@ -7,7 +7,7 @@ import {
   Stack,
   Box,
   IconButton,
-
+  CircularProgress
 } from '@mui/material'
 import UploadIcon from '@mui/icons-material/Upload'
 import CloseIcon from '@mui/icons-material/Close'
@@ -97,7 +97,7 @@ const ReviewFormDialog = ({
 
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={loading ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>
         {isEdit ? 'Chỉnh sửa đánh giá' : 'Đánh giá dịch vụ'}
       </DialogTitle>
@@ -206,8 +206,15 @@ const ReviewFormDialog = ({
             variant="contained"
             disabled={rating === 0 || loading}
             onClick={handleSubmit}
+            startIcon={
+              loading ? <CircularProgress size={18} color="inherit" /> : undefined
+            }
           >
-            {isEdit ? 'Cập nhật' : 'Gửi đánh giá'}
+            {loading
+                ? 'Đang gửi...'
+                : isEdit
+                ? 'Cập nhật'
+                : 'Gửi đánh giá'}
           </Button>
         </Stack>
       </DialogContent>

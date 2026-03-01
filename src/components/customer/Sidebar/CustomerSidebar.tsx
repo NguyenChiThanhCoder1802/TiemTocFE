@@ -17,9 +17,9 @@ import {
   Favorite,
   Logout
 } from '@mui/icons-material'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate,useLocation } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
-
+import { useEffect} from 'react'
 const drawerWidth = 260
 
 const menu = [
@@ -43,12 +43,18 @@ const CustomerSidebar = ({
 }: Props) => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogout = async () => {
     await logout()
     onClose()
     navigate('/login')
   }
+  useEffect(() => {
+  if (variant === 'temporary') {
+    onClose()
+  }
+}, [location.pathname])
 
   return (
     <Drawer

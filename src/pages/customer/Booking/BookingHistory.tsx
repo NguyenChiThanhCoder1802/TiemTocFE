@@ -82,7 +82,6 @@ export default function BookingHistory() {
       }
 
       const res = await getMyBookings({ status, page, limit })
-      console.log('API raw response:', res)
       if (!res || !Array.isArray(res.data)) {
         setData([])
         setPagination(null)
@@ -177,53 +176,99 @@ export default function BookingHistory() {
           </Typography>
         )}
 
-        {safeData.map(b => (
-          <Box
-            key={b._id}
-            p={2}
-            border="1px solid #eee"
-            borderRadius={2}
-            sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#fafafa' } }}
-            onClick={() => navigate(`/bookings/${b._id}`)}
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography fontWeight={600}>
-                {b.bookingType === 'service' ? 'Dịch vụ' : 'Combo'}
-              </Typography>
+       {safeData.map(b => (
+  <Box
+    key={b._id}
+    p={2}
+    border="1px solid #eee"
+    borderRadius={2}
+    sx={{
+      cursor: 'pointer',
+      '&:hover': { backgroundColor: '#fafafa' }
+    }}
+    onClick={() => navigate(`/bookings/${b._id}`)}
+  >
+    <Stack direction="row" spacing={2}>
+      
+      {/* ===== IMAGE ===== */}
+      <Box>
+        {b.bookingType === 'service' &&
+          b.services?.[0]?.imageSnapshot?.[0] && (
+            <Box
+              component="img"
+              src={b.services[0].imageSnapshot[0]}
+              alt={b.services[0].nameSnapshot}
+              sx={{
+                width: 90,
+                height: 90,
+                objectFit: 'cover',
+                borderRadius: 2
+              }}
+            />
+          )}
 
-              <Chip
-                size="small"
-                label={b.status}
-                color={statusColorMap[b.status]}
-              />
-            </Stack>
+        {b.bookingType === 'combo' &&
+          b.comboSnapshot?.imageSnapshot?.[0] && (
+            <Box
+              component="img"
+              src={b.comboSnapshot.imageSnapshot[0]}
+              alt={b.comboSnapshot.name}
+              sx={{
+                width: 90,
+                height: 90,
+                objectFit: 'cover',
+                borderRadius: 2
+              }}
+            />
+          )}
+      </Box>
 
-            <Typography mt={1}>
-              Thời gian:{' '}
-              {new Date(b.startTime).toLocaleString('vi-VN')}
-            </Typography>
+      {/* ===== INFO ===== */}
+      <Stack flex={1}>
+        <Stack direction="row" justifyContent="space-between">
+          <Typography fontWeight={600}>
+            {b.bookingType === 'service'
+              ? b.services
+                  ?.map(s => s.nameSnapshot)
+                  .filter(Boolean)
+                  .join(', ')
+              : b.comboSnapshot?.name}
+          </Typography>
 
-            <Typography>
-              Giá: {b.price.final.toLocaleString('vi-VN')}đ
-            </Typography>
+          <Chip
+            size="small"
+            label={b.status}
+            color={statusColorMap[b.status]}
+          />
+        </Stack>
 
-            {b.status === 'pending' && (
-              <Stack direction="row" justifyContent="flex-end" mt={1}>
-                <Button
-                  size="small"
-                  color="error"
-                  variant="outlined"
-                  onClick={e => {
-                    e.stopPropagation()
-                    setCancelId(b._id)
-                  }}
-                >
-                  Huỷ lịch
-                </Button>
-              </Stack>
-            )}
-          </Box>
-        ))}
+        <Typography mt={1} variant="body2">
+          {new Date(b.startTime).toLocaleString('vi-VN')}
+        </Typography>
+
+        <Typography fontWeight={600} color="primary">
+          {b.price.final.toLocaleString('vi-VN')}đ
+        </Typography>
+
+        {b.status === 'pending' && (
+          <Stack direction="row" justifyContent="flex-end" mt={1}>
+            <Button
+              size="small"
+              color="error"
+              variant="outlined"
+              onClick={e => {
+                e.stopPropagation()
+                setCancelId(b._id)
+              }}
+            >
+              Huỷ lịch
+            </Button>
+          </Stack>
+        )}
+      </Stack>
+    </Stack>
+  </Box>
+))}
       </Stack>
 
       {/* ===== PAGINATION (BasicPagination style) ===== */}

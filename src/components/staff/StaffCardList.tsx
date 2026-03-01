@@ -15,13 +15,15 @@ interface Props {
   selectedStaffId?: string
   onSelect: (staff: Staff | null) => void
   title?: string
+  availability?: Record<string, boolean>
 }
 
 const StaffCardList = ({
   staffs,
   selectedStaffId,
   onSelect,
-  title
+  title,
+  availability = {}
 }: Props) => {
   const navigate = useNavigate()
 
@@ -36,29 +38,32 @@ const StaffCardList = ({
       <Stack direction="row" flexWrap="wrap" gap={3}>
         {staffs.map(staff => {
           const isSelected = staff._id === selectedStaffId
+          const isAvailable = availability[staff._id] !== false
 
          
           return (
             <Card
               key={staff._id}
-               onClick={() =>
-  onSelect(isSelected ? null : staff)
-}
+               onClick={() => {
+                  if (!isAvailable) return
+                  onSelect(isSelected ? null : staff)
+                }}
 
              sx={{
-                width: 280,
-                cursor: 'pointer',
-                border: isSelected
-                  ? '2px solid'
-                  : '1px solid #e0e0e0',
-                borderColor: isSelected ? 'primary.main' : '#e0e0e0',
-                boxShadow: isSelected ? 6 : 1,
-                transition: '0.25s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 6
-                }
-              }}
+              width: 280,
+              cursor: isAvailable ? 'pointer' : 'not-allowed',
+              opacity: isAvailable ? 1 : 0.5,
+              border: isSelected ? '2px solid' : '1px solid #e0e0e0',
+              borderColor: isSelected ? 'primary.main' : '#e0e0e0',
+              boxShadow: isSelected ? 6 : 1,
+              transition: '0.25s',
+              '&:hover': isAvailable
+                ? {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 6
+                  }
+                : {}
+            }}
 
             >
               <CardContent>
@@ -92,9 +97,16 @@ const StaffCardList = ({
                     ⭐ {staff.ratingAverage.toFixed(1)} •{' '}
                     {staff.completedBookings} lượt
                   </Typography>
+                {/* Trạng thái */}
+                  {!isAvailable && (
+                    <Chip
+                      label="Đã kín lịch"
+                      color="error"
+                      size="small"
+                    />
+                  )}
 
-                  {/* Trạng thái */}
-                 {isSelected && (
+                  {isAvailable && isSelected && (
                     <Chip
                       label="Đã chọn"
                       color="primary"

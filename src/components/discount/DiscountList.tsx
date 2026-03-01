@@ -16,7 +16,7 @@ export default function DiscountListPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  useEffect(() => { 
     getDiscountCards()
       .then(res => {
         setData(res.filter(d => d.isActive && !d.isDeleted))

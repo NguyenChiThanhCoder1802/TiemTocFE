@@ -1,83 +1,185 @@
-import { Box, Divider, Stack, Typography } from '@mui/material'
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Divider,
+  Stack,
+  Typography
+} from '@mui/material'
+
 import type { User } from '../../types/Auth/User'
 import type { Staff } from '../../types/Staff/Staff'
 import type { Service } from '../../types/HairService/Service'
 
 interface Props {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+  loading?: boolean
+
   user: User
   staff?: Staff | null
-  service?: Service
+  services: Service[]
   startTime: string
   paymentMethod: 'cash' | 'vnpay' | 'momo'
+  totalDuration: number
+  endTime?: string | null
+  originalAmount: number
+  afterServiceDiscount: number
+  discountAmount: number
+  finalAmount: number
+  discountCode?: string | null
 }
 
-export default function BookingReview({
+export default function BookingReviewDialog({
+  open,
+  onClose,
+  onConfirm,
+  loading = false,
   user,
   staff,
-  service,
-  startTime,paymentMethod
+  services,
+  startTime,
+  paymentMethod,
+  totalDuration,
+  endTime,
+  originalAmount,
+  afterServiceDiscount,
+  discountAmount,
+  finalAmount,
+  discountCode
 }: Props) {
-  console.log({ user, staff, service, startTime })
-  if (!user || !service) {
-    return (
-      <Typography color="error">
-        ❌ Thiếu thông tin để xác nhận booking
-      </Typography>
-    )
-  }
+  if (!user || services.length === 0) return null
+
+  
 
   return (
-    <Box p={3} border="1px solid #eee" borderRadius={2}>
-      <Typography variant="h6" fontWeight={600} mb={2}>
-        3. Xác nhận thông tin
-      </Typography>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Xác nhận thông tin</DialogTitle>
 
-      <Stack spacing={1.2}>
-        <Typography>
-          👤 <b>Khách hàng:</b> {user.name} ({user.email})
-        </Typography>
+      <DialogContent dividers>
+        <Stack spacing={1.5}>
+          <Typography>
+            👤 <b>Khách hàng:</b> {user.name} ({user.email})
+          </Typography>
 
-        <Typography>
-          💇 <b>Nhân viên:</b>{' '}
-          {staff
-            ? `${staff.user.name} – ${staff.position}`
-            : 'Hệ thống tự sắp xếp'}
-        </Typography>
+          <Typography>
+            💇 <b>Nhân viên:</b>{' '}
+            {staff
+              ? `${staff.user.name} – ${staff.position}`
+              : 'Hệ thống tự sắp xếp'}
+          </Typography>
 
-        <Divider />
+          <Divider />
 
-        <Typography>
-          💅 <b>Dịch vụ:</b> {service.name}
-        </Typography>
+          <Typography fontWeight={600}>
+            💅 Dịch vụ đã chọn:
+          </Typography>
 
-        <Typography>
-          📂 <b>Danh mục:</b>{' '}
-          {typeof service.category === 'string'
-            ? service.category
-            : service.category.name}
-        </Typography>
+          {services.map(s => (
+            <Box key={s._id} ml={2}>
+              <Typography>
+                • {s.name} – {s.duration} phút
+              </Typography>
+              <Typography>
+                Giá: {s.finalPrice.toLocaleString()}đ
+              </Typography>
+            </Box>
+          ))}
 
-        <Typography>
-          ⏱️ <b>Thời lượng:</b> {service.duration} phút
-        </Typography>
+          <Divider />
 
-        <Typography>
-          💰 <b>Giá:</b>{' '}
-          <s>{service.price.toLocaleString()}đ</s>{' '}
-          <b>{service.finalPrice.toLocaleString()}đ</b>
-        </Typography>
+          <Typography>
+            📅 <b>Bắt đầu:</b>{' '}
+            {new Date(startTime).toLocaleString()}
+          </Typography>
+          <Typography>
+              ⏱ <b>Tổng thời gian:</b> {totalDuration} phút
+            </Typography>
 
-        <Typography>
-          📅 <b>Thời gian:</b> {new Date(startTime).toLocaleString()}
-        </Typography>
-        <Typography>
-          💳 <b>Phương thức thanh toán:</b>{' '}
-          {paymentMethod === 'cash' && 'Thanh toán tại tiệm'}
-          {paymentMethod === 'vnpay' && 'VNPay'}
-          {paymentMethod === 'momo' && 'MoMo'}
-        </Typography>
+            {endTime && (
+              <Typography>
+                🕒 <b>Kết thúc dự kiến:</b>{' '}
+                {new Date(endTime).toLocaleString()}
+              </Typography>
+            )}
+          <Typography>
+            <Divider />
+            💳 <b>Thanh toán:</b>{' '}
+            {paymentMethod === 'cash' && 'Tại tiệm'}
+            {paymentMethod === 'vnpay' && 'VNPay'}
+            {paymentMethod === 'momo' && 'MoMo'}
+          </Typography>
 
-      </Stack>
-    </Box>
+         <Divider sx={{ my: 1 }} />
+
+          <Stack spacing={0.5}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography>Giá gốc</Typography>
+              <Typography>
+                {originalAmount.toLocaleString()}đ
+              </Typography>
+            </Stack>
+            {originalAmount > afterServiceDiscount && (
+            <Stack direction="row" justifyContent="space-between">
+              <Typography color="warning.main">
+                Giảm dịch vụ
+              </Typography>
+              <Typography color="warning.main">
+                -{(originalAmount - afterServiceDiscount).toLocaleString()}đ
+              </Typography>
+            </Stack>
+          )}
+            {discountAmount > 0 && (
+              <>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography color="primary">
+                    Giảm giá {discountCode && `(${discountCode})`}
+                  </Typography>
+                  <Typography color="primary">
+                    -{discountAmount.toLocaleString()}đ
+                  </Typography>
+                </Stack>
+
+               
+              </>
+            )}
+
+            <Divider />
+
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={700}>
+                Tổng thanh toán
+              </Typography>
+              <Typography fontWeight={700} color="primary">
+                {finalAmount.toLocaleString()}đ
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>
+          Huỷ
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={onConfirm}
+          disabled={loading}
+        >
+          {loading ? 'Đang xử lý...' : 'Xác nhận đặt lịch'}
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }

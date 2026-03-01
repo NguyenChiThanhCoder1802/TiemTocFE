@@ -47,46 +47,29 @@ const ComboCard = ({
   /* ================== RENDER ================== */
   return (
     <MotionBox
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, duration: 0.45 }}
+      transition={{ delay: index * 0.06 }}
       sx={{
-        flex: {
-          xs: '1 1 100%',
-          sm: '1 1 calc(50% - 24px)',
-          md: '1 1 calc(25% - 24px)',
-        },
-        maxWidth: {
-          sm: 'calc(50% - 24px)',
-          md: 'calc(25% - 24px)',
-        },
+        width: '100%',
       }}
     >
       <Card
         sx={{
-          borderRadius: 4,
+          borderRadius: 2,
           overflow: 'hidden',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
+          transition: '0.3s',
           height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          border: item.isFeatured ? '2px solid #d2a679' : 'none',
-          boxShadow: item.isFeatured
-            ? '0 12px 32px rgba(210,166,121,0.45)'
-            : '0 8px 24px rgba(0,0,0,0.08)',
-          transition: 'all 0.35s ease',
           '&:hover': {
-            transform: 'translateY(-8px)',
-            boxShadow: item.isFeatured
-              ? '0 18px 42px rgba(210,166,121,0.6)'
-              : '0 16px 36px rgba(0,0,0,0.12)',
-            '& img': {
-              transform: 'scale(1.05)',
-            },
-          },
+            transform: 'translateY(-4px)',
+            boxShadow: '0 10px 24px rgba(0,0,0,0.12)',
+            '& img': { transform: 'scale(1.06)' }
+          }
         }}
       >
         {/* ================== IMAGE ================== */}
-        <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+        <Box sx={{ position: 'relative'}}>
           <Link
             to={`/${linkPrefix}/${item._id}`}
             style={{ textDecoration: 'none' }}
