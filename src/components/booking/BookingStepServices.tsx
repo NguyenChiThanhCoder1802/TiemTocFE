@@ -92,7 +92,7 @@ export default function BookingStepServices({
         mb={2}
       >
         <Typography variant="h6" fontWeight={700}>
-          Chọn dịch vụ
+         3. Chọn dịch vụ
         </Typography>
 
         <Typography

@@ -11,11 +11,6 @@ const statusColorMap: Record<Booking['status'], ChipColor> = {
   cancelled: 'error'
 }
 
-const paymentColorMap: Record<Booking['paymentStatus'], ChipColor> = {
-  unpaid: 'warning',
-  paid: 'success',
-  failed: 'error'
-}
 
 interface Props {
   booking: Booking
@@ -28,9 +23,20 @@ export default function BookingInfoCard({ booking }: Props) {
       : booking.customer
 
   return (
-    <Box p={3} border="1px solid #eee" borderRadius={3}>
+     <Box
+  sx={{
+    p: 3,
+    backgroundColor: '#fff',
+    borderRadius: 1,
+    boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      boxShadow: '0 6px 20px rgba(0,0,0,0.1)'
+    }
+  }}
+>
       <Typography variant="h6" fontWeight={700} mb={2}>
-        Thông tin đơn đặt lịch
+        Thông tin khách đặt lịch
       </Typography>
 
       <Stack spacing={1}>
@@ -54,16 +60,11 @@ export default function BookingInfoCard({ booking }: Props) {
         <Divider sx={{ my: 1 }} />
 
         <Stack direction="row" spacing={2}>
-          <Chip
-            label={booking.status}
-            color={statusColorMap[booking.status]}
-          />
-
-          <Chip
-            label={booking.paymentStatus}
-            color={paymentColorMap[booking.paymentStatus]}
-          />
-        </Stack>
+        <Chip
+          label={booking.status}
+          color={statusColorMap[booking.status]}
+        />
+      </Stack>
       </Stack>
     </Box>
   )

@@ -1,15 +1,9 @@
 /* ================== SUB TYPES ================== */
 export interface ComboIncludedService {
-  service:
-    | string
-    | {
-        _id: string
-        name: string
-        price: number
-        finalPrice: number
-        duration: number
-      }
-  quantity: number
+  service: string
+    nameSnapshot: string
+  unitPriceSnapshot: number
+  durationSnapshot: number
 }
 
 export interface ComboPricing {

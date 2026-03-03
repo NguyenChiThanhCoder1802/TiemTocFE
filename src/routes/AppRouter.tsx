@@ -29,7 +29,7 @@ import DiscountListPage from '../components/discount/DiscountList';
 import BookingHistory from '../pages/customer/Booking/BookingHistory';
 import BookingDetailPage from '../pages/DetailPage/BookingDetailPage';
 import FavoriteServicesPage from '../pages/customer/Profile/FavoriteServicesPage';
-import PaymentResultPage from '../components/payment/PaymentResultPage';
+import PaymentResultPage from '../components/booking/payment/PaymentResultPage';
 import BookingSuccessPage from '../components/booking/BookingSuccessPage';
 import PaymentHistory from '../pages/customer/Payment/PaymentHistory';
 import BookingCreatePage from '../pages/customer/Booking/BookingCreatePage';
@@ -66,15 +66,15 @@ const AppRouter = () => {
       </Route>
       {/* Có Header/Footer */}
       <Route element={<MainLayout />}>
-       
+
         <Route path="/services" element={<ServicesPage />} />
-     
+
         <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
 
-        <Route path="/combos/:id" element={<ComboServiceDetailPage />} /> 
+        <Route path="/combos/:id" element={<ComboServiceDetailPage />} />
         {/* <Route path="/customer/booking" element={<BookingPage />} /> */}
         <Route path="/discounts" element={<DiscountListPage />} />
         {/* <Route path="/customer/booking/:serviceId" element={<BookingForm />} /> */}

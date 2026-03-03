@@ -7,9 +7,9 @@ import {
   Radio
 } from '@mui/material'
 
-import type { PaymentMethod } from '../../types/Payment/Payment'
-import cashIcon from '../../assets/paymentIcons/tienmat.png'
-import vnpayIcon from '../../assets/paymentIcons/nganhang.png'
+import type { PaymentMethod } from '../../../types/Payment/Payment'
+import cashIcon from '../../../assets/paymentIcons/tienmat.png'
+import vnpayIcon from '../../../assets/paymentIcons/nganhang.png'
 
 interface Props {
   value: PaymentMethod
@@ -27,9 +27,9 @@ export default function PaymentMethodSelect({ value, onChange }: Props) {
         border: '1px solid #eee'
       }}
     >
-       <Typography variant="h6" fontWeight={600}>
-          5. Chọn Phương thức thanh toán
-        </Typography>
+      <Typography variant="h6" fontWeight={600}>
+        5. Chọn Phương thức thanh toán
+      </Typography>
 
       <RadioGroup
         value={value}
@@ -72,7 +72,7 @@ export default function PaymentMethodSelect({ value, onChange }: Props) {
           <FormControlLabel
             value="momo"
             control={<Radio />}
-            label="📱 Ví MoMo (sắp ra mắt)"
+            label=" Ví MoMo (sắp ra mắt)"
             disabled
           />
 

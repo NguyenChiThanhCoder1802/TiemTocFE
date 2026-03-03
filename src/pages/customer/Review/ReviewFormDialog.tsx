@@ -20,9 +20,13 @@ interface ReviewFormDialogProps {
   open: boolean
   onClose: () => void
   onSuccess: () => void
+  onError?: (message: string) => void
   serviceId?: string
   staffId?: string
+  bookingId?: string
   review?: Review
+  serviceName?: string
+  staffName?: string
 }
 
 
@@ -31,8 +35,12 @@ const ReviewFormDialog = ({
   onClose,
   serviceId,
   staffId,
+  bookingId,
   onSuccess,
+  onError,
   review,
+   serviceName,
+  staffName
 }: ReviewFormDialogProps) => {
   const [rating, setRating] = useState<number>(0)
   const [comment, setComment] = useState<string>('')
@@ -72,7 +80,9 @@ const ReviewFormDialog = ({
 
   const handleSubmit = async () => {
   const formData = new FormData()
-
+   if (bookingId) {
+  formData.append('booking', bookingId)
+}
   if (serviceId) formData.append('service', serviceId)
   if (staffId) formData.append('staff', staffId)
 
@@ -90,16 +100,35 @@ const ReviewFormDialog = ({
     }
     onSuccess()
     onClose()
+  } catch (error: any) {
+    const message =
+      error?.response?.data?.message || 'Có lỗi xảy ra'
+    if (onError) {
+      onError(message)
+    }
+
   } finally {
     setLoading(false)
   }
 }
 
+const getTitle = () => {
+  const targetName = serviceName || staffName || ''
 
+  if (staffId) {
+    return isEdit
+      ? `Chỉnh sửa đánh giá nhân viên - ${targetName}`
+      : `Đánh giá nhân viên - ${targetName}`
+  }
+
+  return isEdit
+    ? `Chỉnh sửa đánh giá dịch vụ - ${targetName}`
+    : `Đánh giá dịch vụ - ${targetName}`
+}
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {isEdit ? 'Chỉnh sửa đánh giá' : 'Đánh giá dịch vụ'}
+       {getTitle()}
       </DialogTitle>
 
       <DialogContent>

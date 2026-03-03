@@ -44,11 +44,11 @@ export default function BookingDetailPage() {
 
     const fetchBooking = async () => {
       if (!id) return
-
+      
       try {
         const data = await getBookingDetail(id)
         if (mounted) setBooking(data)
-      } catch (err) {
+      } catch {
         if (mounted) setError('Không thể tải dữ liệu')
       } finally {
         if (mounted) setLoading(false)
@@ -112,7 +112,7 @@ export default function BookingDetailPage() {
       <Stack spacing={3}>
 
         {/* HEADER */}
-        <Typography variant="h5" fontWeight={700}>
+        <Typography variant="h5" fontWeight={700} >
           Chi tiết đặt lịch
         </Typography>
 

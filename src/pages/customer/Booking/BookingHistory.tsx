@@ -37,8 +37,10 @@ const STATUS_TABS: { label: string; value: BookingStatus }[] = [
 
 const statusColorMap: Record<BookingStatus, ChipColor> = {
   pending: 'warning',
+  in_progress: 'primary',
   confirmed: 'info',
   completed: 'success',
+  no_show: 'default',
   cancelled: 'error'
 }
 

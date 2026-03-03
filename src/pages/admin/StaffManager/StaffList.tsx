@@ -118,7 +118,7 @@ const StaffList = () => {
               {/* Online */}
               <TableCell>
                 {staff.user.isOnline ? (
-                  <Chip label="Online" color="success" size="small" />
+                  <Chip label="Online" color="primary" size="small" />
                 ) : (
                   <Chip label="Offline" size="small" />
                 )}

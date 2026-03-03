@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import {
   fetchReviewsByService,
   fetchReviewsByStaff,
+  fetchReviewsByBooking,
   deleteReview
 } from '../api/ReviewAPI'
 import type { Review } from '../types/Review/Review'
@@ -9,9 +10,10 @@ import type { Review } from '../types/Review/Review'
 interface UseReviewParams {
   serviceId?: string
   staffId?: string
+  bookingId?:string
 }
 
-export function useReview({ serviceId, staffId }: UseReviewParams) {
+export function useReview({ serviceId, staffId ,bookingId}: UseReviewParams) {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(false)
   const [editReview, setEditReview] = useState<Review | null>(null)
@@ -23,12 +25,14 @@ export function useReview({ serviceId, staffId }: UseReviewParams) {
         ? await fetchReviewsByService(serviceId)
         : staffId
         ? await fetchReviewsByStaff(staffId)
+        : bookingId
+        ? await fetchReviewsByBooking(bookingId)
         : []
       setReviews(data)
     } finally {
       setLoading(false)
     }
-  }, [serviceId, staffId])
+  }, [serviceId, staffId, bookingId])
 
   const removeReview = async (id: string) => {
     if (!confirm('Bạn chắc chắn muốn xoá đánh giá này?')) return

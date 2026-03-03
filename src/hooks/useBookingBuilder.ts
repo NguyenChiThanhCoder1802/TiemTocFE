@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import type { Staff } from '../types/Staff/Staff'
 import type { Service } from '../types/HairService/Service'
 import type { PaymentMethod } from '../types/Payment/Payment'
-import { getAvailableServices } from '../api/servicesAPI'
+import { fetchServices } from '../api/servicesAPI'
 import { fetchPublicStaffs } from '../api/staffAPI'
 import { checkAllStaffAvailability, previewBooking } from '../api/BookingAPI'
 
@@ -92,30 +92,22 @@ export function useBookingBuilder() {
     checkAvailability()
   }, [startTime, selectedServices])
 
-  /* ================= LOAD AVAILABLE SERVICES ================= */
-  useEffect(() => {
-    if (!startTime) return
-
-    const loadServices = async () => {
-      try {
-        setLoadingServices(true)
-
-        const res = await getAvailableServices({
-          startTime,
-          staffId: selectedStaff?._id
-        })
-
-        setAvailableServices(res)
-        setSelectedServices([])
-      } catch (error) {
-        console.error('Load services failed', error)
-      } finally {
-        setLoadingServices(false)
-      }
+ /* ================= LOAD SERVICES ================= */
+useEffect(() => {
+  const loadServices = async () => {
+    try {
+      setLoadingServices(true)
+      const data = await fetchServices()
+      setAvailableServices(data)
+    } catch (error) {
+      console.error('Load services failed', error)
+    } finally {
+      setLoadingServices(false)
     }
+  }
 
-    loadServices()
-  }, [startTime, selectedStaff])
+  loadServices()
+}, [])
 
   /* ================= PREVIEW PRICE ================= */
   useEffect(() => {

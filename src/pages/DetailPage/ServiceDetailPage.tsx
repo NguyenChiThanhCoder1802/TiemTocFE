@@ -26,7 +26,6 @@ import { fetchServiceBySlug } from '../../api/servicesAPI'
 
 import type { Service } from '../../types/HairService/Service'
 import ReviewList from '../../pages/customer/Review/ReviewList'
-import ReviewFormDialog from '../../pages/customer/Review/ReviewFormDialog'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import { toggleFavoriteService } from '../../api/UserAPI'
@@ -57,8 +56,6 @@ const ServiceDetailPage = () => {
 
   const [service, setService] = useState<Service | null>(null)
   const [loading, setLoading] = useState(true)
-  const [openReview, setOpenReview] = useState(false)
-  const [reloadKey, setReloadKey] = useState(0)
   const [relatedServices, setRelatedServices] = useState<ServiceCard[]>([])
 const [loadingRelated, setLoadingRelated] = useState(true)
 const { user } = useAuth()
@@ -91,8 +88,6 @@ const [favLoading, setFavLoading] = useState(false)
     user.favoriteServices?.includes(service._id) ?? false
   )
 }, [service, user])
-
-  const reloadReviews = () => setReloadKey(k => k + 1)
   const handleToggleFavorite = async () => {
   if (!user) {
     navigate('/login')
@@ -393,24 +388,12 @@ const [favLoading, setFavLoading] = useState(false)
             Đánh giá từ khách hàng
           </Typography>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setOpenReview(true)}
-            sx={{ borderRadius: 3, fontWeight: 600 }}
-          >
-            Viết đánh giá
-          </Button>
+          
         </Box>
 
-        <ReviewList serviceId={service._id} reloadKey={reloadKey} />
+        <ReviewList serviceId={service._id}/>
 
-        <ReviewFormDialog
-          open={openReview}
-          onClose={() => setOpenReview(false)}
-          serviceId={service._id}
-          onSuccess={reloadReviews}
-        />
+        
       </Box> 
       {relatedServices.length > 0 && (
       <Box mt={8}>

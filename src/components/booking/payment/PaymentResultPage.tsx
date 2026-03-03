@@ -11,9 +11,9 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ErrorIcon from '@mui/icons-material/Error'
 
-import BookingDetailResult from '../../components/booking/BookingDetailResult'
-import { useBookingDetail } from '../../hooks/useBookingDetail'
- import { useMyLatestBooking } from '../../hooks/useMyLatestBooking.ts'
+import BookingDetailResult from '../BookingDetailResult.tsx'
+import { useBookingDetail } from '../../../hooks/useBookingDetail.ts'
+import { useMyLatestBooking } from '../../../hooks/useMyLatestBooking.ts'
 
 export default function PaymentResultPage() {
   const [params] = useSearchParams()
@@ -28,12 +28,6 @@ export default function PaymentResultPage() {
   const bookingId = params.get('bookingId')
 
   const isSuccess = status === 'success'
-
-  /**
-   * Ưu tiên:
-   * 1️⃣ bookingId (nếu VNPay return có)
-   * 2️⃣ booking mới nhất (cash / fallback)
-   */
   const {
     booking: bookingById,
     loading: loadingById
@@ -68,8 +62,8 @@ export default function PaymentResultPage() {
       >
         <Typography fontWeight={600}>
           {isSuccess
-            ? 'Thanh toán thành công 🎉'
-            : 'Thanh toán thất bại ❌'}
+            ? 'Thanh toán thành công '
+            : 'Thanh toán thất bại'}
         </Typography>
         <Typography variant="body2">
           {isSuccess

@@ -11,18 +11,12 @@ import {
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
-import StarIcon from '@mui/icons-material/Star'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import LayersIcon from '@mui/icons-material/Layers'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import LayersIcon from '@mui/icons-material/Layers'
 
 import { fetchComboById } from '../../api/ComboAPI'
 import type { Combo } from '../../types/Combo/Combo'
 
-/* ================= COMPONENT ================= */
 const ComboServiceDetailPage = () => {
   const { id } = useParams<{ id: string }>()
   const theme = useTheme()
@@ -44,20 +38,13 @@ const ComboServiceDetailPage = () => {
     loadCombo()
   }, [id])
 
-  /* ================= DISCOUNT ================= */
-  const discountPercent = useMemo(() => {
+  /* ================= TÍNH TỔNG GIÁ GỐC ================= */
+  const originalTotal = useMemo(() => {
     if (!combo) return 0
-    const { originalPrice, comboPrice } = combo.pricing
-    if (!originalPrice || originalPrice <= comboPrice) return 0
-    return Math.round(
-      ((originalPrice - comboPrice) / originalPrice) * 100
+    return combo.services.reduce(
+      (sum, s) => sum + s.unitPriceSnapshot,
+      0
     )
-  }, [combo])
-
-  /* ================= HOT ================= */
-  const isHot = useMemo(() => {
-    if (!combo) return false
-    return combo.stats.bookingCount > 20 || combo.popularityScore > 50
   }, [combo])
 
   /* ================= LOADING ================= */
@@ -79,112 +66,40 @@ const ComboServiceDetailPage = () => {
 
   return (
     <Container sx={{ mt: 6, mb: 10 }}>
-      {/* ================= TOP ================= */}
       <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={5}>
-        {/* ================= IMAGE ================= */}
+        
+        {/* IMAGE */}
         <Box flex={1}>
-          <Box position="relative">
-            <Box
-              component="img"
-              src={combo.images?.[0] || '/placeholder.png'}
-              alt={combo.name}
-              sx={{
-                width: '100%',
-                height: 420,
-                objectFit: 'cover',
-                borderRadius: 4,
-                boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
-              }}
-            />
-
-            {/* BADGES */}
-            <Stack
-              direction="row"
-              spacing={1}
-              position="absolute"
-              top={16}
-              left={16}
-            >
-              {combo.isFeatured && (
-                <Chip
-                  icon={<WorkspacePremiumIcon />}
-                  label="FEATURED"
-                  sx={{ bgcolor: '#000', color: '#fff', fontWeight: 600 }}
-                />
-              )}
-
-              {isHot && (
-                <Chip
-                  icon={<LocalFireDepartmentIcon />}
-                  label="HOT"
-                  sx={{ bgcolor: '#e53935', color: '#fff', fontWeight: 600 }}
-                />
-              )}
-
-              {discountPercent > 0 && (
-                <Chip
-                  label={`-${discountPercent}%`}
-                  sx={{
-                    bgcolor: theme.palette.primary.main,
-                    color: '#fff',
-                    fontWeight: 700,
-                  }}
-                />
-              )}
-            </Stack>
-
-            {/* SERVICE COUNT */}
-            <Chip
-              icon={<LayersIcon />}
-              label={`${combo.services.length} dịch vụ`}
-              sx={{
-                position: 'absolute',
-                bottom: 16,
-                left: 16,
-                bgcolor: 'rgba(255,255,255,0.9)',
-                fontWeight: 600,
-              }}
-            />
-          </Box>
+          <Box
+            component="img"
+            src={combo.images?.[0] || '/placeholder.png'}
+            alt={combo.name}
+            sx={{
+              width: '100%',
+              height: 420,
+              objectFit: 'cover',
+              borderRadius: 3,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            }}
+          />
         </Box>
 
-        {/* ================= INFO ================= */}
+        {/* INFO */}
         <Box flex={1}>
           <Typography variant="h4" fontWeight={700} gutterBottom>
             {combo.name}
           </Typography>
 
-          {/* STATS */}
-          <Stack direction="row" spacing={2} mb={2} alignItems="center">
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <StarIcon sx={{ color: '#f5a623' }} />
-              <Typography fontWeight={600}>
-                {combo.rating.average.toFixed(1)}
-              </Typography>
-              <Typography color="text.secondary">
-                ({combo.rating.count})
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <VisibilityIcon />
-              <Typography color="text.secondary">
-                {combo.stats.viewCount}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <CalendarMonthIcon />
-              <Typography color="text.secondary">
-                {combo.stats.bookingCount} đã đặt
-              </Typography>
-            </Stack>
-          </Stack>
+          {/* CATEGORY */}
+          {combo.category && (
+            <Typography color="text.secondary" mb={1}>
+              {combo.category}
+            </Typography>
+          )}
 
           {/* PRICE */}
           <Box mb={2}>
-            {combo.pricing.originalPrice >
-              combo.pricing.comboPrice && (
+            {originalTotal > combo.pricing.comboPrice && (
               <Typography
                 sx={{
                   textDecoration: 'line-through',
@@ -192,7 +107,7 @@ const ComboServiceDetailPage = () => {
                   fontSize: 14,
                 }}
               >
-                {combo.pricing.originalPrice.toLocaleString()}₫
+                {originalTotal.toLocaleString()}₫
               </Typography>
             )}
 
@@ -216,13 +131,22 @@ const ComboServiceDetailPage = () => {
               label={`${combo.services.length} dịch vụ`}
             />
           </Stack>
+
+          {/* TAGS */}
+          {combo.tags?.length > 0 && (
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+              {combo.tags.map((tag, index) => (
+                <Chip key={index} label={tag} size="small" />
+              ))}
+            </Stack>
+          )}
         </Box>
       </Box>
 
-      {/* ================= DESCRIPTION ================= */}
+      {/* DESCRIPTION */}
       <Box mt={6}>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="h5" fontWeight={600} gutterBottom>
+        <Typography variant="h6" fontWeight={600} gutterBottom>
           Mô tả combo
         </Typography>
         <Typography color="text.secondary" lineHeight={1.8}>
@@ -230,39 +154,55 @@ const ComboServiceDetailPage = () => {
         </Typography>
       </Box>
 
-      {/* ================= SERVICES ================= */}
+      {/* SERVICES SNAPSHOT */}
       <Box mt={6}>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="h5" fontWeight={600} gutterBottom>
+        <Typography variant="h6" fontWeight={600} gutterBottom>
           Dịch vụ trong combo
         </Typography>
 
-        <Stack spacing={1.5}>
-          {combo.services.map((item, index) => {
-            const service =
-              typeof item.service === 'string'
-                ? null
-                : item.service
+        <Stack spacing={2}>
+          {combo.services.map((item, index) => (
+            <Stack
+              key={index}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                bgcolor: '#f9f9f9'
+              }}
+            >
+              <Box>
+                <Typography fontWeight={600}>
+                  {item.nameSnapshot}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {item.durationSnapshot} phút
+                </Typography>
+              </Box>
 
-            return (
-              <Stack
-                key={index}
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography>
-                  {service?.name ?? 'Dịch vụ'}
-                  {item.quantity > 1 && ` x${item.quantity}`}
-                </Typography>
-                <Typography color="text.secondary">
-                  {service?.finalPrice?.toLocaleString()}₫
-                </Typography>
-              </Stack>
-            )
-          })}
+              <Typography fontWeight={600}>
+                {item.unitPriceSnapshot.toLocaleString()}₫
+              </Typography>
+            </Stack>
+          ))}
         </Stack>
       </Box>
+
+      {/* ACTIVE PERIOD */}
+      {combo.activePeriod && (
+        <Box mt={6}>
+          <Divider sx={{ mb: 3 }} />
+          <Typography variant="body2" color="text.secondary">
+            Áp dụng từ{' '}
+            {new Date(combo.activePeriod.startAt).toLocaleDateString()} 
+            {' '}đến{' '}
+            {new Date(combo.activePeriod.endAt).toLocaleDateString()}
+          </Typography>
+        </Box>
+      )}
     </Container>
   )
 }

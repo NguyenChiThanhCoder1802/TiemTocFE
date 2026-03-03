@@ -30,7 +30,7 @@ export default function BookingSuccessPage() {
   return (
     <Box maxWidth={720} mx="auto" mt={4}>
       <Typography variant="h5" mb={3} fontWeight={600}>
-        🎉 Đặt lịch thành công!
+         Đặt lịch thành công!
       </Typography>
 
       <BookingDetailResult booking={booking} />

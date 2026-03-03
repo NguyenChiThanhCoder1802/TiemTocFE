@@ -27,7 +27,14 @@ export const fetchMyReviews = async () => {
   const res = await axiosInstance.get('/reviews/me')
   return res.data.data
 }
-
+export const fetchReviewsByBooking = async (
+  bookingId: string
+): Promise<Review[]> => {
+  const res = await axiosInstance.get<ApiResponse<Review[]>>(
+    `${BASE_URL}/booking/${bookingId}`
+  )
+  return res.data.data
+}
 /* ======================
    CREATE REVIEW
 ====================== */

@@ -5,7 +5,9 @@ import type { Payment } from '../Payment/Payment'
 export type BookingStatus =
   | 'pending'
   | 'confirmed'
+  | 'in_progress'
   | 'completed'
+  | 'no_show'
   | 'cancelled'
 export type BookingPaymentStatus =
   | 'unpaid'
@@ -17,6 +19,7 @@ export type BookingType = 'service' | 'combo'
 export interface BookingServiceItem {
   service: string
  nameSnapshot?: string
+ slugSnapshot?: string
   originalPriceSnapshot?: number
   serviceDiscountPercent?: number
   priceAfterServiceDiscount?: number

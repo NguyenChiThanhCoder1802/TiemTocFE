@@ -1,7 +1,8 @@
 import axiosInstance from "../utils/axiosInstance"
 import type { ApiResponse } from "../types/ApiResponse"
 import type { AdminDashboardStat } from "../types/Admin/stat"
-import type { Booking } from "../types/Booking/Booking"
+// import type { Booking } from "../types/Booking/Booking"
+import type { AdminBooking } from "../types/Booking/AdminBooking"
 /* ================= ADMIN API ================= */
 
 export const getAdminDashboardStat = async () => {
@@ -20,20 +21,20 @@ export const getStaffListApi = (onlyOnline = false) => {
 export const approveStaffApi = (userId: string) => {
   return axiosInstance.post(`/admin/staffs/${userId}/approve`)
 }
+
+
 export const getAllBookingsApi = async (params?: {
   status?: string
-  date?: string
   page?: number
   limit?: number
 }) => {
- const res = await axiosInstance.get<ApiResponse<{
-    data: Booking[]
+  const res = await axiosInstance.get<{
+    data: AdminBooking[]
     pagination: any
-  }>>("/admin/bookings", { params })
+  }>("/admin/bookings", { params })
 
-  return res.data.data
+  return res.data
 }
-
 /** Duyệt booking */
 export const approveBookingApi = (bookingId: string) => {
   return axiosInstance.patch(`/admin/bookings/${bookingId}/approve`)

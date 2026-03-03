@@ -68,11 +68,11 @@ export default function BookingReviewDialog({
       <DialogContent dividers>
         <Stack spacing={1.5}>
           <Typography>
-            👤 <b>Khách hàng:</b> {user.name} ({user.email})
+             <b>Khách hàng:</b> {user.name} ({user.email})
           </Typography>
 
           <Typography>
-            💇 <b>Nhân viên:</b>{' '}
+             <b>Nhân viên:</b>{' '}
             {staff
               ? `${staff.user.name} – ${staff.position}`
               : 'Hệ thống tự sắp xếp'}
@@ -81,7 +81,7 @@ export default function BookingReviewDialog({
           <Divider />
 
           <Typography fontWeight={600}>
-            💅 Dịch vụ đã chọn:
+             Dịch vụ đã chọn:
           </Typography>
 
           {services.map(s => (
@@ -98,25 +98,44 @@ export default function BookingReviewDialog({
           <Divider />
 
           <Typography>
-            📅 <b>Bắt đầu:</b>{' '}
+             <b>Bắt đầu:</b>{' '}
             {new Date(startTime).toLocaleString()}
           </Typography>
           <Typography>
-              ⏱ <b>Tổng thời gian:</b> {totalDuration} phút
+               <b>Tổng thời gian:</b> {totalDuration} phút
             </Typography>
 
             {endTime && (
               <Typography>
-                🕒 <b>Kết thúc dự kiến:</b>{' '}
+                 <b>Kết thúc dự kiến:</b>{' '}
                 {new Date(endTime).toLocaleString()}
               </Typography>
             )}
+            <Divider sx={{ my: 1 }} />
           <Typography>
-            <Divider />
-            💳 <b>Thanh toán:</b>{' '}
+             <b>Thanh toán:</b>{' '}
             {paymentMethod === 'cash' && 'Tại tiệm'}
             {paymentMethod === 'vnpay' && 'VNPay'}
             {paymentMethod === 'momo' && 'MoMo'}
+            {paymentMethod === 'vnpay' && (
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: 'warning',
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'warning.main'
+                }}
+              >
+                <Typography fontWeight={600}>
+                  ⚠️ Bạn chưa bị trừ tiền ở bước này
+                </Typography>
+                <Typography variant="body2">
+                  Sau khi xác nhận, bạn sẽ được chuyển đến cổng thanh toán VNPay
+                  để hoàn tất giao dịch.
+                </Typography>
+              </Box>
+            )}
           </Typography>
 
          <Divider sx={{ my: 1 }} />
@@ -173,12 +192,16 @@ export default function BookingReviewDialog({
         </Button>
 
         <Button
-          variant="contained"
-          onClick={onConfirm}
-          disabled={loading}
-        >
-          {loading ? 'Đang xử lý...' : 'Xác nhận đặt lịch'}
-        </Button>
+            variant="contained"
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {loading
+              ? 'Đang xử lý...'
+              : paymentMethod === 'vnpay'
+                ? 'Thực hiện thanh toán'
+                : 'Xác nhận đặt lịch'}
+          </Button>
       </DialogActions>
     </Dialog>
   )

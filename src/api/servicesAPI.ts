@@ -159,22 +159,4 @@ export const fetchServiceStatistics = async () => {
   const res = await axiosInstance.get(`${BASE_URL}/statistics`)
   return res.data.data
 }
-interface GetAvailableServicesParams {
-  startTime: string
-  staffId?: string
-}
 
-export const getAvailableServices = async (
-  params: GetAvailableServicesParams
-): Promise<Service[]> => {
-  const res = await axiosInstance.get<
-    ApiResponse<Service[]>
-  >(`${BASE_URL}/available`, {
-    params: {
-      startTime: params.startTime,
-      ...(params.staffId && { staffId: params.staffId })
-    }
-  })
-
-  return res.data.data
-}

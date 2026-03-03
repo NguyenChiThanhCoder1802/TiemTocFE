@@ -69,7 +69,7 @@ export function DiscountTable({
                   onChange={(e) =>
                     onToggleActive(d._id, e.target.checked)
                   }
-                  color="success"
+                  color="primary"
                 />
               </Tooltip>
             </TableCell>

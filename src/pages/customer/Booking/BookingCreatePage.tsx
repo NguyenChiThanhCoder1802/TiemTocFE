@@ -14,7 +14,7 @@ import BookingStepTime from '../../../components/booking/BookingStepTime'
 import BookingStepStaff from '../../../components/booking/BookingStepStaff'
 import BookingStepServices from '../../../components/booking/BookingStepServices'
 import DiscountSection from '../../../components/booking/DiscountSelector/DiscountSelector'
-import PaymentMethodSelect from '../../../components/payment/PaymentMethodSelect'
+import PaymentMethodSelect from '../../../components/booking/payment/PaymentMethodSelect'
 import BookingSummaryPanel from '../../../components/booking/BookingSummaryPanel'
 
 import { createBooking } from '../../../api/BookingAPI'
@@ -220,7 +220,7 @@ export default function BookingCreatePage() {
             endTime={builder.endTime}
           />
 
-        
+
           <Button
             fullWidth
             variant="contained"
