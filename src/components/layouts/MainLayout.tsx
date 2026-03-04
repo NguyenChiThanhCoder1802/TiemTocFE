@@ -6,8 +6,10 @@ const MainLayout = () => {
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <Header />
+      
       <Box component="main" flex={1} p={2}>
         <Outlet />
+        
       </Box>
       <Footer />
     </Box>

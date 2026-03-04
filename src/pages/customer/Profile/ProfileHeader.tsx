@@ -16,7 +16,7 @@ const ProfileHeader = ({ activeTab, onTabChange }: ProfileHeaderProps) => {
   if (!user) return null
 
   return (
-    <Box sx={{ bgcolor: '#f5f5f5', pb: 3, borderRadius: 3 }}>
+    <Box sx={{ bgcolor: '#f0f0ed',mt:8, pb: 3, borderRadius: 3 }}>
       <AvatarSection user={user} />
 
       <Box textAlign="center" mt={1}>
