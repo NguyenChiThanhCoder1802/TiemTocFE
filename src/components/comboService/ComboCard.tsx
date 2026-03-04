@@ -3,16 +3,15 @@ import {
   Typography,
   Card,
   CardMedia,
-  CardContent,
-  CardActions,
-  Button,
 } from '@mui/material'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import type { Combo } from '../../types/Combo/Combo'
-import VisibilityIcon from '@mui/icons-material/Visibility'
+
 import StarIcon from '@mui/icons-material/Star'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 
 const MotionBox = motion(Box)
 
@@ -20,18 +19,16 @@ interface ComboCardProps {
   item: Combo
   index: number
   linkPrefix: string
-  onBookNow?: (comboId: string) => void
 }
 
 const ComboCard = ({
   item,
   index,
   linkPrefix,
-  onBookNow,
 }: ComboCardProps) => {
   const imageUrl = item.images?.[0] || '/placeholder.png'
 
-  /* ================== CALCULATIONS ================== */
+  /* ================= DISCOUNT LOGIC (GIỮ NGUYÊN) ================= */
   const discountAmount =
     item.pricing.originalPrice - item.pricing.comboPrice
 
@@ -44,15 +41,12 @@ const ComboCard = ({
 
   const serviceCount = item.services.length
 
-  /* ================== RENDER ================== */
   return (
     <MotionBox
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      sx={{
-        width: '100%',
-      }}
+      sx={{ width: '100%' }}
     >
       <Card
         sx={{
@@ -61,6 +55,8 @@ const ComboCard = ({
           boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
           transition: '0.3s',
           height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
           '&:hover': {
             transform: 'translateY(-4px)',
             boxShadow: '0 10px 24px rgba(0,0,0,0.12)',
@@ -68,60 +64,47 @@ const ComboCard = ({
           }
         }}
       >
-        {/* ================== IMAGE ================== */}
-        <Box sx={{ position: 'relative'}}>
-          <Link
-            to={`/${linkPrefix}/${item._id}`}
-            style={{ textDecoration: 'none' }}
-          >
+        {/* ================= IMAGE ================= */}
+        <Box sx={{ position: 'relative' }}>
+          <Link to={`/${linkPrefix}/${item.slug}`}>
             <CardMedia
               component="img"
               image={imageUrl}
               alt={item.name}
               sx={{
-                height: 220,
+                height: 200,
                 objectFit: 'cover',
-                transition: 'transform 0.5s ease',
+                transition: 'transform 0.5s ease'
               }}
             />
           </Link>
 
-          {/* Gradient overlay */}
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              background:
-                'linear-gradient(to top, rgba(0,0,0,0.35), transparent 60%)',
-            }}
-          />
-
-          {/* 🔥 DISCOUNT PERCENT */}
+          {/* BADGE GIẢM GIÁ */}
           {discountPercent > 0 && (
             <Box
               sx={{
                 position: 'absolute',
                 top: 12,
                 left: 12,
-                bgcolor: 'primary.main',
-                color: '#fff',
-                px: 1.2,
-                py: 0.4,
-                borderRadius: 2,
-                fontSize: 13,
+                px: 1.1,
+                py: 0.3,
+                borderRadius: 6,
+                fontSize: 11,
                 fontWeight: 700,
+                color: '#fff',
+                backgroundColor: '#dc7f06',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.25)'
               }}
             >
-              <LocalOfferIcon sx={{ fontSize: 16 }} />
+              <LocalOfferIcon sx={{ fontSize: 14 }} />
               -{discountPercent}%
             </Box>
           )}
 
-          {/* 💰 SAVE AMOUNT */}
+          {/* TIẾT KIỆM */}
           {discountAmount > 0 && (
             <Box
               sx={{
@@ -130,143 +113,115 @@ const ComboCard = ({
                 left: 12,
                 bgcolor: 'rgba(0,0,0,0.75)',
                 color: '#fff',
-                px: 1.2,
-                py: 0.4,
+                px: 1,
+                py: 0.3,
                 borderRadius: 2,
-                fontSize: 12,
-                fontWeight: 600,
+                fontSize: 11,
+                fontWeight: 600
               }}
             >
               Tiết kiệm{' '}
               {new Intl.NumberFormat('vi-VN').format(discountAmount)}đ
             </Box>
           )}
-
-          {/* ⭐ FEATURED */}
-          {item.isFeatured && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 12,
-                right: 12,
-                bgcolor: '#d2a679',
-                color: '#000',
-                px: 1.2,
-                py: 0.4,
-                borderRadius: 2,
-                fontSize: 13,
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-              }}
-            >
-              <StarIcon sx={{ fontSize: 16 }} />
-              Nổi bật
-            </Box>
-          )}
         </Box>
 
-        {/* ================== CONTENT ================== */}
-        <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-          <Typography variant="h6" fontWeight={600} noWrap>
-            {item.name}
-          </Typography>
-
-          {item.description && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              noWrap
-              sx={{ mt: 0.5 }}
-            >
-              {item.description}
-            </Typography>
-          )}
-
-          {/* PRICE */}
-          <Box sx={{ mt: 1 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                textDecoration: 'line-through',
-                color: 'text.secondary',
-              }}
-            >
-              {new Intl.NumberFormat('vi-VN').format(
-                item.pricing.originalPrice
-              )}
-              đ
+        {/* ================= INFO ================= */}
+        <Box sx={{ p: 2, flexGrow: 1 }}>
+          {/* NAME + PRICE */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1
+            }}
+          >
+            <Typography fontWeight={600} noWrap sx={{ flex: 1 }}>
+              {item.name}
             </Typography>
 
             <Typography
-              variant="h6"
               fontWeight={700}
-              color="primary.main"
+              sx={{
+                color: 'primary.main',
+                whiteSpace: 'nowrap'
+              }}
             >
               {new Intl.NumberFormat('vi-VN').format(
                 item.pricing.comboPrice
-              )}
-              đ
-            </Typography>
-
-            {/* SERVICE COUNT */}
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ mt: 0.5 }}
-            >
-              {serviceCount} dịch vụ • {item.duration} phút
-            </Typography>
-          </Box>
-        </CardContent>
-
-        {/* ================== RATING + VIEW ================== */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 1.5,
-            mb: 1,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-            <StarIcon sx={{ fontSize: 18, color: '#f5a623' }} />
-            <Typography variant="body2" fontWeight={600}>
-              {item.rating.average.toFixed(1)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              ({item.rating.count})
+              )}đ
             </Typography>
           </Box>
 
-          <Typography color="text.secondary">•</Typography>
+          {/* GIÁ GỐC */}
+          <Typography
+            variant="body2"
+            sx={{
+              textDecoration: 'line-through',
+              color: 'text.secondary',
+              mt: 0.5
+            }}
+          >
+            {new Intl.NumberFormat('vi-VN').format(
+              item.pricing.originalPrice
+            )}đ
+          </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-            <VisibilityIcon sx={{ fontSize: 18 }} />
-            <Typography variant="body2" color="text.secondary">
-              {item.stats.viewCount}
-            </Typography>
+          {/* META */}
+          <Box
+            sx={{
+              mt: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 1.2,
+              color: 'text.secondary'
+            }}
+          >
+            {/* Rating */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <StarIcon sx={{ fontSize: 16, color: '#f5a623' }} />
+              <Typography variant="body2" fontWeight={600}>
+                {item.rating.average.toFixed(1)}
+              </Typography>
+              <Typography variant="caption">
+                ({item.rating.count})
+              </Typography>
+            </Box>
+
+            <Typography>•</Typography>
+
+            {/* View */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <VisibilityIcon sx={{ fontSize: 16 }} />
+              <Typography variant="body2">
+                {item.stats.viewCount}
+              </Typography>
+            </Box>
+
+            <Typography>•</Typography>
+
+            {/* Booking */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
+              <EventAvailableIcon sx={{ fontSize: 16 }} />
+              <Typography variant="body2">
+                {item.stats.bookingCount || 0}
+              </Typography>
+            </Box>
           </Box>
+
+          {/* SERVICE INFO */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 1, textAlign: 'center' }}
+          >
+            {serviceCount} dịch vụ • {item.duration} phút
+          </Typography>
         </Box>
 
-        {/* ================== ACTION ================== */}
-        <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{
-              borderRadius: 3,
-              py: 1,
-              fontWeight: 600,
-              textTransform: 'none',
-            }}
-            onClick={() => onBookNow?.(item._id)}
-          >
-            Đặt combo
-          </Button>
-        </CardActions>
+       
       </Card>
     </MotionBox>
   )

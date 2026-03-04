@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -7,36 +7,43 @@ import {
   CircularProgress,
   Chip,
   Divider,
-  Stack
+  Stack,
+  Button
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
+import CategoryIcon from '@mui/icons-material/Category'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import LayersIcon from '@mui/icons-material/Layers'
 
-import { fetchComboById } from '../../api/ComboAPI'
+import { getCategoryName } from '../../utils/CategoryHelper'
+import { getComboBySlug } from '../../api/ComboAPI'
 import type { Combo } from '../../types/Combo/Combo'
 
 const ComboServiceDetailPage = () => {
-  const { id } = useParams<{ id: string }>()
+  const { slug } = useParams<{ slug: string }>()
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const [combo, setCombo] = useState<Combo | null>(null)
   const [loading, setLoading] = useState(true)
 
   /* ================= FETCH ================= */
   useEffect(() => {
-    if (!id) return
+    if (!slug) return
+
     const loadCombo = async () => {
       try {
-        const data = await fetchComboById(id)
+        const data = await getComboBySlug(slug)
         setCombo(data)
       } finally {
         setLoading(false)
       }
     }
+
     loadCombo()
-  }, [id])
+  }, [slug])
 
   /* ================= TÍNH TỔNG GIÁ GỐC ================= */
   const originalTotal = useMemo(() => {
@@ -66,8 +73,12 @@ const ComboServiceDetailPage = () => {
 
   return (
     <Container sx={{ mt: 6, mb: 10 }}>
-      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={5}>
-        
+      {/* ================= TOP ================= */}
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', md: 'row' }}
+        gap={5}
+      >
         {/* IMAGE */}
         <Box flex={1}>
           <Box
@@ -78,8 +89,8 @@ const ComboServiceDetailPage = () => {
               width: '100%',
               height: 420,
               objectFit: 'cover',
-              borderRadius: 3,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+              borderRadius: 4,
+              boxShadow: '0 12px 32px rgba(0,0,0,0.15)'
             }}
           />
         </Box>
@@ -90,13 +101,6 @@ const ComboServiceDetailPage = () => {
             {combo.name}
           </Typography>
 
-          {/* CATEGORY */}
-          {combo.category && (
-            <Typography color="text.secondary" mb={1}>
-              {combo.category}
-            </Typography>
-          )}
-
           {/* PRICE */}
           <Box mb={2}>
             {originalTotal > combo.pricing.comboPrice && (
@@ -104,10 +108,10 @@ const ComboServiceDetailPage = () => {
                 sx={{
                   textDecoration: 'line-through',
                   color: 'text.secondary',
-                  fontSize: 14,
+                  fontSize: 14
                 }}
               >
-                {originalTotal.toLocaleString()}₫
+                {new Intl.NumberFormat('vi-VN').format(originalTotal)}₫
               </Typography>
             )}
 
@@ -116,16 +120,57 @@ const ComboServiceDetailPage = () => {
               fontWeight={700}
               sx={{ color: theme.palette.primary.main }}
             >
-              {combo.pricing.comboPrice.toLocaleString()}₫
+              {new Intl.NumberFormat('vi-VN').format(
+                combo.pricing.comboPrice
+              )}₫
             </Typography>
+
+            {/* ACTIVE PERIOD ngay dưới giá */}
+            {combo.activePeriod?.startAt &&
+              combo.activePeriod?.endAt && (
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  mt={1}
+                  alignItems="center"
+                >
+                  <CalendarMonthIcon fontSize="small" />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    Từ{' '}
+                    {new Date(
+                      combo.activePeriod.startAt
+                    ).toLocaleDateString('vi-VN')}
+                    {' – '}
+                    {new Date(
+                      combo.activePeriod.endAt
+                    ).toLocaleDateString('vi-VN')}
+                  </Typography>
+                </Stack>
+              )}
           </Box>
 
           {/* META */}
-          <Stack direction="row" spacing={1} mb={2} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={1}
+            mb={2}
+            flexWrap="wrap"
+          >
+            {combo.category && (
+              <Chip
+                icon={<CategoryIcon />}
+                label={getCategoryName(combo.category)}
+              />
+            )}
+
             <Chip
               icon={<AccessTimeIcon />}
               label={`${combo.duration} phút`}
             />
+
             <Chip
               icon={<LayersIcon />}
               label={`${combo.services.length} dịch vụ`}
@@ -134,30 +179,69 @@ const ComboServiceDetailPage = () => {
 
           {/* TAGS */}
           {combo.tags?.length > 0 && (
-            <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Stack
+              direction="row"
+              spacing={1}
+              flexWrap="wrap"
+              mb={2}
+            >
               {combo.tags.map((tag, index) => (
-                <Chip key={index} label={tag} size="small" />
+                <Chip
+                  key={index}
+                  label={tag}
+                  size="small"
+                />
               ))}
             </Stack>
           )}
+
+          <Button
+            fullWidth
+            size="large"
+            variant="contained"
+            sx={{
+              mt: 3,
+              height: 52,
+              fontWeight: 600,
+              borderRadius: 3
+            }}
+            onClick={() =>
+              navigate(`/customer/booking/combo/${slug}`)
+            }
+          >
+            Đặt combo ngay
+          </Button>
         </Box>
       </Box>
 
-      {/* DESCRIPTION */}
+      {/* ================= DESCRIPTION ================= */}
       <Box mt={6}>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Typography
+          variant="h5"
+          fontWeight={600}
+          gutterBottom
+        >
           Mô tả combo
         </Typography>
-        <Typography color="text.secondary" lineHeight={1.8}>
-          {combo.description || 'Chưa có mô tả cho combo này.'}
+
+        <Typography
+          color="text.secondary"
+          lineHeight={1.8}
+        >
+          {combo.description ||
+            'Chưa có mô tả cho combo này.'}
         </Typography>
       </Box>
 
-      {/* SERVICES SNAPSHOT */}
+      {/* ================= SERVICES SNAPSHOT ================= */}
       <Box mt={6}>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Typography
+          variant="h5"
+          fontWeight={600}
+          gutterBottom
+        >
           Dịch vụ trong combo
         </Typography>
 
@@ -171,38 +255,32 @@ const ComboServiceDetailPage = () => {
               sx={{
                 p: 2,
                 borderRadius: 2,
-                bgcolor: '#f9f9f9'
+                bgcolor: '#fafafa'
               }}
             >
               <Box>
                 <Typography fontWeight={600}>
                   {item.nameSnapshot}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                >
                   {item.durationSnapshot} phút
                 </Typography>
               </Box>
 
               <Typography fontWeight={600}>
-                {item.unitPriceSnapshot.toLocaleString()}₫
+                {new Intl.NumberFormat('vi-VN').format(
+                  item.unitPriceSnapshot
+                )}
+                ₫
               </Typography>
             </Stack>
           ))}
         </Stack>
       </Box>
-
-      {/* ACTIVE PERIOD */}
-      {combo.activePeriod && (
-        <Box mt={6}>
-          <Divider sx={{ mb: 3 }} />
-          <Typography variant="body2" color="text.secondary">
-            Áp dụng từ{' '}
-            {new Date(combo.activePeriod.startAt).toLocaleDateString()} 
-            {' '}đến{' '}
-            {new Date(combo.activePeriod.endAt).toLocaleDateString()}
-          </Typography>
-        </Box>
-      )}
     </Container>
   )
 }

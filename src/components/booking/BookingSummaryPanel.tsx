@@ -13,7 +13,10 @@ interface Service {
 }
 
 interface Props {
+  bookingType?: 'service' | 'combo'
   services: Service[]
+  comboName?: string
+
   original: number
   afterServiceDiscount: number
   discountAmount: number

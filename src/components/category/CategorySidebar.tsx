@@ -12,7 +12,7 @@ import { fetchCategories } from '../../api/CategoryAPI'
 
 interface CategorySidebarProps {
   value?: string | null
-  onChange?: (categoryId: string | null) => void
+  onChange?: (value: { id: string | null; name: string | null }) => void
 }
 
 export default function CategorySidebar({
@@ -35,26 +35,36 @@ export default function CategorySidebar({
       </Typography>
 
       <List disablePadding>
+        {/* ===== TẤT CẢ ===== */}
         {!loading && (
           <ListItemButton
             selected={!value}
-            onClick={() => onChange?.(null)}
+            onClick={() =>
+              onChange?.({ id: null, name: null })
+            }
           >
             <ListItemText primary="Tất cả" />
           </ListItemButton>
         )}
 
+        {/* ===== LOADING ===== */}
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} height={36} sx={{ mb: 1 }} />
           ))}
 
+        {/* ===== CATEGORY LIST ===== */}
         {!loading &&
           categories.map(cat => (
             <ListItemButton
               key={cat._id}
               selected={value === cat._id}
-              onClick={() => onChange?.(cat._id)}
+              onClick={() =>
+                onChange?.({
+                  id: cat._id,
+                  name: cat.name
+                })
+              }
             >
               <ListItemText primary={cat.name} />
             </ListItemButton>

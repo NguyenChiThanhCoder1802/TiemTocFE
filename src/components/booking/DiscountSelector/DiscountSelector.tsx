@@ -84,7 +84,7 @@ export default function DiscountSelector({
         mb={2}
       >
         <Typography variant="h6" fontWeight={600}>
-          4. Chọn Voucher
+          Chọn Voucher
         </Typography>
 
         <Typography

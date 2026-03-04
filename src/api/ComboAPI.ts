@@ -21,7 +21,14 @@ export const fetchComboById = async (id: string): Promise<Combo> => {
   const res = await axiosInstance.get<ApiResponse<Combo>>(`${BASE_URL}/${id}`)
   return res.data.data
 }
-
+export const getComboBySlug = async (
+  slug: string
+): Promise<Combo> => {
+  const res = await axiosInstance.get<ApiResponse<Combo>>(
+    `${BASE_URL}/slug/${slug}`
+  )
+  return res.data.data
+}
 /* ======================
    CREATE (ADMIN)
 ====================== */

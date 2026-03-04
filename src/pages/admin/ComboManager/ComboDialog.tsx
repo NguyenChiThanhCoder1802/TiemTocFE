@@ -48,6 +48,7 @@ const ComboDialog = ({
     setPricing,
     setServices,
     setTags,
+    setActivePeriod,  
     resetForm
   } = useComboServiceForm(combo)
 
@@ -102,7 +103,17 @@ const ComboDialog = ({
       ),
     [selectedServices]
   )
+  const [startAt, setStartAt] = useState<string>(
+  combo?.activePeriod?.startAt
+    ? new Date(combo.activePeriod.startAt).toISOString().slice(0, 16)
+    : ''
+)
 
+const [endAt, setEndAt] = useState<string>(
+  combo?.activePeriod?.endAt
+    ? new Date(combo.activePeriod.endAt).toISOString().slice(0, 16)
+    : ''
+)
   /* ================== SYNC DERIVED DATA ================== */
   useEffect(() => {
   setPricing(originalPrice, comboPrice)
@@ -115,7 +126,9 @@ useEffect(() => {
 useEffect(() => {
   setTags(tags)
 }, [tags, setTags])
-
+ useEffect(() => {
+  setActivePeriod(startAt, endAt)
+}, [startAt, endAt, setActivePeriod])
 
   /* ================== SUBMIT ================== */
   const handleSubmit = () => {
@@ -302,7 +315,33 @@ useEffect(() => {
 
           <Typography>Thời gian: {duration} phút</Typography>
         </Section>
+            <Section title="Thời gian áp dụng">
+  <Stack direction="row" spacing={2}>
+    <TextField
+      label="Ngày bắt đầu"
+      type="datetime-local"
+      value={startAt}
+      onChange={e => setStartAt(e.target.value)}
+      InputLabelProps={{ shrink: true }}
+      fullWidth
+    />
 
+    <TextField
+      label="Ngày kết thúc"
+      type="datetime-local"
+      value={endAt}
+      onChange={e => setEndAt(e.target.value)}
+      InputLabelProps={{ shrink: true }}
+      error={Boolean(startAt && endAt && endAt <= startAt)}
+      helperText={
+        startAt && endAt && endAt <= startAt
+          ? 'Ngày kết thúc phải sau ngày bắt đầu'
+          : ''
+      }
+      fullWidth
+    />
+  </Stack>
+</Section>
         {/* ================= STATUS ================= */}
         <Section title="Trạng thái">
           <FormControlLabel
@@ -317,6 +356,7 @@ useEffect(() => {
             label="Kích hoạt combo"
           />
         </Section>
+
       </DialogContent>
 
       {/* ================= ACTION ================= */}

@@ -6,14 +6,16 @@ import {
   Stack,
   Chip
 } from '@mui/material'
+import { useState } from 'react'
 import type { DiscountCard } from '../../types/Discount/Discount'
 
 interface Props {
   discount: DiscountCard
-  onApply: (code: string) => void
 }
 
-export function UserDiscountCard({ discount, onApply }: Props) {
+export function UserDiscountCard({ discount }: Props) {
+  const [copied, setCopied] = useState(false)
+
   const expired =
     new Date(discount.endDate) < new Date()
 
@@ -32,6 +34,15 @@ export function UserDiscountCard({ discount, onApply }: Props) {
       }`
     }
     return `Giảm ${discount.discountValue.toLocaleString()}đ`
+  }
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(discount.code)
+    setCopied(true)
+
+    setTimeout(() => {
+      setCopied(false)
+    }, 2000)
   }
 
   return (
@@ -88,9 +99,9 @@ export function UserDiscountCard({ discount, onApply }: Props) {
               size="small"
               variant="contained"
               disabled={disabled}
-              onClick={() => onApply(discount.code)}
+              onClick={handleCopy}
             >
-              Dùng ngay
+              {copied ? 'Đã sao chép' : 'Sao chép mã'}
             </Button>
           </Stack>
         </Stack>

@@ -7,10 +7,18 @@ import type { ServiceCard } from '../types/HairService/ServiceCard'
 import type { ServiceDetailResponse } from '../types/HairService/ServiceDetailResponse'
 const BASE_URL = '/hairservices'
 
-export const fetchServices = async():Promise<Service[]> => {
+export const fetchServices = async (
+  categoryId?: string
+): Promise<Service[]> => {
   const res = await axiosInstance.get<ApiResponse<Service[]>>(
-    `${BASE_URL}`
+    `${BASE_URL}`,
+    {
+      params: {
+        ...(categoryId && { category: categoryId })
+      }
+    }
   )
+
   return res.data.data
 }
 export const getMostFavoritedServices = async (

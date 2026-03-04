@@ -11,10 +11,14 @@ interface Props {
 
 const ComboCardList = ({ items, title, linkPrefix, loading }: Props) => {
   return (
-    <Box sx={{ px: 3, py: 4 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold" align="center">
-        {title}
-      </Typography>
+   <Box sx={{ px: 0, py: 4 }}>
+  <Typography
+    variant="h5"
+    fontWeight={700}
+    sx={{ mb: 2 }}
+  >
+    {title}
+  </Typography>
 
           <Box
   sx={{

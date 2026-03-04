@@ -12,7 +12,13 @@ const useAuth = () => {
   })
 
   const [loading, setLoading] = useState(!user)
-
+const updateAuthUser = (updatedUser: User) => {
+  setUser(updatedUser)
+  localStorage.setItem(
+    AUTH_USER_KEY,
+    JSON.stringify(updatedUser)
+  )
+}
   /* ======================
      FETCH CURRENT USER
   ====================== */
@@ -73,6 +79,7 @@ const useAuth = () => {
     isCustomer: user?.role === 'customer',
     refreshUser,
     logout,
+    updateAuthUser
   }
 }
 

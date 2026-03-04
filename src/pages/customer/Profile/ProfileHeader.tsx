@@ -1,7 +1,10 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography,IconButton } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import { useState } from 'react'
 import useAuth from '../../../hooks/useAuth'
 import AvatarSection from './AvatarSection'
 import ProfileTabs from './ProfileTabs'
+import UpdateProfileDialog from './UpdateProfileDialog'
 import type { ProfileTab } from '../../../types/Profile/ProfileTab'
 interface ProfileHeaderProps {
   activeTab: ProfileTab
@@ -9,6 +12,7 @@ interface ProfileHeaderProps {
 }
 const ProfileHeader = ({ activeTab, onTabChange }: ProfileHeaderProps) => {
   const { user } = useAuth()
+  const [open, setOpen] = useState(false)
   if (!user) return null
 
   return (
@@ -16,12 +20,19 @@ const ProfileHeader = ({ activeTab, onTabChange }: ProfileHeaderProps) => {
       <AvatarSection user={user} />
 
       <Box textAlign="center" mt={1}>
-        <Typography fontWeight={700} fontSize={20}>
-          {user.name} - {user.role}
-        </Typography>
+         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+          <Typography fontWeight={700} fontSize={20}>
+            {user.name} - {user.role}
+          </Typography>
+
+          <IconButton size="small" onClick={() => setOpen(true)}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
 
       <ProfileTabs value={activeTab} onChange={onTabChange} />
+       <UpdateProfileDialog open={open} onClose={() => setOpen(false)} />
     </Box>
   )
 }

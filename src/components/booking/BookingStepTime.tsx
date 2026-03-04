@@ -9,7 +9,7 @@ export default function BookingStepTime({ startTime, onChange }: Props) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={600} mb={1}>
-        1. Chọn ngày & giờ
+        Chọn ngày & giờ
       </Typography>
 
       <TextField

@@ -25,10 +25,6 @@ export default function DiscountListPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleApply = (code: string) => {
-    console.log('Apply discount:', code)
-  }
-
   if (loading) {
     return (
       <Container sx={{ textAlign: 'center', mt: 6 }}>
@@ -48,7 +44,7 @@ export default function DiscountListPage() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
-        🎁 Ưu đãi dành cho bạn
+         Ưu đãi dành cho bạn
       </Typography>
 
       {data.length === 0 ? (
@@ -76,7 +72,7 @@ export default function DiscountListPage() {
             >
               <UserDiscountCard
                 discount={discount}
-                onApply={handleApply}
+               
               />
             </Box>
           ))}

@@ -28,7 +28,7 @@ export default function PaymentMethodSelect({ value, onChange }: Props) {
       }}
     >
       <Typography variant="h6" fontWeight={600}>
-        5. Chọn Phương thức thanh toán
+       Chọn Phương thức thanh toán
       </Typography>
 
       <RadioGroup

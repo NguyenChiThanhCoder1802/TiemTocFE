@@ -22,6 +22,19 @@ export const useComboServiceForm = (combo: Combo | null) => {
     fd.set('duration', String(combo.duration))
     fd.set('pricing', JSON.stringify(combo.pricing))
     fd.set('tags', JSON.stringify(combo.tags ?? []))
+    if (combo.activePeriod?.startAt) {
+      fd.set(
+        'activePeriod[startAt]',
+        new Date(combo.activePeriod.startAt).toISOString()
+      )
+    }
+
+    if (combo.activePeriod?.endAt) {
+      fd.set(
+        'activePeriod[endAt]',
+        new Date(combo.activePeriod.endAt).toISOString()
+      )
+    }
 
     fd.set(
       'services',
@@ -79,7 +92,29 @@ export const useComboServiceForm = (combo: Combo | null) => {
     },
     []
   )
+  /* ================= ACTIVE PERIOD ================= */
+const setActivePeriod = useCallback(
+  (startAt?: string, endAt?: string) => {
+    if (startAt) {
+      formDataRef.current.set(
+        'activePeriod[startAt]',
+        new Date(startAt).toISOString()
+      )
+    } else {
+      formDataRef.current.delete('activePeriod[startAt]')
+    }
 
+    if (endAt) {
+      formDataRef.current.set(
+        'activePeriod[endAt]',
+        new Date(endAt).toISOString()
+      )
+    } else {
+      formDataRef.current.delete('activePeriod[endAt]')
+    }
+  },
+  []
+)
   /* ================= IMAGES ================= */
   const handleImageChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +149,7 @@ export const useComboServiceForm = (combo: Combo | null) => {
     setPricing,
     setServices,
     setTags,
+    setActivePeriod,
     resetForm
   }
 }

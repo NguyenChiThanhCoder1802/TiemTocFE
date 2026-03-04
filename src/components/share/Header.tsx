@@ -101,6 +101,25 @@ const Header = () => {
                  Ưu đãi
               </Box>
             )}
+            <Box
+                onClick={() => navigate('/services')}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  cursor: 'pointer',
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 2,
+                  fontWeight: 500,
+                  color: '#5D4037',
+                  '&:hover': {
+                    backgroundColor: alpha('#000', 0.05)
+                  }
+                }}
+              >
+                Dịch vụ
+              </Box>
 
           </Box>
           {/* ===== RIGHT ===== */}

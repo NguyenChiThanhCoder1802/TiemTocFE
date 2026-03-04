@@ -20,7 +20,7 @@ export default function BookingStepStaff({
   return (
     <Box>
       <Typography variant="h6" fontWeight={600} mb={1}>
-        2. Chọn nhân viên (không bắt buộc)
+        Chọn nhân viên (không bắt buộc)
       </Typography>
       {error && (
         <Typography color="error" mb={2}>

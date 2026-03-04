@@ -33,6 +33,7 @@ import PaymentResultPage from '../components/booking/payment/PaymentResultPage';
 import BookingSuccessPage from '../components/booking/BookingSuccessPage';
 import PaymentHistory from '../pages/customer/Payment/PaymentHistory';
 import BookingCreatePage from '../pages/customer/Booking/BookingCreatePage';
+import BookingComboPage from '../pages/customer/Booking/BookingComboPage';
 
 
 
@@ -74,11 +75,12 @@ const AppRouter = () => {
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
 
-        <Route path="/combos/:id" element={<ComboServiceDetailPage />} />
+        <Route path="/combos/:slug" element={<ComboServiceDetailPage />} />
         {/* <Route path="/customer/booking" element={<BookingPage />} /> */}
         <Route path="/discounts" element={<DiscountListPage />} />
         {/* <Route path="/customer/booking/:serviceId" element={<BookingForm />} /> */}
         <Route path="/customer/booking" element={<BookingCreatePage />} />
+        <Route path='/customer/booking/combo/:slug' element={<BookingComboPage/>} />
         <Route
           path="/booking-success/:id"
           element={<BookingSuccessPage />}

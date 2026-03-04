@@ -3,6 +3,7 @@ export interface User {
   name: string
   email: string
   phone?: string
+  gender?: 'male' | 'female' | 'other'
   role: 'customer'| 'admin' | 'staff'
   avatar?: string
   favoriteServices?: string[] 

@@ -131,8 +131,10 @@ const [favLoading, setFavLoading] = useState(false)
   }
 
   const discount = service.serviceDiscount
-  const expiringSoon = discount?.isActive &&
-    isExpiringSoon(discount.endAt)
+  const discountPercent = discount?.percent ?? 0
+  const hasDiscount= service.finalPrice < service.price
+  const expiringSoon = hasDiscount &&
+    isExpiringSoon(discount?.endAt)
 
   return (
     <Container sx={{ mt: 6, mb: 10 }}>
@@ -245,18 +247,25 @@ const [favLoading, setFavLoading] = useState(false)
               </Tooltip>
             
               {/* SHARE */}
-              <Tooltip title="Chia sẻ">
-                <IconButton
-                  onClick={() => {
-                    navigator.share?.({
+             <Tooltip title="Chia sẻ">
+              <IconButton
+                onClick={async () => {
+                  if (navigator.share) {
+                    await navigator.share({
                       title: service.name,
                       url: window.location.href
-                    }) || navigator.clipboard.writeText(window.location.href)
-                  }}
-                >
-                  <ShareIcon />
-                </IconButton>
-              </Tooltip>
+                    })
+                  } else {
+                    await navigator.clipboard.writeText(
+                      window.location.href
+                    )
+                    alert('Đã sao chép link!')
+                  }
+                }}
+              >
+                <ShareIcon />
+              </IconButton>
+            </Tooltip>
             </Stack>
           </Box>
 
@@ -290,7 +299,7 @@ const [favLoading, setFavLoading] = useState(false)
 
           {/* PRICE */}
           <Box mb={2}>
-            {discount?.isActive && discount.percent > 0 && (
+            {hasDiscount  && (
               <Typography
                 sx={{
                   textDecoration: 'line-through',
@@ -310,10 +319,10 @@ const [favLoading, setFavLoading] = useState(false)
               {new Intl.NumberFormat('vi-VN').format(service.finalPrice)}đ
             </Typography>
 
-            {discount?.isActive && discount.percent > 0 && (
+            {hasDiscount && discountPercent > 0  &&(
               <Stack direction="row" spacing={1} mt={1} alignItems="center">
                 <Chip
-                  label={`Giảm ${discount.percent}%`}
+                  label={`Giảm ${discountPercent}%`}
                   sx={{
                     bgcolor: theme.palette.primary.main,
                     color: '#fff',
@@ -322,8 +331,8 @@ const [favLoading, setFavLoading] = useState(false)
                 />
 
                 <Typography variant="body2" color="text.secondary">
-                  {discount.startAt && <>Từ {formatDate(discount.startAt)}</>}
-                  {discount.endAt && <> – {formatDate(discount.endAt)}</>}
+                  {discount?.startAt && <>Từ {formatDate(discount.startAt)}</>}
+                  {discount?.endAt && <> – {formatDate(discount.endAt)}</>}
                 </Typography>
 
                 {expiringSoon && (
