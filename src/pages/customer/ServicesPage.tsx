@@ -96,6 +96,7 @@ const ServicesPage = () => {
             <Typography>Không có dịch vụ nào.</Typography>
           ) : (
             <ItemCardList
+              title='Dịch vụ của tiệm'
               items={services}
               linkPrefix="services"
             />

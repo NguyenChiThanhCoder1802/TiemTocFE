@@ -7,8 +7,10 @@ type ChipColor = NonNullable<ChipProps['color']>
 const statusColorMap: Record<Booking['status'], ChipColor> = {
   pending: 'warning',
   confirmed: 'info',
+  in_progress:"info",
   completed: 'success',
-  cancelled: 'error'
+  cancelled: 'error',
+  no_show: 'error'
 }
 
 

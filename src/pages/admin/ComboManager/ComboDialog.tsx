@@ -80,7 +80,7 @@ const ComboDialog = ({
           typeof s.service === 'string'
             ? services.find(x => x._id === s.service)!
             : s.service,
-        quantity: s.quantity
+        quantity: 1
       }))
     )
   }, [combo, services])

@@ -52,10 +52,13 @@ const ReviewListPage = () => {
               '&:hover': { bgcolor: '#fafafa' }
             }}
             onClick={() =>
+            {
+              if (review.service && typeof review.service !== "string") {
+            
               navigate(
                 `/services/${review.service?.slug}?reviewId=${review._id}`
               )
-            }
+            }}}
           >
             <Stack spacing={0.5}>
               <Rating value={review.rating} readOnly size="small" />
@@ -66,7 +69,8 @@ const ReviewListPage = () => {
                 </Typography>
               )}
 
-              {review.service && (
+              {review.service && 
+                typeof review.service !== "string" && (
                 <Typography
                   fontSize={12}
                   color="text.secondary"

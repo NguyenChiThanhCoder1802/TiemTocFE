@@ -1,3 +1,4 @@
+import type { Service } from "../HairService/Service"
 export interface Review {
   _id: string
   user: {
@@ -6,7 +7,7 @@ export interface Review {
     avatar?: string
   }
 
-  service?: string | null
+  service?: string | Service | null
   staff?: string | null
 
   rating: number
