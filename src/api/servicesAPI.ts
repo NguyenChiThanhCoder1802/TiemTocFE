@@ -44,6 +44,18 @@ export const getFeaturedServices = async (
 
   return res.data.data
 }
+export const getLatestServices = async (
+  limit = 8
+): Promise<ServiceCard[]> => {
+  const res = await axiosInstance.get<ApiResponse<ServiceCard[]>>(
+    `${BASE_URL}/latest`,
+    {
+      params: { limit }
+    }
+  )
+
+  return res.data.data
+}
 /* ======================
    GET ALL SERVICES admin
 ====================== */

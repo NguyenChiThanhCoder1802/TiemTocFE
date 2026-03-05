@@ -80,7 +80,7 @@ const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
                 }}
               >
                 <Typography sx={{ color: '#5D4037', fontWeight: 500 }}>
-                  Lịch hẹn
+                  Lịch hẹn của bạn
                 </Typography>
               </Box>
             )}
@@ -104,6 +104,27 @@ const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
                 }}
               >
                  Ưu đãi
+              </Box>
+            )}
+             {isAuthenticated && !isAdmin && (
+              <Box
+                onClick={() => navigate('/customer/booking')}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  cursor: 'pointer',
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 2,
+                  fontWeight: 500,
+                  color: '#5D4037',
+                  '&:hover': {
+                    backgroundColor: alpha('#000', 0.05)
+                  }
+                }}
+              >
+                 Đặt lịch ngay
               </Box>
             )}
             <Box

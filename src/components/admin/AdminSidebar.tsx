@@ -9,9 +9,13 @@ import {
 } from '@mui/material'
 import {
   Dashboard,
+  EventNote,
   ContentCut,
+  AutoAwesome,
+  Category,
+  Badge,
   People,
-  BarChart
+  LocalOffer
 } from '@mui/icons-material'
 import { NavLink } from 'react-router-dom'
 
@@ -19,13 +23,13 @@ const drawerWidth = 240
 
 const menu = [
   { text: 'Tổng quan', icon: <Dashboard />, path: '/admin/stats' },
-  { text: 'Lịch của khách', icon: <ContentCut />, path: '/admin/BookingManager' },
+  { text: 'Lịch của khách', icon: <EventNote />, path: '/admin/BookingManager' },
   { text: 'Dịch vụ', icon: <ContentCut />, path: '/admin/ServiceManager/HairSalonService' },
-  { text: 'Combo', icon: <ContentCut />, path: '/admin/ComboManager/Combo' },
-  { text: 'Danh mục', icon: <ContentCut />, path: '/admin/CategoryManager' },
-  { text: 'Nhân viên', icon: <People />, path: '/admin/StaffManager/StaffList' },
+  { text: 'Combo', icon: <AutoAwesome />, path: '/admin/ComboManager/Combo' },
+  { text: 'Danh mục', icon: <Category />, path: '/admin/CategoryManager' },
+  { text: 'Nhân viên', icon: <Badge />, path: '/admin/StaffManager/StaffList' },
   { text: 'Tài khoản', icon: <People />, path: '/admin/AccountManager/Accounts' },
-  { text: 'Thẻ Giảm Giá', icon: <BarChart />, path: '/admin/DiscountManager' },
+  { text: 'Thẻ Giảm Giá', icon: <LocalOffer />, path: '/admin/DiscountManager' },
 ]
 
 const AdminSidebar = () => {

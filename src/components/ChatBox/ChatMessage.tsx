@@ -1,11 +1,13 @@
-import { Box, Typography } from "@mui/material"
-
+import { Box, CircularProgress, Typography } from "@mui/material"
+import ReactMarkdown from "react-markdown"
 interface Props {
   role: "user" | "ai"
   text: string
+  loading?: boolean
+
 }
 
-const ChatMessage = ({ role, text }: Props) => {
+const ChatMessage = ({ role, text, loading }: Props) => {
 
   const isUser = role === "user"
 
@@ -23,12 +25,38 @@ const ChatMessage = ({ role, text }: Props) => {
           px: 2,
           py: 1.2,
           borderRadius: 2,
-          maxWidth: "70%"
+          maxWidth: "70%",
+          wordBreak: "break-word"
         }}
       >
-        <Typography fontSize={14}>
-          {text}
-        </Typography>
+         {loading ? (
+          <Box display="flex" alignItems="center" gap={1}>
+            <CircularProgress size={14} />
+            <Typography fontSize={13}>AI đang trả lời...</Typography>
+          </Box>
+        ) : (
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <Typography fontSize={14} mb={1}>
+                  {children}
+                </Typography>
+              ),
+              li: ({ children }) => (
+                <li style={{ marginBottom: 4 }}>
+                  <Typography fontSize={14}>{children}</Typography>
+                </li>
+              ),
+              strong: ({ children }) => (
+                <Typography component="span" fontWeight={600}>
+                  {children}
+                </Typography>
+              )
+            }}
+          >
+            {text}
+          </ReactMarkdown>
+        )}
       </Box>
     </Box>
   )

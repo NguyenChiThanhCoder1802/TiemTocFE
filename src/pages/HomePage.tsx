@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 
 import { fetchPublicStaffs } from '../api/staffAPI'
-import { fetchServices, getMostFavoritedServices, getFeaturedServices } from '../api/servicesAPI'
+import { fetchServices, getMostFavoritedServices, getFeaturedServices, getLatestServices } from '../api/servicesAPI'
 import { fetchCombos } from '../api/ComboAPI'
 
 import StaffCardList from '../components/staff/StaffCardList'
@@ -19,7 +19,8 @@ const HomePage = () => {
   const [combos, setCombos] = useState<Combo[]>([])
   const [favoriteServices, setFavoriteServices] = useState<ServiceCard[]>([])
   const [featuredServices, setFeaturedServices] = useState<ServiceCard[]>([])
-
+  const [latestServices, setLatestServices] = useState<ServiceCard[]>([])
+const [loadingLatest, setLoadingLatest] = useState(false)
   const [loadingPage, setLoadingPage] = useState(true)
   const [loadingFavorites, setLoadingFavorites] = useState(false)
   const [loadingFeatured, setLoadingFeatured] = useState(false)
@@ -33,19 +34,21 @@ const HomePage = () => {
         setLoadingPage(true)
         setLoadingFavorites(true)
         setLoadingFeatured(true)
-
+        setLoadingLatest(true)
         const [
           serviceData,
           staffData,
           comboData,
           favoriteData,
-          featuredData
+          featuredData,
+          latestData
         ] = await Promise.all([
           fetchServices(),
           fetchPublicStaffs(),
           fetchCombos({ isActive: true }),
           getMostFavoritedServices(8),
-          getFeaturedServices(8)
+          getFeaturedServices(8),
+          getLatestServices(8)
         ])
 
         setServices(serviceData)
@@ -53,12 +56,14 @@ const HomePage = () => {
         setCombos(comboData)
         setFavoriteServices(favoriteData)
         setFeaturedServices(featuredData)
+        setLatestServices(latestData)
       } catch {
         setError('Không thể tải dữ liệu')
       } finally {
         setLoadingPage(false)
         setLoadingFavorites(false)
         setLoadingFeatured(false)
+        setLoadingLatest(false)
       }
     }
 
@@ -82,6 +87,12 @@ const HomePage = () => {
             linkPrefix="services"
             loading={loadingFeatured}
           />)}
+          <ItemCardList
+            items={latestServices}
+            title="Dịch vụ mới nhất"
+            linkPrefix="services"
+            loading={loadingLatest}
+          />
           <ItemCardList
             items={service}
             title="Dịch vụ thường ngày"

@@ -5,6 +5,7 @@ import {
   CardContent,
   CircularProgress,
 } from '@mui/material'
+
 import {
   ResponsiveContainer,
   BarChart as ReBarChart,
@@ -12,13 +13,24 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts'
+
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 import useAuth from '../../hooks/useAuth'
-import { getAdminDashboardStat } from '../../api/AdminAPI'
+
+import {
+  getAdminDashboardStat,
+  getRevenueDashboardApi,
+  getOnlineRevenueByMonthApi,
+  getOnlinePaymentStatsApi
+} from '../../api/AdminAPI'
+
 import type { AdminDashboardStat } from '../../types/Admin/stat'
 
 /* ================= STAT CARD ================= */
@@ -35,6 +47,7 @@ const StatCard = ({
       <Typography color="text.secondary" fontSize={14}>
         {label}
       </Typography>
+
       <Typography variant="h4" fontWeight={700}>
         {value}
       </Typography>
@@ -49,17 +62,45 @@ const AdminDashboard = () => {
   const navigate = useNavigate()
 
   const [stat, setStat] = useState<AdminDashboardStat | null>(null)
+  const [revenue, setRevenue] = useState<any>(null)
+  const [revenueByMonth, setRevenueByMonth] = useState<any[]>([])
+  const [paymentStats, setPaymentStats] = useState<any[]>([])
+
   const [fetching, setFetching] = useState(true)
+
+  /* ================= FETCH DATA ================= */
 
   useEffect(() => {
     if (!isAdmin) return
 
-    getAdminDashboardStat()
-      .then(setStat)
-      .finally(() => setFetching(false))
+    const fetchData = async () => {
+      try {
+        const [
+          statData,
+          revenueData,
+          monthRevenue,
+          paymentStatData
+        ] = await Promise.all([
+          getAdminDashboardStat(),
+          getRevenueDashboardApi(),
+          getOnlineRevenueByMonthApi(new Date().getFullYear()),
+          getOnlinePaymentStatsApi()
+        ])
+
+        setStat(statData)
+        setRevenue(revenueData)
+        setRevenueByMonth(monthRevenue)
+        setPaymentStats(paymentStatData)
+      } finally {
+        setFetching(false)
+      }
+    }
+
+    fetchData()
   }, [isAdmin])
 
   /* ===== AUTH GUARD ===== */
+
   if (loading || fetching)
     return (
       <Box display="flex" justifyContent="center" mt={6}>
@@ -77,16 +118,35 @@ const AdminDashboard = () => {
     navigate('/login')
   }
 
-  /* ===== CHART DATA ===== */
-  const chartData =
+  /* ================= CHART DATA ================= */
+
+  const topServiceChart =
     stat?.topServices.topBooking.map((s) => ({
       name: s.name,
       booking: s.bookingCount,
     })) || []
 
+  const revenueMonthChart =
+    revenueByMonth.map((m) => ({
+      month: `T${m._id.month}`,
+      revenue: m.revenue,
+    })) || []
+
+  const paymentPieChart =
+    paymentStats.map((p) => ({
+      name: p._id,
+      value: p.count
+    })) || []
+
+  const COLORS = ['#00C49F', '#FF8042', '#FFBB28']
+
+  /* ================= UI ================= */
+
   return (
     <Box>
+
       {/* ================= HEADER ================= */}
+
       <Box
         sx={{
           display: 'flex',
@@ -109,6 +169,7 @@ const AdminDashboard = () => {
       </Box>
 
       {/* ================= STATS ================= */}
+
       <Box
         sx={{
           display: 'flex',
@@ -128,32 +189,31 @@ const AdminDashboard = () => {
         />
 
         <StatCard
-          label="Conversion rate"
-          value={`${(
-            (stat?.performance.avgConversionRate ?? 0) * 100
-          ).toFixed(1)}%`}
+          label="Doanh thu"
+          value={`${revenue?.totalRevenue?.toLocaleString() ?? 0} đ`}
         />
 
         <StatCard
-          label="Rating trung bình"
-          value={(stat?.performance.avgRating ?? 0).toFixed(1)}
+          label="Đơn hàng"
+          value={revenue?.totalOrders ?? 0}
         />
       </Box>
 
-      {/* ================= CHART ================= */}
-      <Card>
+      {/* ================= TOP SERVICE ================= */}
+
+      <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography fontWeight={600} mb={2}>
             Top dịch vụ được đặt nhiều nhất
           </Typography>
 
-          {chartData.length === 0 ? (
+          {topServiceChart.length === 0 ? (
             <Typography color="text.secondary">
               Chưa có dữ liệu
             </Typography>
           ) : (
             <ResponsiveContainer width="100%" height={320}>
-              <ReBarChart data={chartData}>
+              <ReBarChart data={topServiceChart}>
                 <XAxis dataKey="name" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
@@ -163,6 +223,56 @@ const AdminDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* ================= REVENUE BY MONTH ================= */}
+
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography fontWeight={600} mb={2}>
+            Doanh thu VNPay theo tháng
+          </Typography>
+
+          <ResponsiveContainer width="100%" height={320}>
+            <ReBarChart data={revenueMonthChart}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="revenue" fill="#8884d8" />
+            </ReBarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* ================= PAYMENT STATS ================= */}
+
+      <Card>
+        <CardContent>
+          <Typography fontWeight={600} mb={2}>
+            Trạng thái thanh toán VNPay
+          </Typography>
+
+          <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+              <Pie
+                data={paymentPieChart}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={120}
+                label
+              >
+                {paymentPieChart.map((_, index) => (
+                  <Cell
+                    key={index}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
     </Box>
   )
 }

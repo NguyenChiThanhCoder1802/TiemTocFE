@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Box, Paper, TextField, IconButton, Typography } from "@mui/material"
 import SendIcon from "@mui/icons-material/Send"
+import SmartToyIcon from "@mui/icons-material/SmartToy"
 import ChatMessage from "./ChatMessage"
 import { askAI } from "../../api/chatAPI"
 
@@ -19,6 +20,7 @@ const ChatBox = () => {
   ]))
 
   const [input, setInput] = useState("")
+  const [loading, setLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const sendMessage = async () => {
@@ -35,6 +37,7 @@ const ChatBox = () => {
     setMessages(prev => [...prev, userMessage])
 
     setInput("")
+    setLoading(true)
 
     try {
 
@@ -57,11 +60,14 @@ const ChatBox = () => {
         }
       ])
     }
+     finally {
+    setLoading(false)
+  }
   }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [messages,loading])
 
   return (
     <Paper
@@ -78,9 +84,13 @@ const ChatBox = () => {
       <Box
         sx={{
           p: 2,
-          borderBottom: "1px solid #eee"
+          borderBottom: "1px solid #eee",
+           display: "flex",
+          alignItems: "center",
+          gap: 1
         }}
       >
+        <SmartToyIcon/>
         <Typography fontWeight={600}>
           Chat tư vấn dịch vụ
         </Typography>
@@ -104,7 +114,13 @@ const ChatBox = () => {
             text={m.text}
           />
         ))}
-
+        {loading && (
+          <ChatMessage
+            role="ai"
+            text=""
+            loading
+          />
+        )}
         <div ref={bottomRef} />
       </Box>
 

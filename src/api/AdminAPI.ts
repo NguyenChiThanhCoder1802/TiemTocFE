@@ -57,3 +57,30 @@ export const completeBookingApi = (bookingId: string) => {
     `/admin/bookings/${bookingId}/complete`
   )
 }
+// tổng doanh thu 
+export const getRevenueDashboardApi = async () => {
+  const res = await axiosInstance.get<ApiResponse<any>>(
+    "/admin/revenue"
+  )
+
+  return res.data.data
+}
+//doanh thu theo tháng 
+export const getOnlineRevenueByMonthApi = async (year: number) => {
+  const res = await axiosInstance.get<ApiResponse<any>>(
+    "/admin/revenue/online-by-month",
+    {
+      params: { year }
+    }
+  )
+
+  return res.data.data
+}
+// thống kê trạng thái thanh toán vnpay từ khách 
+export const getOnlinePaymentStatsApi = async () => {
+  const res = await axiosInstance.get<ApiResponse<any>>(
+    "/admin/revenue/payment-stats"
+  )
+
+  return res.data.data
+}
