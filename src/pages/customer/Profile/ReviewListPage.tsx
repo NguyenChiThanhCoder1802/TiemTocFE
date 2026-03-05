@@ -8,7 +8,7 @@ import {
   CircularProgress
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { fetchMyReviews } from '../../../api/ReviewAPI'
+import { fetchMyReviews } from '../../../api/reviewApi'
 import type { Review } from '../../../types/Review/Review'
 
 const ReviewListPage = () => {
@@ -41,69 +41,68 @@ const ReviewListPage = () => {
           Bạn chưa có đánh giá nào
         </Typography>
       )}
-    <Box
+      <Box
         sx={{
           maxWidth: 600
         }}
       >
-      <Stack spacing={1.5}>
-        {reviews.map(review => (
-          <Card
-            key={review._id}
-            sx={{
-              p: 1.5,
-              cursor: 'pointer',
-              '&:hover': { bgcolor: '#fafafa' }
-            }}
-            onClick={() =>
-            {
-               if (
-                review.service &&
-                typeof review.service !== 'string'
-              ) {
-                navigate(
-                  `/services/${review.service.slug}?reviewId=${review._id}`
-                )
-                return
-              }
+        <Stack spacing={1.5}>
+          {reviews.map(review => (
+            <Card
+              key={review._id}
+              sx={{
+                p: 1.5,
+                cursor: 'pointer',
+                '&:hover': { bgcolor: '#fafafa' }
+              }}
+              onClick={() => {
+                if (
+                  review.service &&
+                  typeof review.service !== 'string'
+                ) {
+                  navigate(
+                    `/services/${review.service.slug}?reviewId=${review._id}`
+                  )
+                  return
+                }
 
-              /* staff */
-              if (
-                review.staff &&
-                typeof review.staff !== 'string'
-              ) {
-                navigate(`/staffs/${review.staff._id}`)
-              }
-            }}
-          >
-            <Stack spacing={0.5}>
-              <Rating value={review.rating} readOnly size="small" />
+                /* staff */
+                if (
+                  review.staff &&
+                  typeof review.staff !== 'string'
+                ) {
+                  navigate(`/staffs/${review.staff._id}`)
+                }
+              }}
+            >
+              <Stack spacing={0.5}>
+                <Rating value={review.rating} readOnly size="small" />
 
-              {review.comment && (
-                <Typography fontSize={14} noWrap>
-                  {review.comment}
-                </Typography>
-              )}
+                {review.comment && (
+                  <Typography fontSize={14} noWrap>
+                    {review.comment}
+                  </Typography>
+                )}
 
-              {review.service && 
-                typeof review.service !== "string" && (
-                <Typography
-                  fontSize={12}
-                  color="text.secondary"
-                >
-                  Dịch vụ: {review.service.name}
-                </Typography>
-              )}
-              {review.staff && typeof review.staff !== "string" && (
-                <Typography fontSize={12} color="text.secondary">
-                  Nhân viên: {review.staff.user.name}
-                </Typography>
-              )}
-            </Stack>
-          </Card>
-        ))}
-      </Stack>
-    </Box>
+                {review.service &&
+                  typeof review.service !== "string" && (
+                    <Typography
+                      fontSize={12}
+                      color="text.secondary"
+                    >
+                      Dịch vụ: {review.service.name}
+                    </Typography>
+                  )}
+                {review.staff && typeof review.staff !== "string" && (
+                  <Typography fontSize={12} color="text.secondary">
+                    Nhân viên: {review.staff.user.name}
+                  </Typography>
+                )}
+              </Stack>
+            </Card>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   )
 }

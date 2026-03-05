@@ -4,16 +4,16 @@ import {
   fetchReviewsByStaff,
   fetchReviewsByBooking,
   deleteReview
-} from '../api/ReviewAPI'
+} from '../api/reviewApi'
 import type { Review } from '../types/Review/Review'
 
 interface UseReviewParams {
   serviceId?: string
   staffId?: string
-  bookingId?:string
+  bookingId?: string
 }
 
-export function useReview({ serviceId, staffId ,bookingId}: UseReviewParams) {
+export function useReview({ serviceId, staffId, bookingId }: UseReviewParams) {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(false)
   const [editReview, setEditReview] = useState<Review | null>(null)
@@ -24,10 +24,10 @@ export function useReview({ serviceId, staffId ,bookingId}: UseReviewParams) {
       const data = serviceId
         ? await fetchReviewsByService(serviceId)
         : staffId
-        ? await fetchReviewsByStaff(staffId)
-        : bookingId
-        ? await fetchReviewsByBooking(bookingId)
-        : []
+          ? await fetchReviewsByStaff(staffId)
+          : bookingId
+            ? await fetchReviewsByBooking(bookingId)
+            : []
       setReviews(data)
     } finally {
       setLoading(false)

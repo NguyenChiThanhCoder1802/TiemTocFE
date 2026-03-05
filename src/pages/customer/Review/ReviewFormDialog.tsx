@@ -13,7 +13,7 @@ import UploadIcon from '@mui/icons-material/Upload'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from 'react'
 import ReviewStars from './ReviewStars'
-import { createReview, updateReview } from '../../../api/ReviewAPI'
+import { createReview, updateReview } from '../../../api/reviewApi'
 import type { Review } from '../../../types/Review/Review'
 
 interface ReviewFormDialogProps {
@@ -39,7 +39,7 @@ const ReviewFormDialog = ({
   onSuccess,
   onError,
   review,
-   serviceName,
+  serviceName,
   staffName
 }: ReviewFormDialogProps) => {
   const [rating, setRating] = useState<number>(0)
@@ -79,56 +79,56 @@ const ReviewFormDialog = ({
   }
 
   const handleSubmit = async () => {
-  const formData = new FormData()
-   if (bookingId) {
-  formData.append('booking', bookingId)
-}
-  if (serviceId) formData.append('service', serviceId)
-  if (staffId) formData.append('staff', staffId)
-
-  formData.append('rating', String(rating))
-  formData.append('comment', comment)
-
-  newImages.forEach(file => formData.append('images', file))
-
-  setLoading(true)
-  try {
-    if (isEdit && review) {
-      await updateReview(review._id, formData)
-    } else {
-      await createReview(formData)
+    const formData = new FormData()
+    if (bookingId) {
+      formData.append('booking', bookingId)
     }
-    onSuccess()
-    onClose()
-  } catch (error: any) {
-    const message =
-      error?.response?.data?.message || 'Có lỗi xảy ra'
-    if (onError) {
-      onError(message)
-    }
+    if (serviceId) formData.append('service', serviceId)
+    if (staffId) formData.append('staff', staffId)
 
-  } finally {
-    setLoading(false)
+    formData.append('rating', String(rating))
+    formData.append('comment', comment)
+
+    newImages.forEach(file => formData.append('images', file))
+
+    setLoading(true)
+    try {
+      if (isEdit && review) {
+        await updateReview(review._id, formData)
+      } else {
+        await createReview(formData)
+      }
+      onSuccess()
+      onClose()
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || 'Có lỗi xảy ra'
+      if (onError) {
+        onError(message)
+      }
+
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
-const getTitle = () => {
-  const targetName = serviceName || staffName || ''
+  const getTitle = () => {
+    const targetName = serviceName || staffName || ''
 
-  if (staffId) {
+    if (staffId) {
+      return isEdit
+        ? `Chỉnh sửa đánh giá nhân viên - ${targetName}`
+        : `Đánh giá nhân viên - ${targetName}`
+    }
+
     return isEdit
-      ? `Chỉnh sửa đánh giá nhân viên - ${targetName}`
-      : `Đánh giá nhân viên - ${targetName}`
+      ? `Chỉnh sửa đánh giá dịch vụ - ${targetName}`
+      : `Đánh giá dịch vụ - ${targetName}`
   }
-
-  return isEdit
-    ? `Chỉnh sửa đánh giá dịch vụ - ${targetName}`
-    : `Đánh giá dịch vụ - ${targetName}`
-}
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-       {getTitle()}
+        {getTitle()}
       </DialogTitle>
 
       <DialogContent>
@@ -240,8 +240,8 @@ const getTitle = () => {
             }
           >
             {loading
-                ? 'Đang gửi...'
-                : isEdit
+              ? 'Đang gửi...'
+              : isEdit
                 ? 'Cập nhật'
                 : 'Gửi đánh giá'}
           </Button>

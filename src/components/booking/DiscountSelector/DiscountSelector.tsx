@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Stack, Typography, Chip, Button } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
-import { getDiscountCards, applyDiscountCard } from '../../../api/DiscountAPI'
+import { getDiscountCards, applyDiscountCard } from '../../../api/discountAPI'
 import type { DiscountCard } from '../../../types/Discount/Discount'
 
 import DiscountManualInput from './DiscountManualInput'

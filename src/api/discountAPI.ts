@@ -16,6 +16,7 @@ export const getDiscountCards = async (): Promise<DiscountCard[]> => {
   return res.data
 }
 
+
 export const createDiscountCard = async (
   payload: CreateDiscountCardPayload
 ): Promise<DiscountCard> => {

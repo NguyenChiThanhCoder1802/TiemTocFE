@@ -10,7 +10,7 @@ import {
   createDiscountCard,
   updateDiscountCard,
   deleteDiscountCard
-} from '../api/DiscountAPI'
+} from '../api/discountAPI'
 
 export const useDiscountManager = () => {
   const [discounts, setDiscounts] = useState<DiscountCard[]>([])

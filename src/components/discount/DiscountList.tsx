@@ -7,7 +7,7 @@ import {
   Box
 } from '@mui/material'
 
-import { getDiscountCards } from '../../api/DiscountAPI'
+import { getDiscountCards } from '../../api/discountAPI'
 import type { DiscountCard } from '../../types/Discount/Discount'
 import { UserDiscountCard } from './UserDiscountCard'
 
@@ -16,7 +16,7 @@ export default function DiscountListPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => { 
+  useEffect(() => {
     getDiscountCards()
       .then(res => {
         setData(res.filter(d => d.isActive && !d.isDeleted))
@@ -44,7 +44,7 @@ export default function DiscountListPage() {
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
       <Typography variant="h4" gutterBottom>
-         Ưu đãi dành cho bạn
+        Ưu đãi dành cho bạn
       </Typography>
 
       {data.length === 0 ? (
@@ -72,7 +72,7 @@ export default function DiscountListPage() {
             >
               <UserDiscountCard
                 discount={discount}
-               
+
               />
             </Box>
           ))}
