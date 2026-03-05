@@ -17,9 +17,14 @@ import CustomerSidebar from '../../components/customer/Sidebar/CustomerSidebar'
 const Header = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, isAdmin } = useAuth()
-
   const [openSidebar, setOpenSidebar] = useState(false)
+  const [search, setSearch] = useState('')
 
+const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (e.key === 'Enter' && search.trim()) {
+    navigate(`/results?search=${search}`)
+  }
+}
   return (
     <>
       <AppBar
@@ -136,7 +141,12 @@ const Header = () => {
             }}
           >
             <SearchIcon sx={{ mr: 1, color: '#5D4037' }} />
-            <InputBase placeholder="Tìm kiếm..." />
+           <InputBase
+              placeholder="Tìm kiếm..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+            />
           </Box>
 
             {/* ===== CHƯA ĐĂNG NHẬP → TEXT ===== */}

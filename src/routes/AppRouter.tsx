@@ -33,6 +33,7 @@ import PaymentResultPage from '../components/booking/payment/PaymentResultPage';
 import BookingSuccessPage from '../components/booking/BookingReturn/BookingSuccessPage';
 import BookingCreatePage from '../pages/customer/Booking/BookingCreatePage';
 import BookingComboPage from '../pages/customer/Booking/BookingComboPage';
+import ResultPage from '../components/SearchResult/ResultPage';
 
 
 
@@ -45,9 +46,10 @@ const AppRouter = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/otp" element={<OtpVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
 
-      <Route path="/reset-password" element={<ResetPassword />} />
+      
 
       <Route path="/unauthorized" element={<Unauthorized />} />
       {/* Admin */}
@@ -68,7 +70,7 @@ const AppRouter = () => {
       <Route element={<MainLayout />}>
 
         <Route path="/services" element={<ServicesPage />} />
-
+        <Route path="/results" element={<ResultPage />} />
         <Route path="/staffs/:id" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
