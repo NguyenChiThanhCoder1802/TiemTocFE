@@ -99,6 +99,7 @@ const ServicesPage = () => {
               title='Dịch vụ của tiệm'
               items={services}
               linkPrefix="services"
+              maxItems={services.length}
             />
           )}
         </Box>

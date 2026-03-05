@@ -41,7 +41,11 @@ const ReviewListPage = () => {
           Bạn chưa có đánh giá nào
         </Typography>
       )}
-
+    <Box
+        sx={{
+          maxWidth: 600
+        }}
+      >
       <Stack spacing={1.5}>
         {reviews.map(review => (
           <Card
@@ -53,12 +57,24 @@ const ReviewListPage = () => {
             }}
             onClick={() =>
             {
-              if (review.service && typeof review.service !== "string") {
-            
-              navigate(
-                `/services/${review.service?.slug}?reviewId=${review._id}`
-              )
-            }}}
+               if (
+                review.service &&
+                typeof review.service !== 'string'
+              ) {
+                navigate(
+                  `/services/${review.service.slug}?reviewId=${review._id}`
+                )
+                return
+              }
+
+              /* staff */
+              if (
+                review.staff &&
+                typeof review.staff !== 'string'
+              ) {
+                navigate(`/staffs/${review.staff._id}`)
+              }
+            }}
           >
             <Stack spacing={0.5}>
               <Rating value={review.rating} readOnly size="small" />
@@ -78,10 +94,16 @@ const ReviewListPage = () => {
                   Dịch vụ: {review.service.name}
                 </Typography>
               )}
+              {review.staff && typeof review.staff !== "string" && (
+                <Typography fontSize={12} color="text.secondary">
+                  Nhân viên: {review.staff.user.name}
+                </Typography>
+              )}
             </Stack>
           </Card>
         ))}
       </Stack>
+    </Box>
     </Box>
   )
 }

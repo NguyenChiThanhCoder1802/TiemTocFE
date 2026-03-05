@@ -13,7 +13,7 @@ import type { Staff } from '../../types/Staff/Staff'
 interface Props {
   staffs: Staff[]
   selectedStaffId?: string
-  onSelect: (staff: Staff | null) => void
+  onSelect?: (staff: Staff | null) => void
   title?: string
   availability?: Record<string, boolean>
 }
@@ -46,7 +46,7 @@ const StaffCardList = ({
               key={staff._id}
                onClick={() => {
                   if (!isAvailable) return
-                  onSelect(isSelected ? null : staff)
+                  onSelect?.(isSelected ? null : staff)
                 }}
 
              sx={{

@@ -1,8 +1,6 @@
-import { Box, Typography, Skeleton , IconButton} from '@mui/material'
+import { Box, Typography, Skeleton} from '@mui/material'
 import type { ServiceCard } from '../../types/HairService/ServiceCard'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import HairServiceCard from './HairServiceCard'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
   items: ServiceCard[]
@@ -13,9 +11,7 @@ interface Props {
 }
 
 const ItemCardList = ({ items, title, linkPrefix, loading,maxItems = 4 }: Props) => {
-  const navigate = useNavigate()
   const visibleItems = items.slice(0, maxItems)
-  const hasMore = items.length > maxItems
   return (
     <Box sx={{ px: 0, py: 2 }}>
        <Box
@@ -35,18 +31,7 @@ const ItemCardList = ({ items, title, linkPrefix, loading,maxItems = 4 }: Props)
           {title}
         </Typography>
 
-        {hasMore && (
-          <IconButton
-            size="small"
-            onClick={() => navigate(`/${linkPrefix}`)}
-            sx={{
-              border: '1px solid #e0e0e0',
-              borderRadius: 2
-            }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        )}
+        
       </Box>
    
       <Box

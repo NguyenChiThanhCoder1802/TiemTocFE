@@ -5,16 +5,14 @@ import {
   Divider,
   Stack,
   Typography,
-  Avatar,
   Button
 } from '@mui/material'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import PersonIcon from '@mui/icons-material/Person'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 import ReplayIcon from '@mui/icons-material/Replay'
 
 import dayjs from 'dayjs'
-import type { Booking } from '../../types/Booking/Booking'
+import type { Booking } from '../../../types/Booking/Booking'
 import { useNavigate } from 'react-router-dom'
 
 interface Props {
@@ -45,7 +43,7 @@ export default function BookingDetailResult({
           {/* ===== HEADER ===== */}
           <Box>
             <Typography variant="h6" fontWeight={600}>
-              📅 Thông tin đặt lịch
+              Thông tin đặt lịch
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Mã booking: <b>{booking._id}</b>
@@ -57,7 +55,6 @@ export default function BookingDetailResult({
           {/* ===== KHÁCH HÀNG ===== */}
           {customer && (
             <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar>{customer.name?.[0]}</Avatar>
               <Box>
                 <Typography fontWeight={500}>
                   {customer.name}
@@ -74,9 +71,7 @@ export default function BookingDetailResult({
             <>
               <Divider />
               <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar src={staff.user?.avatar}>
-                  <PersonIcon />
-                </Avatar>
+
                 <Box>
                   <Typography fontWeight={500}>
                     {staff.user?.name}
@@ -100,8 +95,8 @@ export default function BookingDetailResult({
 
             {booking.bookingType === 'service' &&
               booking.services.map((s, idx) => (
-                <Typography key={idx} variant="body2">  
-                 • {s.nameSnapshot} – {s.priceAfterServiceDiscount?.toLocaleString()}₫
+                <Typography key={idx} variant="body2">
+                  • {s.nameSnapshot} – {s.priceAfterServiceDiscount?.toLocaleString()}₫
                 </Typography>
               ))}
 
@@ -137,57 +132,57 @@ export default function BookingDetailResult({
 
           {/* ===== THANH TOÁN ===== */}
           <Stack spacing={0.5}>
-  <Stack direction="row" justifyContent="space-between">
-    <Typography>Giá gốc</Typography>
-    <Typography>
-      {booking.price.original.toLocaleString()}₫
-    </Typography>
-  </Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography>Giá gốc</Typography>
+              <Typography>
+                {booking.price.original.toLocaleString()}₫
+              </Typography>
+            </Stack>
 
-  {booking.price.original >
-    booking.price.afterServiceDiscount && (
-    <Stack direction="row" justifyContent="space-between">
-      <Typography color="warning.main">
-        Giảm dịch vụ
-      </Typography>
-      <Typography color="warning.main">
-        -{(
-          booking.price.original -
-          booking.price.afterServiceDiscount
-        ).toLocaleString()}₫
-      </Typography>
-    </Stack>
-  )}
+            {booking.price.original >
+              booking.price.afterServiceDiscount && (
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography color="warning.main">
+                    Giảm dịch vụ
+                  </Typography>
+                  <Typography color="warning.main">
+                    -{(
+                      booking.price.original -
+                      booking.price.afterServiceDiscount
+                    ).toLocaleString()}₫
+                  </Typography>
+                </Stack>
+              )}
 
-  {booking.price.discountAmount > 0 && (
-    <Stack direction="row" justifyContent="space-between">
-      <Typography color="primary">
-        Giảm mã ({booking.discount?.code})
-      </Typography>
-      <Typography color="primary">
-        -{booking.price.discountAmount.toLocaleString()}₫
-      </Typography>
-    </Stack>
-  )}
+            {booking.price.discountAmount > 0 && (
+              <Stack direction="row" justifyContent="space-between">
+                <Typography color="primary">
+                  Giảm mã ({booking.discount?.code})
+                </Typography>
+                <Typography color="primary">
+                  -{booking.price.discountAmount.toLocaleString()}₫
+                </Typography>
+              </Stack>
+            )}
 
-  <Divider />
+            <Divider />
 
-  <Stack direction="row" justifyContent="space-between">
-    <Typography fontWeight={700}>
-      Thanh toán
-    </Typography>
-    <Typography fontWeight={700} color="primary">
-      {booking.price.final.toLocaleString()}₫
-    </Typography>
-  </Stack>
-</Stack>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography fontWeight={700}>
+                Thanh toán
+              </Typography>
+              <Typography fontWeight={700} color="primary">
+                {booking.price.final.toLocaleString()}₫
+              </Typography>
+            </Stack>
+          </Stack>
           {/* ===== ACTIONS ===== */}
           <Stack direction="row" spacing={2} mt={2}>
             <Button
               variant="outlined"
               onClick={() => navigate('/customer/bookinghistory')}
             >
-              Xem lịch sử booking
+              Xem trạng thái đặt lịch
             </Button>
 
             {showRetry && (

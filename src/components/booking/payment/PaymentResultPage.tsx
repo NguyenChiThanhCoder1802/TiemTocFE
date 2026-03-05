@@ -11,7 +11,7 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ErrorIcon from '@mui/icons-material/Error'
 
-import BookingDetailResult from '../BookingDetailResult.tsx'
+import BookingDetailResult from '../BookingReturn/BookingDetailResult.tsx'
 import { useBookingDetail } from '../../../hooks/useBookingDetail.ts'
 import { useMyLatestBooking } from '../../../hooks/useMyLatestBooking.ts'
 

@@ -41,7 +41,7 @@ const Login = () => {
 
       if (role === 'admin') navigate('/admin/dashboard')
       else if (role === 'staff') navigate('/staff/home')
-      else navigate('/customer/Profile/CustomerDashboard')
+      else navigate('/')
     } catch{
       setMessage('Sai email hoặc mật khẩu')
     }

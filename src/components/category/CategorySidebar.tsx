@@ -24,7 +24,12 @@ export default function CategorySidebar({
 
   useEffect(() => {
     fetchCategories({ isActive: true })
-      .then(setCategories)
+      .then((data) => {
+      const filtered = data.filter(
+        (cat) => cat.name.toLowerCase() !== 'combo'
+      )
+      setCategories(filtered)
+    })
       .finally(() => setLoading(false))
   }, [])
 

@@ -30,8 +30,7 @@ import BookingHistory from '../pages/customer/Booking/BookingHistory';
 import BookingDetailPage from '../pages/DetailPage/BookingDetailPage';
 import FavoriteServicesPage from '../pages/customer/Profile/FavoriteServicesPage';
 import PaymentResultPage from '../components/booking/payment/PaymentResultPage';
-import BookingSuccessPage from '../components/booking/BookingSuccessPage';
-import PaymentHistory from '../pages/customer/Payment/PaymentHistory';
+import BookingSuccessPage from '../components/booking/BookingReturn/BookingSuccessPage';
 import BookingCreatePage from '../pages/customer/Booking/BookingCreatePage';
 import BookingComboPage from '../pages/customer/Booking/BookingComboPage';
 
@@ -80,7 +79,7 @@ const AppRouter = () => {
         <Route path="/discounts" element={<DiscountListPage />} />
         {/* <Route path="/customer/booking/:serviceId" element={<BookingForm />} /> */}
         <Route path="/customer/booking" element={<BookingCreatePage />} />
-        <Route path='/customer/booking/combo/:slug' element={<BookingComboPage/>} />
+        <Route path='/customer/booking/combo/:slug' element={<BookingComboPage />} />
         <Route
           path="/booking-success/:id"
           element={<BookingSuccessPage />}
@@ -88,7 +87,7 @@ const AppRouter = () => {
         <Route path="/customer/BookingHistory" element={<BookingHistory />} />
         <Route path="/bookings/:id" element={<BookingDetailPage />} />
         <Route path="/payment-result" element={<PaymentResultPage />} />
-        <Route path="/customer/paymentHistory" element={<PaymentHistory />} />
+     
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['customer']} />}>
           <Route path="/customer/profile" element={<ProfilePage />} />

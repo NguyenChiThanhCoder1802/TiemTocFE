@@ -5,14 +5,12 @@ import {
   CardContent,
   Checkbox,
   Stack,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Button
+  Chip
 } from '@mui/material'
 import { useState } from 'react'
 import type { Service } from '../../types/HairService/Service'
+import ServiceSearchDialog from '../../components/booking/ChooseService/ServiceSearchDialog'
+
 interface Props {
   services: Service[]
   selected: Service[]
@@ -29,7 +27,7 @@ export default function BookingStepServices({
   const isSelected = (id: string) =>
     selected.some(s => s._id === id)
 
-  /* ================= CARD UI ================= */
+  /* CARD UI */
   const ServiceCardItem = (service: Service) => {
     const checked = isSelected(service._id)
 
@@ -45,8 +43,7 @@ export default function BookingStepServices({
       >
         <CardContent>
           <Stack direction="row" spacing={2} alignItems="center">
-            
-            {/* IMAGE */}
+
             <Box
               component="img"
               src={service.images?.[0] || '/placeholder.png'}
@@ -59,7 +56,6 @@ export default function BookingStepServices({
               }}
             />
 
-            {/* INFO */}
             <Box flex={1}>
               <Typography fontWeight={600}>
                 {service.name}
@@ -84,7 +80,8 @@ export default function BookingStepServices({
 
   return (
     <Box>
-      {/* ================= HEADER ================= */}
+
+      {/* HEADER */}
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -92,7 +89,7 @@ export default function BookingStepServices({
         mb={2}
       >
         <Typography variant="h6" fontWeight={700}>
-         Chọn dịch vụ
+          Chọn dịch vụ
         </Typography>
 
         <Typography
@@ -104,39 +101,21 @@ export default function BookingStepServices({
         </Typography>
       </Stack>
 
-      {/* ================= SELECTED SERVICES ================= */}
-      {selected.length > 0 && (
-        <Stack spacing={2} mb={3}>
-          {selected.map(service => ServiceCardItem(service))}
-        </Stack>
-      )}
+      {/* SELECTED */}
+      <Stack spacing={2} mb={3}>
+        {selected.map(service => ServiceCardItem(service))}
+      </Stack>
 
-      {/* ================= DIALOG ALL SERVICES ================= */}
-      <Dialog
+      {/* SEARCH DIALOG */}
+      <ServiceSearchDialog
         open={open}
         onClose={() => setOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Chọn thêm dịch vụ</DialogTitle>
+        services={services}
+        selected={selected}
+        toggleService={toggleService}
+        renderCard={ServiceCardItem}
+      />
 
-        <DialogContent>
-          <Stack spacing={2}>
-            {services.map(service =>
-              ServiceCardItem(service)
-            )}
-          </Stack>
-
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3 }}
-            onClick={() => setOpen(false)}
-          >
-            Xong
-          </Button>
-        </DialogContent>
-      </Dialog>
     </Box>
   )
 }

@@ -3,4 +3,5 @@ export type ProfileTab =
   | 'bookings'
   | 'orders'
   | 'reviews'
+  | 'paymentHistory'
   | 'loyalty'

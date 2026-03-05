@@ -21,7 +21,6 @@ import {
 
 import { registerApi, staffRegisterApi } from '../../api/AuthAPI'
 
-/* ================= TYPES ================= */
 
 type StaffPosition = 'stylist' | 'assistant' | 'manager'
 
@@ -71,7 +70,7 @@ const Register = () => {
     e.preventDefault()
 
     if (password !== confirm) {
-      setMessage('❌ Mật khẩu không khớp')
+      setMessage(' Mật khẩu không khớp')
       return
     }
 

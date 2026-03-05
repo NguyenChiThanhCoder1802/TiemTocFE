@@ -100,7 +100,7 @@ export const forgotPasswordApi = async (email: string) => {
 }
 export const resetPasswordApi = async (payload: {
   email: string
-  token: string
+  otp: string
   newPassword: string
 }) => {
   const res = await axiosInstance.post<{ message: string }>(

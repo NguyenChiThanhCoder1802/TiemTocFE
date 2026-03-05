@@ -12,9 +12,7 @@ import {
 import {
   Dashboard,
   CalendarMonth,
-  Star,
   Person,
-  Favorite,
   Logout
 } from '@mui/icons-material'
 import { NavLink, useNavigate,useLocation } from 'react-router-dom'
@@ -25,8 +23,6 @@ const drawerWidth = 260
 const menu = [
   { text: 'Trang chủ', icon: <Dashboard />, path: '/' },
   { text: 'Lịch đặt', icon: <CalendarMonth />, path: '/customer/booking' },
-  { text: 'Đánh giá', icon: <Star />, path: '/my-reviews' },
-  { text: 'Yêu thích', icon: <Favorite />, path: '/my-favorites' },
   { text: 'Hồ sơ', icon: <Person />, path: '/customer/profile' }
 ]
 
@@ -61,7 +57,7 @@ const CustomerSidebar = ({
       open={open}
       onClose={onClose}
       variant={variant}
-      anchor="right" // 👉 MỞ TỪ BÊN PHẢI
+      anchor="right"
       sx={{
         width: drawerWidth,
         [`& .MuiDrawer-paper`]: {
@@ -75,14 +71,13 @@ const CustomerSidebar = ({
         <Box>
           <Typography fontWeight={600}>{user?.name}</Typography>
           <Typography fontSize={13} color="text.secondary">
-            Customer
+            {user?.role}
           </Typography>
         </Box>
       </Box>
 
       <Divider />
 
-      {/* ===== MENU ===== */}
       <List>
         {menu.map(item => (
           <ListItemButton

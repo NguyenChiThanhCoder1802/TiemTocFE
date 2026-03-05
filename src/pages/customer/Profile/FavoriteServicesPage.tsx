@@ -25,7 +25,7 @@ const FavoriteServicesPage = () => {
   if (!loading && services.length === 0) {
     return (
       <Typography align="center" mt={4} color="text.secondary">
-        Bạn chưa yêu thích dịch vụ nào ❤️
+        Bạn chưa yêu thích dịch vụ nào!
       </Typography>
     )
   }

@@ -34,8 +34,8 @@ const HairServiceCard = ({
     ? Math.round(((item.price - item.finalPrice) / item.price) * 100)
     : 0
 
-  const badgeLabel = isSale ? `-${discountPercent}%` : 'HOT'
-  const badgeColor = isSale ? '#d32f2f' : '#f57c00'
+  const badgeLabel = isSale ? `-${discountPercent}%` : ''
+  const badgeColor = isSale ? '#d2a679' : '#f57c00'
 
   return (
     <MotionBox

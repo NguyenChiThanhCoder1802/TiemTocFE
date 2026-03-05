@@ -53,7 +53,6 @@ axiosInstance.interceptors.response.use(
       response.headers['X-New-Access-Token']
 
     if (newAccessToken) {
-      console.log('🔄 UPDATE ACCESS TOKEN FROM BE')
       localStorage.setItem('accessToken', newAccessToken)
     }
 

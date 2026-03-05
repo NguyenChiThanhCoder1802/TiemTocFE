@@ -40,8 +40,7 @@ export const useComboServiceForm = (combo: Combo | null) => {
       'services',
       JSON.stringify(
         combo.services.map(s => ({
-          service: typeof s.service === 'string' ? s.service : s.service._id,
-          quantity: s.quantity
+          service: s.service
         }))
       )
     )
@@ -75,7 +74,7 @@ export const useComboServiceForm = (combo: Combo | null) => {
   /* ================= SERVICES ================= */
   const setServices = useCallback(
     (
-      services: { service: ServiceLite; quantity: number }[],
+      services: { service: ServiceLite}[],
       duration: number
     ) => {
       formDataRef.current.set(
@@ -83,7 +82,6 @@ export const useComboServiceForm = (combo: Combo | null) => {
         JSON.stringify(
           services.map(s => ({
             service: s.service._id,
-            quantity: s.quantity
           }))
         )
       )

@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import ProfileHeader from './ProfileHeader'
 import FavoriteServicesPage from './FavoriteServicesPage'
 import ReviewListPage from './ReviewListPage'
+import PaymentHistory from '../Payment/PaymentHistory'
 import type { ProfileTab } from '../../../types/Profile/ProfileTab'
 
 
@@ -13,11 +14,11 @@ const ProfilePage = () => {
       case 'favorites':
         return <FavoriteServicesPage />
       case 'bookings':
-        return <div>Danh sách lịch đặt</div>
-      case 'orders':
-        return <div>Danh sách đơn hàng</div>
+        return <div>Danh sách đặt lịch của bạn</div>
       case 'reviews':
         return <ReviewListPage />
+         case 'paymentHistory':
+      return <PaymentHistory />
       default:
         return null
     }

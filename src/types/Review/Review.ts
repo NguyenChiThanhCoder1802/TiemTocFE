@@ -1,4 +1,5 @@
 import type { Service } from "../HairService/Service"
+import type { Staff } from "../Staff/Staff"
 export interface Review {
   _id: string
   user: {
@@ -8,7 +9,7 @@ export interface Review {
   }
 
   service?: string | Service | null
-  staff?: string | null
+  staff?: string | Staff | null
 
   rating: number
   comment?: string

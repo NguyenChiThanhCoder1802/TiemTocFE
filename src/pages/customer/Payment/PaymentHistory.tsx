@@ -3,128 +3,103 @@ import {
   Box,
   Typography,
   Card,
-  CardContent,
   Stack,
   Chip,
-  Divider
+  CircularProgress
 } from '@mui/material'
 import { getMyPayments } from '../../../api/PaymentAPI'
 import type { Payment } from '../../../types/Payment/Payment'
 
-const methodLabelMap = {
-  vnpay: 'VNPay',
-  momo: 'MoMo',
-  cash: 'Tiền mặt'
-}
-
-const statusLabelMap = {
-  pending: 'Đang xử lý',
-  success: 'Thành công',
-  failed: 'Thất bại'
-}
-
-const statusColorMap = {
-  pending: 'warning',
-  success: 'success',
-  failed: 'error'
-} as const
-
-export default function PaymentHistory() {
+const PaymentHistoryPage = () => {
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const data = await getMyPayments()
-        setPayments(data)
-      } catch (error) {
-        console.error('Lỗi lấy payment:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPayments()
+    getMyPayments()
+      .then(setPayments)
+      .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <Typography>Đang tải...</Typography>
-
-  if (!payments.length)
-    return <Typography>Chưa có lịch sử thanh toán</Typography>
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <CircularProgress />
+      </Box>
+    )
+  }
 
   return (
-    <Box p={4}>
-      <Typography variant="h5" fontWeight={700} mb={3}>
+    <Box maxWidth={700}>
+      <Typography variant="h6" mb={2} fontWeight={600}>
         Lịch sử thanh toán
       </Typography>
 
-      <Stack spacing={3}>
-        {payments.map((payment) => {
-          const booking =
-            typeof payment.booking === 'object'
-              ? payment.booking
-              : null
+      {payments.length === 0 && (
+        <Typography color="text.secondary">
+          Bạn chưa có giao dịch nào
+        </Typography>
+      )}
 
-          const serviceNames =
-            booking?.services?.map(
-              (s: any) => s.nameSnapshot
-            ) || []
+      <Stack spacing={2}>
+        {payments.map(payment => {
+          const booking =
+            typeof payment.booking === 'string'
+              ? null
+              : payment.booking
 
           return (
-            <Card
-              key={payment._id}
-              sx={{ borderRadius: 3 }}
-            >
-              <CardContent>
-                <Stack spacing={1}>
-                  {/* Service name */}
-                  <Typography fontWeight={600}>
+            <Card key={payment._id} sx={{ p: 2 }}>
+              <Stack spacing={1}>
+
+                {/* Booking */}
+                <Typography fontSize={14}>
+                  Booking: {booking?._id}
+                </Typography>
+
+                {/* Services */}
+                {booking?.services?.length ? (
+                  <Typography fontSize={14}>
                     Dịch vụ:{' '}
-                    {serviceNames.length
-                      ? serviceNames.join(', ')
-                      : 'Không có'}
+                    {booking.services
+                      .map(s => s.nameSnapshot)
+                      .join(', ')}
                   </Typography>
+                ) : null}
 
-                  <Divider />
+                {/* Amount */}
+                <Typography fontSize={14}>
+                  Số tiền:{' '}
+                  <b>
+                    {payment.amount.toLocaleString()} đ
+                  </b>
+                </Typography>
 
-                  <Typography>
-                    Phương thức:{' '}
-                    {methodLabelMap[payment.method]}
-                  </Typography>
+                {/* Method */}
+                <Typography fontSize={14}>
+                  Phương thức: {payment.method}
+                </Typography>
 
-                  <Typography>
-                    Số tiền:{' '}
-                    {payment.amount.toLocaleString(
-                      'vi-VN'
-                    )}
-                    đ
-                  </Typography>
-
-                  <Typography>
-                    Ngân hàng:{' '}
-                    {payment.bankCode ?? '—'}
-                  </Typography>
-
-                  <Typography>
-                    Thanh toán lúc:{' '}
-                    {payment.paidAt
-                      ? new Date(
-                          payment.paidAt
-                        ).toLocaleString('vi-VN')
-                      : '—'}
-                  </Typography>
-
+                {/* Status */}
+                <Box>
                   <Chip
-                    label={statusLabelMap[payment.status]}
+                    label={
+                      payment.status === 'success'
+                        ? 'Thành công'
+                        : payment.status === 'pending'
+                        ? 'Đang xử lý'
+                        : 'Thất bại'
+                    }
                     color={
-                      statusColorMap[payment.status]
+                      payment.status === 'success'
+                        ? 'success'
+                        : payment.status === 'pending'
+                        ? 'warning'
+                        : 'error'
                     }
                     size="small"
-                    sx={{ width: 'fit-content' }}
                   />
-                </Stack>
-              </CardContent>
+                </Box>
+              </Stack>
             </Card>
           )
         })}
@@ -132,3 +107,5 @@ export default function PaymentHistory() {
     </Box>
   )
 }
+
+export default PaymentHistoryPage

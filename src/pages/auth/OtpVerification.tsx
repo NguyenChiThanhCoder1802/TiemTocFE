@@ -58,7 +58,7 @@ const OtpVerification = () => {
     const otpCode = otp.join('')
 
     if (otpCode.length !== 6) {
-      setMessage('❌ Vui lòng nhập đủ 6 số OTP')
+      setMessage(' Vui lòng nhập đủ 6 số OTP')
       return
     }
 
@@ -70,7 +70,7 @@ const OtpVerification = () => {
       otp: otpCode
     })
       localStorage.removeItem('pendingEmail')
-      setMessage('✅ Xác minh thành công!')
+      setMessage('Xác minh thành công!')
 
       setTimeout(() => navigate('/login'), 1500)
     } catch (err: unknown) {

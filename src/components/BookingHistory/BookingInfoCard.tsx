@@ -13,7 +13,14 @@ const statusColorMap: Record<Booking['status'], ChipColor> = {
   no_show: 'error'
 }
 
-
+const statusLabelMap: Record<Booking['status'], string> = {
+  pending: "Chờ xác nhận",
+  confirmed: "Đã xác nhận",
+  in_progress: "Đang thực hiện",
+  completed: "Hoàn thành",
+  cancelled: "Đã huỷ",
+  no_show: "Không đến"
+}
 interface Props {
   booking: Booking
 }
@@ -62,8 +69,11 @@ export default function BookingInfoCard({ booking }: Props) {
         <Divider sx={{ my: 1 }} />
 
         <Stack direction="row" spacing={2}>
+          <Typography fontWeight={600}>
+            Trạng thái lịch của bạn:
+          </Typography>
         <Chip
-          label={booking.status}
+          label={statusLabelMap[booking.status]}
           color={statusColorMap[booking.status]}
         />
       </Stack>

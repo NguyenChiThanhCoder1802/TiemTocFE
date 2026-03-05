@@ -14,7 +14,7 @@ import type { Staff } from '../types/Staff/Staff'
 import type { Combo } from '../types/Combo/Combo'
 
 const HomePage = () => {
-  const [services, setServices] = useState<ServiceCard[]>([])
+  const [service, setServices] = useState<ServiceCard[]>([])
   const [staffs, setStaffs] = useState<Staff[]>([])
   const [combos, setCombos] = useState<Combo[]>([])
   const [favoriteServices, setFavoriteServices] = useState<ServiceCard[]>([])
@@ -23,7 +23,7 @@ const HomePage = () => {
   const [loadingPage, setLoadingPage] = useState(true)
   const [loadingFavorites, setLoadingFavorites] = useState(false)
   const [loadingFeatured, setLoadingFeatured] = useState(false)
-  const [loadingCombos, setLoadingCombos] = useState(false)
+  const [loadingCombos] = useState(false)
 
   const [error, setError] = useState<string | null>(null)
 
@@ -75,11 +75,17 @@ const HomePage = () => {
 
       {!loadingPage && (
         <>
+        {featuredServices.length > 0 && (
           <ItemCardList
             items={featuredServices}
             title="Dịch vụ nổi bật"
             linkPrefix="services"
             loading={loadingFeatured}
+          />)}
+          <ItemCardList
+            items={service}
+            title="Dịch vụ thường ngày"
+            linkPrefix="services"
           />
           <ItemCardList
             items={favoriteServices}

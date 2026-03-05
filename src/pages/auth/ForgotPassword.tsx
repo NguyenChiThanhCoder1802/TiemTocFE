@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Box, Button, TextField, Typography, Alert,CircularProgress  } from '@mui/material'
 import { forgotPasswordApi } from '../../api/AuthAPI'
+import { useNavigate } from 'react-router-dom'
 const ForgotPassword = () => {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -15,6 +17,9 @@ const ForgotPassword = () => {
        const res = await forgotPasswordApi(email)
 
       setMessage(res.message || 'Vui lòng kiểm tra email để đặt lại mật khẩu')
+      setTimeout(() => {
+        navigate(`/reset-password`,{state:{email}})
+      }, 1000)
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : 'Email không tồn tại'

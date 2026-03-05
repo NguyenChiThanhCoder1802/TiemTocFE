@@ -8,6 +8,7 @@ const tabs :{ label: string; value: ProfileTab }[]= [
   { label: 'Lịch đặt', value: 'bookings' },
   { label: 'Yêu thích', value: 'favorites' },
   { label: 'Đánh giá', value: 'reviews' },
+  { label: 'Thanh toán', value: 'paymentHistory' },
   { label: 'Khách hàng thân thiết', value: 'loyalty' },
 ]
 

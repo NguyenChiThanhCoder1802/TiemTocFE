@@ -68,7 +68,6 @@ export interface CreateComboPayload {
 
   services: {
     service: string
-    quantity: number
   }[]
 
   pricing: ComboPricing

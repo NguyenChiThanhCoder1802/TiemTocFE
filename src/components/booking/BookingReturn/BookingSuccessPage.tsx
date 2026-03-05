@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CircularProgress, Box, Typography } from '@mui/material'
 import BookingDetailResult from './BookingDetailResult'
-import { fetchBookingById } from '../../api/BookingAPI'
-import type { Booking } from '../../types/Booking/Booking'
+import { fetchBookingById } from '../../../api/BookingAPI'
+import type { Booking } from '../../../types/Booking/Booking'
 
 export default function BookingSuccessPage() {
   const { id } = useParams<{ id: string }>()
@@ -30,7 +30,7 @@ export default function BookingSuccessPage() {
   return (
     <Box maxWidth={720} mx="auto" mt={4}>
       <Typography variant="h5" mb={3} fontWeight={600}>
-         Đặt lịch thành công!
+        Đặt lịch thành công!
       </Typography>
 
       <BookingDetailResult booking={booking} />
