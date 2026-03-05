@@ -69,7 +69,7 @@ const StaffDetailPage = () => {
             </Typography>
 
             <Typography mt={1}>
-              ⭐ {staff.ratingAverage.toFixed(1)} / 5 • {staff.completedBookings} lượt phục vụ
+              {staff.ratingAverage.toFixed(1)} / 5 • {staff.completedBookings} lượt phục vụ
             </Typography>
           </Box>
         </Stack>

@@ -18,7 +18,7 @@ const ServicesPage = () => {
     const loadServices = async () => {
       try {
         setLoading(true)
-        const data = await fetchServices(categoryId ?? undefined)
+        const data = await fetchServices({categoryId: categoryId ?? undefined})
         setServices(data)
       } catch (err: any) {
         setError(err?.response?.data?.message || 'Không thể tải dịch vụ')

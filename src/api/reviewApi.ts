@@ -4,9 +4,6 @@ import type { ApiResponse } from '../types/ApiResponse'
 
 const BASE_URL = '/reviews'
 
-/* ======================
-   GET REVIEWS BY SERVICE
-====================== */
 export const fetchReviewsByService = async (
   serviceId: string
 ): Promise<Review[]> => {

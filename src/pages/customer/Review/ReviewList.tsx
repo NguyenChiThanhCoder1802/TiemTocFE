@@ -6,9 +6,10 @@ import { useReview } from '../../../hooks/useReview'
 interface ReviewListProps {
   serviceId?: string
   staffId?: string
+  reloadKey?: number
 }
  
-const ReviewList = ({ serviceId, staffId }: ReviewListProps) => {
+const ReviewList = ({ serviceId, staffId,reloadKey }: ReviewListProps) => {
  const {
   reviews,
   loading,
@@ -21,7 +22,7 @@ const ReviewList = ({ serviceId, staffId }: ReviewListProps) => {
 
   useEffect(() => {
     loadReviews()
-  }, [loadReviews])
+  }, [loadReviews, reloadKey])
   if (loading) return <CircularProgress />
 
 

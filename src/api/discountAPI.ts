@@ -16,9 +16,6 @@ export const getDiscountCards = async (): Promise<DiscountCard[]> => {
   return res.data
 }
 
-/* ======================
-   CREATE DISCOUNT CARD (ADMIN)
-====================== */
 export const createDiscountCard = async (
   payload: CreateDiscountCardPayload
 ): Promise<DiscountCard> => {
@@ -29,9 +26,6 @@ export const createDiscountCard = async (
   return res.data
 }
 
-/* ======================
-   UPDATE DISCOUNT CARD (ADMIN)
-====================== */
 export const updateDiscountCard = async (
   id: string,
   payload: UpdateDiscountCardPayload
@@ -43,16 +37,10 @@ export const updateDiscountCard = async (
   return res.data
 }
 
-/* ======================
-   DELETE DISCOUNT CARD (ADMIN)
-====================== */
 export const deleteDiscountCard = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${BASE_URL}/${id}`)
 }
 
-/* ======================
-   APPLY DISCOUNT (USER)
-====================== */
 export const applyDiscountCard = async (
   code: string,
   amount: number,
