@@ -98,7 +98,7 @@ const Register = () => {
           email,
           name,
           password,
-          role: 'customer'
+          confirmpassword: confirm,
         })
       }
 

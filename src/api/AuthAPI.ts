@@ -19,7 +19,7 @@ export interface RegisterPayload {
   email: string
   name: string
   password: string
-  role: string
+  confirmpassword:string
   applyAsStaff?: boolean
 }
 export interface JwtPayload {
@@ -69,7 +69,7 @@ export const registerApi = async (payload: RegisterPayload) => {
     '/auth/register',
     payload
   )
-
+  console.log(res)
   return res.data.data
 }
 export const staffRegisterApi = async (payload: StaffRegisterPayload) => {
