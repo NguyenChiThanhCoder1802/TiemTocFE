@@ -9,7 +9,7 @@ import {
   Button,
   Card,
   CardContent,
-  Chip
+  Chip,
 } from '@mui/material'
 
 import BookingStepStaff from '../../../components/booking/BookingStepStaff'
@@ -25,11 +25,11 @@ import { getComboBySlug } from '../../../api/ComboAPI'
 import { fetchPublicStaffs } from '../../../api/staffAPI'
 import { createBooking } from '../../../api/BookingAPI'
 import { createBookingPayment } from '../../../api/PaymentAPI'
-
+import { useToast } from '../../../hooks/useToast' 
 export default function BookingComboPage() {
   const { slug } = useParams()
   const navigate = useNavigate()
-
+  const { showToast } = useToast()
   const [combo, setCombo] = useState<Combo | null>(null)
   const [staffs, setStaffs] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,6 +86,7 @@ export default function BookingComboPage() {
       })
 
       if (paymentMethod === 'cash') {
+        showToast("Đặt lịch thành công (Thanh toán tại salon)", "success")
         navigate(`/booking-success/${booking._id}`)
         return
       }
@@ -95,8 +96,12 @@ export default function BookingComboPage() {
         window.location.href = payment.paymentUrl
         return
       }
-    } catch (error: any) {
-      alert(error?.response?.data?.message ?? 'Có lỗi xảy ra')
+    } catch (err: any) {
+      const msg =
+    err?.response?.data?.message ||
+    err?.message ||
+    'Có lỗi xảy ra'
+ showToast(msg, "error")
     } finally {
       setSubmitting(false)
     }
@@ -125,6 +130,7 @@ export default function BookingComboPage() {
       <Typography variant="h4" fontWeight={700} gutterBottom>
         Đặt lịch Combo
       </Typography>
+    
 
       <Card sx={{ mb: 4 }}>
         <CardContent>
@@ -134,7 +140,7 @@ export default function BookingComboPage() {
           </Typography>
 
           <Stack direction="row" spacing={2} mt={2}>
-            <Chip label={`⏱ ${combo.duration} phút`} />
+            <Chip label={` ${combo.duration} phút`} />
             <Chip
               color="primary"
               label={`${combo.pricing.comboPrice.toLocaleString()} đ`}
@@ -156,7 +162,7 @@ export default function BookingComboPage() {
                   setSelectedStaff(s)
                   setStaffError(null)
                 }}
-                availability={{}} // bạn có thể inject real availability
+                availability={{}}
                 error={staffError}
               />
             </CardContent>

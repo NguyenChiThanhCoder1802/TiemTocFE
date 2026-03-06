@@ -8,6 +8,8 @@ import { DndProvider } from 'react-dnd';
 import theme from './types/theme';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
+import ToastProvider from './components/common/ToastProvider';
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
 
@@ -15,7 +17,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
          <CssBaseline />
           <DndProvider backend={HTML5Backend}>
-            <App />
+            <ToastProvider>
+              <App />
+            </ToastProvider>
+            
           </DndProvider>
         </ThemeProvider>
       </SnackbarProvider>

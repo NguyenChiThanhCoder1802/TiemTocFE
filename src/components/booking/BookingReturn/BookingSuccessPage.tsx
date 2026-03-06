@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { CircularProgress, Box, Typography } from '@mui/material'
+import { useParams, useLocation } from 'react-router-dom'
+import { CircularProgress, Box, Typography, Alert } from '@mui/material'
 import BookingDetailResult from './BookingDetailResult'
 import { fetchBookingById } from '../../../api/BookingAPI'
 import type { Booking } from '../../../types/Booking/Booking'
@@ -9,7 +9,8 @@ export default function BookingSuccessPage() {
   const { id } = useParams<{ id: string }>()
   const [booking, setBooking] = useState<Booking | null>(null)
   const [loading, setLoading] = useState(true)
-
+  const location = useLocation()
+  const message = location.state?.message
   useEffect(() => {
     if (!id) return
 
@@ -28,6 +29,12 @@ export default function BookingSuccessPage() {
     return <Typography color="error">Không tìm thấy booking</Typography>
 
   return (
+    <>
+    {message && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          {message}
+        </Alert>
+      )}
     <Box maxWidth={720} mx="auto" mt={4}>
       <Typography variant="h5" mb={3} fontWeight={600}>
         Đặt lịch thành công!
@@ -35,5 +42,6 @@ export default function BookingSuccessPage() {
 
       <BookingDetailResult booking={booking} />
     </Box>
+    </>
   )
 }

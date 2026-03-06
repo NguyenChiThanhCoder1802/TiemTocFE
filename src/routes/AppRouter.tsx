@@ -48,9 +48,6 @@ const AppRouter = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
-
-      
-
       <Route path="/unauthorized" element={<Unauthorized />} />
       {/* Admin */}
       <Route element={<PrivateRoute allowedRoles={['admin']} />}>
@@ -80,7 +77,7 @@ const AppRouter = () => {
         {/* <Route path="/customer/booking" element={<BookingPage />} /> */}
         <Route path="/discounts" element={<DiscountListPage />} />
         {/* <Route path="/customer/booking/:serviceId" element={<BookingForm />} /> */}
-        <Route path="/customer/booking" element={<BookingCreatePage />} />
+  
         <Route path='/customer/booking/combo/:slug' element={<BookingComboPage />} />
         <Route
           path="/booking-success/:id"
@@ -93,6 +90,7 @@ const AppRouter = () => {
         {/* Customer */}
         <Route element={<PrivateRoute allowedRoles={['customer']} />}>
           <Route path="/customer/profile" element={<ProfilePage />} />
+          <Route path="/customer/booking" element={<BookingCreatePage />} />
           <Route path="/customer/home" element={<HomePage />} />
           <Route path="/customer/profile/favorites" element={<FavoriteServicesPage />} />
         </Route>

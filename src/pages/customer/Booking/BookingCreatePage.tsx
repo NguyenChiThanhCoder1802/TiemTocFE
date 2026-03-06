@@ -20,9 +20,10 @@ import BookingSummaryPanel from '../../../components/booking/BookingSummaryPanel
 import { createBooking } from '../../../api/BookingAPI'
 import { createBookingPayment } from '../../../api/PaymentAPI'
 import BookingReviewDialog from '../../../components/booking/BookingReview'
-
+import { useToast } from '../../../hooks/useToast'
 export default function BookingCreatePage() {
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const { user } = useAuth()
   const location = useLocation()
   const [showConfirm, setShowConfirm] = useState(false)
@@ -79,6 +80,7 @@ export default function BookingCreatePage() {
 
       // CASH
       if (builder.paymentMethod === 'cash') {
+         showToast("Đặt lịch thành công", "success")
         navigate(`/booking-success/${booking._id}`)
         return
       }
@@ -88,28 +90,19 @@ export default function BookingCreatePage() {
         const payment = await createBookingPayment(
           booking._id
         )
+        showToast("Đang chuyển đến cổng thanh toán...", "info")
 
         window.location.href = payment.paymentUrl
         return
       }
-    } catch (error: unknown) {
-      let message = 'Có lỗi xảy ra'
+    } catch (err: any) {
+  const msg =
+    err?.response?.data?.message ||
+    err?.message ||
+    'Có lỗi xảy ra'
 
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'response' in error
-      ) {
-        const err = error as {
-          response?: {
-            data?: { message?: string }
-          }
-        }
+  showToast(msg, "error")
 
-        message = err.response?.data?.message ?? message
-      }
-
-      alert(message)
 
     } finally {
       setSubmitting(false)

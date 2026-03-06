@@ -105,12 +105,12 @@ const Register = () => {
       localStorage.setItem('pendingEmail', email)
       navigate('/otp', { state: { email } })
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setMessage(err.message)
-      } else {
-        setMessage('Có lỗi xảy ra')
-      }
-    } finally {
+  if (err instanceof Error) {
+    setMessage(err.message)
+  } else {
+    setMessage('Có lỗi xảy ra')
+  }
+} finally {
       setLoading(false)
     }
   }

@@ -8,7 +8,6 @@ import {
   Stack,
   Divider,
   Paper,
-  Button
 } from '@mui/material'
 
 import { fetchStaffById } from '../../api/staffAPI'
@@ -92,13 +91,7 @@ const StaffDetailPage = () => {
             Đánh giá từ khách hàng
           </Typography>
 
-          <Button
-            variant="contained"
-            onClick={() => setOpenReview(true)}
-            sx={{ borderRadius: 3 }}
-          >
-            Viết đánh giá
-          </Button>
+        
         </Stack>
 
         <ReviewList

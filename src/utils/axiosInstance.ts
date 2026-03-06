@@ -60,7 +60,10 @@ axiosInstance.interceptors.response.use(
   },
   error => {
     const status = error.response?.status
-    const message = error.response?.data?.message
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Server error'
 
     if (
       status === 401 &&
@@ -73,7 +76,7 @@ axiosInstance.interceptors.response.use(
       logoutAndRedirect()
     }
 
-    return Promise.reject(error)
+    return Promise.reject(new Error(message))
   }
 )
 
