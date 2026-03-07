@@ -74,7 +74,7 @@ export default function BookingReviewDialog({
           <Typography>
              <b>Nhân viên:</b>{' '}
             {staff
-              ? `${staff.user.name} – ${staff.position}`
+              ? `${staff.name} – ${staff.position}`
               : 'Hệ thống tự sắp xếp'}
           </Typography>
 

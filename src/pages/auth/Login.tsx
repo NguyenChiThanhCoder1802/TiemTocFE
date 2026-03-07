@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   Typography,
-  Alert,
   InputAdornment,
   IconButton,
   Box
@@ -17,12 +16,13 @@ import {
 } from '@mui/icons-material'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 import { loginApi } from '../../api/AuthAPI'
+import { useToast } from '../../hooks/useToast'
 
 const Login = () => {
+  const { showToast } = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [message, setMessage] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -34,7 +34,7 @@ const Login = () => {
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
       localStorage.setItem('auth_user', JSON.stringify(user))
-
+      showToast('Đăng nhập thành công', 'success')
       const role = Array.isArray(user.role)
         ? user.role[0]
         : user.role
@@ -42,9 +42,11 @@ const Login = () => {
       if (role === 'admin') navigate('/admin/dashboard')
       else if (role === 'staff') navigate('/staff/home')
       else navigate('/')
-    } catch{
-      setMessage('Sai email hoặc mật khẩu')
-    }
+    } catch (err: any) {
+    showToast(
+      err?.message,
+      'error'
+    )}
   }
 
   return (
@@ -117,25 +119,7 @@ const Login = () => {
         </Button>
 
       </form>
-          <Typography
-            mt={2}
-            textAlign="center"
-            sx={{
-              cursor: 'pointer',
-              color: 'secondary.main',
-              fontWeight: 500
-            }}
-            onClick={() => navigate('/register?applyAsStaff=true')}
-          >
-            Đăng ký thành nhân viên
-          </Typography>
-
-      {message && (
-        <Alert severity={message.includes('thành công') ? 'success' : 'error'} sx={{ mt: 2 }}>
-          {message}
-        </Alert>
-      )}
-
+          
      <Box
         mt={2}
         display="flex"
@@ -169,6 +153,6 @@ const Login = () => {
 
     </Box>
   )
-}
+  }
 
 export default Login

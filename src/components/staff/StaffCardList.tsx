@@ -70,8 +70,8 @@ const StaffCardList = ({
                 <Stack alignItems="center" spacing={1.2}>
                   {/* Avatar → xem profile */}
                   <Avatar
-                     src={staff.user?.avatar || ''}
-  alt={staff.user?.name || 'Staff'}
+                     src={staff.avatar || ''}
+  alt={staff.name || 'Staff'}
                     sx={{ width: 72, height: 72, cursor: 'pointer' }}
                     onClick={e => {
                       e.stopPropagation()
@@ -80,7 +80,7 @@ const StaffCardList = ({
                   />
 
                   <Typography fontWeight={600}>
-                    {staff.user.name}
+                    {staff.name}
                   </Typography>
 
                   <Chip

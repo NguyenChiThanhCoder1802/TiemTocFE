@@ -1,14 +1,12 @@
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   TextField,
   Button,
   Typography,
-  Alert,
   InputAdornment,
   IconButton,
   Box,
-  MenuItem,
   CircularProgress
 } from '@mui/material'
 import {
@@ -18,51 +16,22 @@ import {
   VisibilityOff,
   EmailOutlined
 } from '@mui/icons-material'
+import { useToast } from "../../hooks/useToast"
+import { registerApi } from '../../api/AuthAPI'
 
-import { registerApi, staffRegisterApi } from '../../api/AuthAPI'
-
-
-type StaffPosition = 'stylist' | 'assistant' | 'manager'
-
-interface StaffRegisterPayload {
-  email: string
-  name: string
-  password: string
-  confirmpassword: string
-  experienceYears: number
-  skills: string[]
-  position: StaffPosition
-}
-
-/* ================= CONSTANTS ================= */
-
-const STAFF_POSITIONS: { label: string; value: StaffPosition }[] = [
-  { label: 'Stylist', value: 'stylist' },
-  { label: 'Assistant', value: 'assistant' },
-  { label: 'Manager', value: 'manager' }
-]
 
 /* ================= COMPONENT ================= */
 
 const Register = () => {
-  const [searchParams] = useSearchParams()
-  const isStaff = searchParams.get('applyAsStaff') === 'true'
 
   const navigate = useNavigate()
-
+  const { showToast } = useToast()
   const [email, setEmail] = useState<string>('')
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [confirm, setConfirm] = useState<string>('')
-
-  // Staff-only
-  const [experienceYears, setExperienceYears] = useState<number>(0)
-  const [skillsInput, setSkillsInput] = useState<string>('')
-  const [position, setPosition] = useState<StaffPosition>('stylist')
-
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [message, setMessage] = useState<string>('')
 
   /* ================= HANDLERS ================= */
 
@@ -70,50 +39,32 @@ const Register = () => {
     e.preventDefault()
 
     if (password !== confirm) {
-      setMessage(' Mật khẩu không khớp')
+      showToast(' Mật khẩu không khớp',"error")
       return
     }
 
     try {
       setLoading(true)
-      setMessage('')
-
-      if (isStaff) {
-        const payload: StaffRegisterPayload = {
-          email,
-          name,
-          password,
-          confirmpassword: confirm,
-          experienceYears,
-          skills: skillsInput
-            .split(',')
-            .map(s => s.trim())
-            .filter(Boolean),
-          position
-        }
-
-        await staffRegisterApi(payload)
-      } else {
+      showToast('')
         await registerApi({
           email,
           name,
           password,
           confirmpassword: confirm,
         })
-      }
-
-      localStorage.setItem('pendingEmail', email)
-      navigate('/otp', { state: { email } })
-    } catch (err: unknown) {
-  if (err instanceof Error) {
-    setMessage(err.message)
-  } else {
-    setMessage('Có lỗi xảy ra')
-  }
-} finally {
-      setLoading(false)
-    }
-  }
+        showToast('Đăng ký thành công - Xác thực OTP!')
+          localStorage.setItem('pendingEmail', email)
+          navigate('/otp', { state: { email } })
+        } catch (err: unknown) {
+        if (err instanceof Error) {
+          showToast(err.message,"error")
+        } else {
+         showToast("Có lỗi xảy ra", "error")
+        }
+      } finally {
+            setLoading(false)
+          }
+        }
 
   /* ================= RENDER ================= */
 
@@ -121,7 +72,7 @@ const Register = () => {
     <>
       <Box textAlign="center" mb={3}>
         <Typography variant="h5">
-          {isStaff ? 'Đăng ký nhân viên' : 'Đăng ký'}
+         Đăng ký tài khoản
         </Typography>
       </Box>
 
@@ -160,48 +111,6 @@ const Register = () => {
             )
           }}
         />
-
-        {/* STAFF FIELDS */}
-        {isStaff && (
-          <>
-            <TextField
-              label="Số năm kinh nghiệm"
-              type="number"
-              value={experienceYears}
-              onChange={(e) => setExperienceYears(Number(e.target.value))}
-              fullWidth
-              margin="normal"
-              inputProps={{ min: 0 }}
-            />
-
-            <TextField
-              label="Kỹ năng (cách nhau bằng dấu ,)"
-              value={skillsInput}
-              onChange={(e) => setSkillsInput(e.target.value)}
-              fullWidth
-              margin="normal"
-              placeholder="Cắt tóc nam, uốn, nhuộm..."
-            />
-
-            <TextField
-              select
-              label="Vị trí"
-              value={position}
-              onChange={(e) =>
-                setPosition(e.target.value as StaffPosition)
-              }
-              fullWidth
-              margin="normal"
-            >
-              {STAFF_POSITIONS.map(p => (
-                <MenuItem key={p.value} value={p.value}>
-                  {p.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </>
-        )}
-
         {/* PASSWORD */}
         <TextField
           label="Mật khẩu"
@@ -248,16 +157,10 @@ const Register = () => {
           {loading ? (
             <CircularProgress size={22} color="inherit" />
           ) : (
-            isStaff ? 'Đăng ký nhân viên' : 'Đăng ký'
+            'Đăng ký'
           )}
         </Button>
       </form>
-
-      {message && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {message}
-        </Alert>
-      )}
 
       <Typography
         mt={2}

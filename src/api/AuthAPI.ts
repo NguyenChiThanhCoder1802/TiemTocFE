@@ -6,21 +6,11 @@ export interface LoginPayload {
   email: string
   password: string
 }
-export interface StaffRegisterPayload {
-  email: string
-  name: string
-  password: string
-  confirmpassword: string
-  experienceYears: number
-  skills: string[]
-  position?: 'stylist' | 'assistant' | 'manager'
-}
 export interface RegisterPayload {
   email: string
   name: string
   password: string
   confirmpassword:string
-  applyAsStaff?: boolean
 }
 export interface JwtPayload {
  id:string
@@ -72,14 +62,7 @@ export const registerApi = async (payload: RegisterPayload) => {
   console.log(res)
   return res.data.data
 }
-export const staffRegisterApi = async (payload: StaffRegisterPayload) => {
-  const res = await axiosInstance.post(
-    '/auth/staff-register',
-    payload
-  )
 
-  return res.data
-}
 export const verifyOtpApi = async (payload: {email: string, otp: string }) => {
   const res = await axiosInstance.post<{ message: string }>(
     '/auth/verify-otp',

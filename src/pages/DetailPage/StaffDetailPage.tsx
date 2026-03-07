@@ -34,13 +34,13 @@ const StaffDetailPage = () => {
         {/* ================= INFO ================= */}
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
           <Avatar
-            src={staff.user.avatar}
+            src={staff.avatar}
             sx={{ width: 140, height: 140, border: '4px solid', borderColor: 'primary.main' }}
           />
 
           <Box flex={1}>
             <Typography variant="h4" fontWeight={600}>
-              {staff.user.name}
+              {staff.name}
             </Typography>
 
             <Stack direction="row" spacing={1} mt={1}>

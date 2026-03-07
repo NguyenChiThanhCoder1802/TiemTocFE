@@ -1,21 +1,17 @@
-export type StaffStatus = 'pending' | 'approved' | 'rejected'
+
 export type StaffPosition = 'stylist' | 'assistant' | 'manager'
 export type WorkingStatus = 'active' | 'off' | 'resigned'
 
 export interface Staff {
   _id: string
-  user: {
-    _id: string
-    name: string
-    email: string
-    avatar?: string
-    isOnline: boolean
-    status: 'active' | 'blocked'
-  }
+  name: string
+  phone?: string
+  email?: string
+  avatar?: string
+  salary?: number
   experienceYears: number
   skills: string[]
   position: StaffPosition
-  status: StaffStatus
   workingStatus: WorkingStatus
   ratingAverage: number
   completedBookings: number

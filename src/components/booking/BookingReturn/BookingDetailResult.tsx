@@ -74,7 +74,7 @@ export default function BookingDetailResult({
 
                 <Box>
                   <Typography fontWeight={500}>
-                    {staff.user?.name}
+                    {staff?.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Nhân viên phục vụ
