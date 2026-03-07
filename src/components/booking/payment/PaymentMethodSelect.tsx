@@ -1,7 +1,6 @@
 import {
   Box,
   Stack,
-  Typography,
   RadioGroup,
   FormControlLabel,
   Radio
@@ -18,18 +17,8 @@ interface Props {
 
 export default function PaymentMethodSelect({ value, onChange }: Props) {
   return (
-    <Box
-      sx={{
-        backgroundColor: '#fff',
-        p: 3,
-        borderRadius: 2,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        border: '1px solid #eee'
-      }}
-    >
-      <Typography variant="h6" fontWeight={600}>
-       Chọn Phương thức thanh toán
-      </Typography>
+    <Box>
+
 
       <RadioGroup
         value={value}

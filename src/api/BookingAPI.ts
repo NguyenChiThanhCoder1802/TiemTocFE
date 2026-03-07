@@ -17,6 +17,25 @@ export const checkAllStaffAvailability = async (
 
   return res.data.availability
 }
+export const getAvailableSlots = async (
+  date: string,
+  duration: number
+): Promise<
+  {
+    time: string
+    available: boolean
+    reason?: string
+  }[]
+> => {
+  const res = await axiosInstance.get(
+    `${BASE_URL}/available-slots`,
+    {
+      params: { date, duration }
+    }
+  )
+
+  return res.data.data
+}
 export const previewBooking = async (payload: {
   bookingType: 'service' | 'combo'
   services?: { service: string }[]

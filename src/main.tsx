@@ -9,7 +9,8 @@ import theme from './types/theme';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import ToastProvider from './components/common/ToastProvider';
-
+import { LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
 
@@ -17,9 +18,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
          <CssBaseline />
           <DndProvider backend={HTML5Backend}>
-            <ToastProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+               <ToastProvider>
               <App />
             </ToastProvider>
+            </LocalizationProvider>
+           
             
           </DndProvider>
         </ThemeProvider>

@@ -71,19 +71,13 @@ export default function DiscountSelector({
   }
 
   return (
-    <Box
-      sx={{
-        backgroundColor: '#fff',
-        p: 3,
-        borderRadius: 3,
-        boxShadow: 1
-      }}>
+    <Box>
       <Stack
         direction="row"
         justifyContent="space-between"
         mb={2}
       >
-        <Typography variant="h6" fontWeight={600}>
+        <Typography fontWeight={600}>
           Chọn Voucher
         </Typography>
 

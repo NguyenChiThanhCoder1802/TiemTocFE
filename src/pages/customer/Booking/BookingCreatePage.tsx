@@ -3,7 +3,7 @@ import {
   Stack,
   Typography,
   Button,
-  CircularProgress
+  CircularProgress,Divider
 } from '@mui/material'
 
 import { useState, useEffect } from 'react'
@@ -11,12 +11,11 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useBookingBuilder } from '../../../hooks/useBookingBuilder'
 import useAuth from '../../../hooks/useAuth'
 import BookingStepTime from '../../../components/booking/BookingStepTime'
-import BookingStepStaff from '../../../components/booking/BookingStepStaff'
+import BookingStepStaff from '../../../components/booking/ChooseStaff/BookingStepStaff'
 import BookingStepServices from '../../../components/booking/BookingStepServices'
 import DiscountSection from '../../../components/booking/DiscountSelector/DiscountSelector'
 import PaymentMethodSelect from '../../../components/booking/payment/PaymentMethodSelect'
 import BookingSummaryPanel from '../../../components/booking/BookingSummaryPanel'
-
 import { createBooking } from '../../../api/BookingAPI'
 import { createBookingPayment } from '../../../api/PaymentAPI'
 import BookingReviewDialog from '../../../components/booking/BookingReview'
@@ -80,7 +79,7 @@ export default function BookingCreatePage() {
 
       // CASH
       if (builder.paymentMethod === 'cash') {
-         showToast("Đặt lịch thành công", "success")
+        showToast("Đặt lịch thành công", "success")
         navigate(`/booking-success/${booking._id}`)
         return
       }
@@ -96,12 +95,12 @@ export default function BookingCreatePage() {
         return
       }
     } catch (err: any) {
-  const msg =
-    err?.response?.data?.message ||
-    err?.message ||
-    'Có lỗi xảy ra'
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Có lỗi xảy ra'
 
-  showToast(msg, "error")
+      showToast(msg, "error")
 
 
     } finally {
@@ -159,12 +158,22 @@ export default function BookingCreatePage() {
         }}
       >
         <Box flex={2}>
+           <Box
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: 1,
+              p: 4,
+              boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
+            }}
+          >
           <Stack spacing={4}>
+            <Divider textAlign="center">Chọn ngày và giờ</Divider>
             <BookingStepTime
               startTime={builder.startTime}
               onChange={builder.setStartTime}
+              duration={builder.totalDuration}
             />
-
+            <Divider textAlign="center">Chọn nhân viên</Divider>
             {builder.loadingStaff ? (
               <CircularProgress />
             ) : (
@@ -178,7 +187,7 @@ export default function BookingCreatePage() {
                 error={builder.staffError}
               />
             )}
-
+            <Divider textAlign="center">Chọn dịch vụ</Divider>
             {builder.loadingServices ? (
               <CircularProgress />
             ) : (
@@ -188,18 +197,19 @@ export default function BookingCreatePage() {
                 toggleService={builder.toggleService}
               />
             )}
-
+            <Divider textAlign="center">Chọn ưu đãi</Divider>
             <DiscountSection
               amount={builder.price.original}
               serviceIds={builder.selectedServices.map(s => s._id)}
               onApply={builder.setDiscount}
             />
-
+            <Divider textAlign="center">Chọn phương thức thanh toán</Divider>
             <PaymentMethodSelect
               value={builder.paymentMethod}
               onChange={builder.setPaymentMethod}
             />
           </Stack>
+          </Box>
         </Box>
 
         <Box flex={1}>

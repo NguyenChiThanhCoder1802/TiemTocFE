@@ -12,7 +12,7 @@ import {
   Chip,
 } from '@mui/material'
 
-import BookingStepStaff from '../../../components/booking/BookingStepStaff'
+import BookingStepStaff from '../../../components/booking/ChooseStaff/BookingStepStaff'
 import BookingStepTime from '../../../components/booking/BookingStepTime'
 import BookingPaymentSection from '../../../components/booking/payment/PaymentMethodSelect'
 import BookingSummaryPanel from '../../../components/booking/BookingSummaryPanel'
@@ -25,7 +25,7 @@ import { getComboBySlug } from '../../../api/ComboAPI'
 import { fetchPublicStaffs } from '../../../api/staffAPI'
 import { createBooking } from '../../../api/BookingAPI'
 import { createBookingPayment } from '../../../api/PaymentAPI'
-import { useToast } from '../../../hooks/useToast' 
+import { useToast } from '../../../hooks/useToast'
 export default function BookingComboPage() {
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -98,10 +98,10 @@ export default function BookingComboPage() {
       }
     } catch (err: any) {
       const msg =
-    err?.response?.data?.message ||
-    err?.message ||
-    'Có lỗi xảy ra'
- showToast(msg, "error")
+        err?.response?.data?.message ||
+        err?.message ||
+        'Có lỗi xảy ra'
+      showToast(msg, "error")
     } finally {
       setSubmitting(false)
     }
@@ -130,7 +130,7 @@ export default function BookingComboPage() {
       <Typography variant="h4" fontWeight={700} gutterBottom>
         Đặt lịch Combo
       </Typography>
-    
+
 
       <Card sx={{ mb: 4 }}>
         <CardContent>

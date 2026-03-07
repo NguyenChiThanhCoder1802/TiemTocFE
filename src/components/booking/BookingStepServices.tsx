@@ -88,7 +88,7 @@ export default function BookingStepServices({
         alignItems="center"
         mb={2}
       >
-        <Typography variant="h6" fontWeight={700}>
+        <Typography  fontWeight={700}>
           Chọn dịch vụ
         </Typography>
 
