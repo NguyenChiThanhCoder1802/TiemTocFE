@@ -13,18 +13,52 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import CustomerSidebar from '../../components/customer/Sidebar/CustomerSidebar'
-
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import Badge from '@mui/material/Badge'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import { useEffect } from 'react'
+import { getMyNotificationsApi } from '../../api/notificationApi'
+import type { Notification } from '../../types/Notification/Notification'
 const Header = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, isAdmin } = useAuth()
   const [openSidebar, setOpenSidebar] = useState(false)
   const [search, setSearch] = useState('')
+  const [notifications, setNotifications] = useState<Notification[]>([])
+const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (e.key === 'Enter' && search.trim()) {
     navigate(`/results?search=${search}`)
   }
 }
+const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
+  setAnchorEl(event.currentTarget)
+}
+
+const handleCloseNotifications = () => {
+  setAnchorEl(null)
+}
+useEffect(() => {
+
+  if (!isAuthenticated) return
+
+  const fetchNotifications = async () => {
+    try {
+
+      const res = await getMyNotificationsApi(1, 5)
+
+      setNotifications(res.data)
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  fetchNotifications()
+
+}, [isAuthenticated])
   return (
     <>
       <AppBar
@@ -150,7 +184,71 @@ const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
           </Box>
           {/* ===== RIGHT ===== */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* SEARCH */}
+        
+              {isAuthenticated && !isAdmin && (
+                <>
+                  <IconButton onClick={handleOpenNotifications}>
+                    <Badge
+                      badgeContent={notifications.filter(n => !n.isRead).length}
+                      color="error"
+                    >
+                      <NotificationsIcon sx={{ color: '#d2a679' }} />
+                    </Badge>
+                  </IconButton>
+
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseNotifications}
+                  >
+                    {notifications.length === 0 && (
+                      <MenuItem>Không có thông báo</MenuItem>
+                    )}
+                      {notifications.map((n) => {
+                        const service = n.booking?.services?.[0]
+
+                        return (
+                          <MenuItem
+                            key={n._id}
+                            onClick={() => navigate(`/bookings/${n.booking?._id}`)}
+                            sx={{ gap: 2, alignItems: 'center', maxWidth: 320 }}
+                          >
+                            {/* SERVICE IMAGE */}
+                            {service?.imageSnapshot?.[0] && (
+                              <img
+                                src={service.imageSnapshot[0]}
+                                alt={service.nameSnapshot}
+                                style={{
+                                  width: 40,
+                                  height: 40,
+                                  objectFit: 'cover',
+                                  borderRadius: 6
+                                }}
+                              />
+                            )}
+
+                            <Box>
+                              <Typography sx={{ fontWeight: n.isRead ? 400 : 600 }}>
+                                {n.title}
+                              </Typography>
+
+                              <Typography variant="body2" color="text.secondary">
+                                {n.message}
+                              </Typography>
+
+                              {service && (
+                                <Typography variant="caption" color="text.secondary">
+                                  {service.nameSnapshot}
+                                </Typography>
+                              )}
+                            </Box>
+                          </MenuItem>
+                        )
+                      })}
+                  </Menu>
+                </>
+              )}
+                {/* SEARCH */}
           <Box
             sx={{
               borderRadius: 2,
@@ -161,6 +259,7 @@ const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
               py: 0.25
             }}
           >
+      
             <SearchIcon sx={{ mr: 1, color: '#5D4037' }} />
            <InputBase
               placeholder="Tìm kiếm..."
