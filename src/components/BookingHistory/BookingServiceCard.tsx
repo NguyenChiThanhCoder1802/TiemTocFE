@@ -20,7 +20,7 @@ export default function BookingServiceCard({ booking }: Props) {
   }
   const staffName =
     typeof booking.staff === 'object'
-      ? booking.staff?.user?.name
+      ? booking.staff?.name
       : undefined
       const staffId =
     typeof booking.staff === 'object'

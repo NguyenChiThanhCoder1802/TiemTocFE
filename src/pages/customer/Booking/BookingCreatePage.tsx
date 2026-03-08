@@ -54,7 +54,6 @@ export default function BookingCreatePage() {
   const handleSubmit = async () => {
     if (
       !builder.startTime ||
-      !builder.selectedStaff ||
       builder.selectedServices.length === 0
     )
       return
@@ -67,7 +66,7 @@ export default function BookingCreatePage() {
       ).toISOString()
 
       const booking = await createBooking({
-        staff: builder.selectedStaff._id,
+        staff: builder.selectedStaff?._id ?? null,
         bookingType: 'service',
         services: builder.selectedServices.map(s => ({
           service: s._id

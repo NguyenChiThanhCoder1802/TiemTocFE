@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Button, Typography, Tooltip } from "@mui/material"
 import { format } from "date-fns"
 
 interface Slot {
@@ -38,7 +38,7 @@ export default function BookingTimeSlots({
             "HH:mm"
           )
 
-          return (
+         const button =(
             <Button
               key={slot.time}
               variant={
@@ -60,6 +60,15 @@ export default function BookingTimeSlots({
               {timeLabel}
             </Button>
           )
+          if (!slot.available && slot.reason) {
+            return (
+              <Tooltip key={slot.time} title={slot.reason}>
+                <span>{button}</span>
+              </Tooltip>
+            )
+          }
+
+          return button
         })}
       </Box>
     </Box>

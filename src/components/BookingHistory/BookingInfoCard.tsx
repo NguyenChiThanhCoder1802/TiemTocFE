@@ -62,8 +62,12 @@ export default function BookingInfoCard({ booking }: Props) {
         </Typography>
 
         <Typography>
-          <b>Thời gian:</b>{' '}
+          <b>Thời gian hẹn:</b>{' '}
           {new Date(booking.startTime).toLocaleString('vi-VN')}
+        </Typography>
+        <Typography>
+          <b>Thời gian kết thúc dự kiến:</b>{' '}
+          {new Date(booking.endTime).toLocaleString('vi-VN')}
         </Typography>
 
         <Divider sx={{ my: 1 }} />

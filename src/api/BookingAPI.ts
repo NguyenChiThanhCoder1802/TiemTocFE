@@ -57,7 +57,7 @@ export const previewBooking = async (payload: {
   return res.data
 }
 export const createBooking = async (payload: {
-  staff: string
+  staff?: string | null
   bookingType: 'service' | 'combo'
   services?: { service: string }[]
   combo?: string
