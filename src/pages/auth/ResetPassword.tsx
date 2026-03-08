@@ -15,7 +15,6 @@ const ResetPassword = () => {
   const location = useLocation()
 
   const email = location.state?.email || ''
-    const [otp, setOtp] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
@@ -25,10 +24,7 @@ const ResetPassword = () => {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!otp) {
-      setError('Vui lòng nhập OTP')
-      return
-    }
+
     if (newPassword !== confirmPassword) {
       setError('Mật khẩu không khớp')
       return
@@ -41,7 +37,6 @@ const ResetPassword = () => {
 
       const res = await resetPasswordApi({
         email,
-        otp,
         newPassword
       })
 
@@ -79,15 +74,6 @@ const ResetPassword = () => {
           label="Email"
           value={email}
           disabled
-          margin="normal"
-        />
-
-        <TextField
-          fullWidth
-          label="OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
           margin="normal"
         />
 

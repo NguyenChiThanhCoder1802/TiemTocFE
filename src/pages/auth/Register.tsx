@@ -52,9 +52,8 @@ const Register = () => {
           password,
           confirmpassword: confirm,
         })
-        showToast('Đăng ký thành công - Xác thực OTP!')
-          localStorage.setItem('pendingEmail', email)
-          navigate('/otp', { state: { email } })
+        showToast('Đăng ký thành công')
+        navigate('/login')
         } catch (err: unknown) {
         if (err instanceof Error) {
           showToast(err.message,"error")

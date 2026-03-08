@@ -16,12 +16,12 @@ const ForgotPassword = () => {
       setError('')
        const res = await forgotPasswordApi(email)
 
-      setMessage(res.message || 'Vui lòng kiểm tra email để đặt lại mật khẩu')
+      setMessage(res.message || 'Tiếp tục đặt lại mật khẩu')
       setTimeout(() => {
         navigate(`/reset-password`,{state:{email}})
       }, 1000)
     } catch (err: unknown) {
-      setError(
+      setError( 
         err instanceof Error ? err.message : 'Email không tồn tại'
       )
     } finally {
@@ -41,7 +41,7 @@ const ForgotPassword = () => {
         textAlign="center"
         mb={3}
       >
-        Nhập email đã đăng ký để nhận link đặt lại mật khẩu
+        Nhập email đã đăng ký để tiếp tục đặt lại mật khẩu
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>

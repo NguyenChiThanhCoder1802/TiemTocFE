@@ -63,14 +63,7 @@ export const registerApi = async (payload: RegisterPayload) => {
   return res.data.data
 }
 
-export const verifyOtpApi = async (payload: {email: string, otp: string }) => {
-  const res = await axiosInstance.post<{ message: string }>(
-    '/auth/verify-otp',
-    payload
-  )
 
-  return res.data
-}
 
 
 export const forgotPasswordApi = async (email: string) => {
@@ -83,7 +76,6 @@ export const forgotPasswordApi = async (email: string) => {
 }
 export const resetPasswordApi = async (payload: {
   email: string
-  otp: string
   newPassword: string
 }) => {
   const res = await axiosInstance.post<{ message: string }>(
