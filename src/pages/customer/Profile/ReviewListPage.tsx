@@ -95,7 +95,7 @@ const ReviewListPage = () => {
                   )}
                 {review.staff && typeof review.staff !== "string" && (
                   <Typography fontSize={12} color="text.secondary">
-                    Nhân viên: {review.staff.user.name}
+                    Nhân viên: {review.staff.name}
                   </Typography>
                 )}
               </Stack>

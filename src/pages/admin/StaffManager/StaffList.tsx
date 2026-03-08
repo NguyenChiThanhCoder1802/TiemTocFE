@@ -90,15 +90,15 @@ const StaffList = () => {
               {/* Avatar */}
               <TableCell>
                 <Avatar
-                  src={staff.user.avatar}
-                  alt={staff.user.name}
+                  src={staff.avatar}
+                  alt={staff.name}
                   sx={{ width: 36, height: 36 }}
                 />
               </TableCell>
 
               {/* Basic info */}
-              <TableCell>{staff.user.name}</TableCell>
-              <TableCell>{staff.user.email}</TableCell>
+              <TableCell>{staff.name}</TableCell>
+              <TableCell>{staff.email}</TableCell>
               <TableCell>{staff.position}</TableCell>
 
               
@@ -114,15 +114,7 @@ const StaffList = () => {
               <TableCell>
                 {renderWorkingStatus(staff.workingStatus)}
               </TableCell>
-             
-              {/* Online */}
-              <TableCell>
-                {staff.user.isOnline ? (
-                  <Chip label="Online" color="primary" size="small" />
-                ) : (
-                  <Chip label="Offline" size="small" />
-                )}
-              </TableCell>
+
             </TableRow>
           ))}
 

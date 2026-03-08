@@ -67,10 +67,7 @@ export default function BookingComboPage() {
   /* ================= SUBMIT ================= */
 
   const handleSubmit = async () => {
-    if (!combo || !selectedStaff || !startTime) {
-      if (!selectedStaff) {
-        setStaffError('Vui lòng chọn nhân viên')
-      }
+    if (!combo || !startTime) {
       return
     }
 
@@ -80,7 +77,7 @@ export default function BookingComboPage() {
       const booking = await createBooking({
         bookingType: 'combo',
         combo: combo._id,
-        staff: selectedStaff._id,
+        staff: selectedStaff?._id,
         startTime: new Date(startTime).toISOString(),
         paymentMethod
       })
@@ -174,6 +171,7 @@ export default function BookingComboPage() {
               <BookingStepTime
                 startTime={startTime ?? ''}
                 onChange={setStartTime}
+                duration={combo.duration}
               />
             </CardContent>
           </Card>
@@ -198,7 +196,7 @@ export default function BookingComboPage() {
               fontSize: 16,
               fontWeight: 600
             }}
-            disabled={!selectedStaff || !startTime || submitting}
+            disabled={ !startTime || submitting}
             onClick={handleSubmit}
           >
             {submitting ? 'Đang xử lý...' : 'Xác nhận đặt lịch'}
