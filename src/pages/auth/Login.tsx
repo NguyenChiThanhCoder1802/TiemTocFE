@@ -14,7 +14,7 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material'
-import ContentCutIcon from '@mui/icons-material/ContentCut'
+import logo from "../../assets/logoHairSalon/IconChinhTiem.png"
 import { loginApi } from '../../api/AuthAPI'
 import { useToast } from '../../hooks/useToast'
 
@@ -51,12 +51,19 @@ const Login = () => {
 
   return (
     <Box sx={{ width: 360 }}>
-     <Box textAlign="center" mb={3}>
-        <ContentCutIcon
-          sx={{
-            fontSize: 48,
-            color: 'primary.main',
-            mb: 1
+     <Box sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    mb: 3
+  }}>
+        <img
+          src={logo}
+          alt="Hair Salon"
+          style={{
+            width:  120,
+            height: 120,
+            objectFit: "contain"
           }}
         />
         <Typography variant="h5" mt={1}>

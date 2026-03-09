@@ -16,6 +16,7 @@ import {
   VisibilityOff,
   EmailOutlined
 } from '@mui/icons-material'
+import logo from "../../assets/logoHairSalon/IconChinhTiem.png"
 import { useToast } from "../../hooks/useToast"
 import { registerApi } from '../../api/AuthAPI'
 
@@ -45,7 +46,6 @@ const Register = () => {
 
     try {
       setLoading(true)
-      showToast('')
         await registerApi({
           email,
           name,
@@ -70,9 +70,25 @@ const Register = () => {
   return (
     <>
       <Box textAlign="center" mb={3}>
-        <Typography variant="h5">
-         Đăng ký tài khoản
+        <Box sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    mb: 3
+  }}>
+        <img
+          src={logo}
+          alt="Hair Salon"
+          style={{
+            width:  120,
+            height: 120,
+            objectFit: "contain"
+          }}
+        />
+        <Typography variant="h5" mt={1}>
+          Đăng ký tài khoản
         </Typography>
+      </Box>
       </Box>
 
       <form onSubmit={handleRegister}>
