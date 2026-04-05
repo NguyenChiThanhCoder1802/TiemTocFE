@@ -33,6 +33,7 @@ import BookingSuccessPage from '../components/booking/BookingReturn/BookingSucce
 import BookingCreatePage from '../pages/customer/Booking/BookingCreatePage';
 import BookingComboPage from '../pages/customer/Booking/BookingComboPage';
 import ResultPage from '../components/SearchResult/ResultPage';
+import OtpVerification from '../pages/auth/OtpVerification';
 
 
 
@@ -43,6 +44,7 @@ const AppRouter = () => {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+         <Route path="/otp" element={<OtpVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
