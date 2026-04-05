@@ -5,6 +5,10 @@ export const fetchPublicStaffs = async (): Promise<Staff[]> => {
   const res = await axiosInstance.get('/staffs/')
   return res.data.data
 }
+export const fetchStaffBySlug = async (slug: string): Promise<Staff> => {
+  const res = await axiosInstance.get(`/staffs/${slug}`)
+  return res.data.data
+}
 
 /**
  * GET /staffs/:id

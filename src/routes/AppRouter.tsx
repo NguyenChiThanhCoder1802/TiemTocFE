@@ -66,7 +66,7 @@ const AppRouter = () => {
 
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/results" element={<ResultPage />} />
-        <Route path="/staffs/:id" element={<StaffDetailPage />} />
+        <Route path="/staffs/:slug" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
         {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
