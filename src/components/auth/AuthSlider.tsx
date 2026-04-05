@@ -72,22 +72,6 @@ const AuthSlider = () => {
           px: 4
         }}
       >
-        <Box
-          component={motion.img}
-          src="/iconNen.png"
-          alt="HairSalon Logo"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          sx={{
-            width: 120,
-            height: 120,
-            mb: 2,
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.35))'
-          }}
-        />
-
         <Typography
           variant="h3"
           sx={{

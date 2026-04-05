@@ -1,7 +1,6 @@
 import axiosInstance from "../utils/axiosInstance"
 import type { ApiResponse } from "../types/ApiResponse"
 import type { AdminDashboardStat } from "../types/Admin/stat"
-// import type { Booking } from "../types/Booking/Booking"
 import type { AdminBooking } from "../types/Booking/AdminBooking"
 /* ================= ADMIN API ================= */
 
@@ -17,10 +16,25 @@ export const getStaffListApi = (onlyOnline = false) => {
     params: { onlyOnline }
   })
 }
-
-export const approveStaffApi = (userId: string) => {
-  return axiosInstance.post(`/admin/staffs/${userId}/approve`)
+export const createStaffApi = (data: FormData) => {
+  return axiosInstance.post("/admin/staffs", data,{
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
 }
+export const updateStaffApi = (id: string, data: FormData) => {
+  return axiosInstance.patch(`/admin/staffs/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}
+
+export const deleteStaffApi = (id: string) => {
+  return axiosInstance.delete(`/admin/staffs/${id}`)
+}
+
 
 
 export const getAllBookingsApi = async (params?: {

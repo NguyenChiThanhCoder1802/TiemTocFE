@@ -16,7 +16,7 @@ const ForgotPassword = () => {
       setError('')
        const res = await forgotPasswordApi(email)
 
-      setMessage(res.message || 'Tiếp tục đặt lại mật khẩu')
+      setMessage(res.message || 'Vui lòng kiểm tra email để đặt lại mật khẩu')
       setTimeout(() => {
         navigate(`/reset-password`,{state:{email}})
       }, 1000)

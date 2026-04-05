@@ -38,7 +38,7 @@ const StaffCardList = ({
       <Stack direction="row" flexWrap="wrap" gap={3}>
         {staffs.map(staff => {
           const isSelected = staff._id === selectedStaffId
-          const isAvailable = availability[staff._id] !== false
+          const isAvailable = availability[staff.slug] !== false
 
          
           return (
@@ -75,7 +75,7 @@ const StaffCardList = ({
                     sx={{ width: 72, height: 72, cursor: 'pointer' }}
                     onClick={e => {
                       e.stopPropagation()
-                      navigate(`/staffs/${staff._id}`)
+                      navigate(`/staffs/${staff.slug}`)
                     }}
                   />
 
