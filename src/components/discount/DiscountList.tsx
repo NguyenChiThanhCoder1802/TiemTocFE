@@ -41,43 +41,99 @@ export default function DiscountListPage() {
     )
   }
 
-  return (
-    <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" gutterBottom>
+ return (
+  <Box
+    sx={{
+      minHeight:'100vh',
+      background:'#fdf8f2',
+      py:5
+    }}
+  >
+
+    <Container>
+
+      <Typography
+        variant="h4"
+        fontWeight={800}
+        sx={{
+          mb:1,
+          color:'#3b2416',
+          textAlign:'center'
+        }}
+      >
         Ưu đãi dành cho bạn
       </Typography>
 
-      {data.length === 0 ? (
-        <Alert severity="info">
-          Hiện chưa có thẻ giảm giá nào
-        </Alert>
-      ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 2
-          }}
-        >
-          {data.map(discount => (
-            <Box
-              key={discount._id}
-              sx={{
-                width: {
-                  xs: '100%',
-                  sm: 'calc(50% - 8px)',
-                  md: 'calc(33.333% - 10.7px)'
-                }
-              }}
-            >
-              <UserDiscountCard
-                discount={discount}
 
-              />
-            </Box>
-          ))}
-        </Box>
-      )}
+      <Typography
+        textAlign="center"
+        sx={{
+          mb:5,
+          color:'#8b5e34'
+        }}
+      >
+        Sử dụng mã giảm giá để nhận ưu đãi khi đặt lịch
+      </Typography>
+
+
+
+
+      {
+        data.length === 0 ? (
+
+          <Alert severity="info">
+            Hiện chưa có thẻ giảm giá nào
+          </Alert>
+
+        )
+
+        :
+
+        (
+
+          <Box
+            sx={{
+              display:'flex',
+              flexWrap:'wrap',
+              gap:3
+            }}
+          >
+
+            {
+              data.map(discount=>(
+
+                <Box
+                  key={discount._id}
+                  sx={{
+                    width:{
+                      xs:'100%',
+                      sm:'calc(50% - 12px)',
+                      md:'calc(33.333% - 16px)'
+                    }
+                  }}
+                >
+
+                  <UserDiscountCard
+                    discount={discount}
+                  />
+
+
+                </Box>
+
+              ))
+            }
+
+
+          </Box>
+
+
+        )
+      }
+
+
     </Container>
-  )
+
+
+  </Box>
+)
 }
