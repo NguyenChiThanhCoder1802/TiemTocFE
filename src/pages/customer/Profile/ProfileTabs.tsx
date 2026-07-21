@@ -9,7 +9,6 @@ const tabs :{ label: string; value: ProfileTab }[]= [
   { label: 'Yêu thích', value: 'favorites' },
   { label: 'Đánh giá', value: 'reviews' },
   { label: 'Thanh toán', value: 'paymentHistory' },
-  { label: 'Khách hàng thân thiết', value: 'loyalty' },
 ]
 
 const ProfileTabs = ({ value, onChange }: ProfileTabsProps) => {

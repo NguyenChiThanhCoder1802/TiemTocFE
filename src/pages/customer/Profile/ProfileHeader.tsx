@@ -1,40 +1,265 @@
-import { Box, Typography,IconButton } from '@mui/material'
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Divider 
+} from '@mui/material'
+
 import EditIcon from '@mui/icons-material/Edit'
 import { useState } from 'react'
+
 import useAuth from '../../../hooks/useAuth'
 import AvatarSection from './AvatarSection'
 import ProfileTabs from './ProfileTabs'
 import UpdateProfileDialog from './UpdateProfileDialog'
+
 import type { ProfileTab } from '../../../types/Profile/ProfileTab'
+
+
 interface ProfileHeaderProps {
   activeTab: ProfileTab
   onTabChange: (tab: ProfileTab) => void
 }
-const ProfileHeader = ({ activeTab, onTabChange }: ProfileHeaderProps) => {
+
+
+const ProfileHeader = ({
+  activeTab,
+  onTabChange
+}: ProfileHeaderProps) => {
+
   const { user } = useAuth()
+
   const [open, setOpen] = useState(false)
+
+
   if (!user) return null
 
-  return (
-    <Box sx={{ bgcolor: '#f0f0ed',mt:8, pb: 3, borderRadius: 3 }}>
-      <AvatarSection user={user} />
 
-      <Box textAlign="center" mt={1}>
-         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
-          <Typography fontWeight={700} fontSize={20}>
-            {user.name} - {user.role}
+  return (
+
+    <Box
+      sx={{
+        width: '100%',
+        bgcolor: '#fff',
+        borderRadius: 2,
+
+        boxShadow:
+          '0 4px 20px rgba(0,0,0,0.08)',
+
+        overflow: 'visible'
+      }}
+    >
+
+
+      {/* ================= PROFILE INFO ================= */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+
+          px: {
+            xs: 2,
+            md: 5
+          },
+
+          py: 3,
+
+          gap: 4,
+
+          minHeight: 160,
+
+
+          flexDirection: {
+            xs: 'column',
+            sm: 'row'
+          }
+        }}
+      >
+
+
+        {/* Avatar */}
+        <Box
+          sx={{
+            width: 130,
+            height: 130,
+
+            flexShrink: 0,
+
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            position: 'relative',
+            zIndex: 2
+          }}
+        >
+
+          <AvatarSection user={user}/>
+
+        </Box>
+
+
+
+
+        {/* Information */}
+        <Box
+          sx={{
+            flex: 1,
+
+            display:'flex',
+
+            flexDirection:'column',
+
+            gap: 1,
+
+
+            alignItems:{
+              xs:'center',
+              sm:'flex-start'
+            }
+          }}
+        >
+
+
+
+          {/* Name + Edit */}
+          <Box
+            sx={{
+              display:'flex',
+
+              alignItems:'center',
+
+              gap:1,
+
+              flexWrap:'wrap'
+            }}
+          >
+
+
+            <Typography
+              fontWeight={700}
+              fontSize={24}
+            >
+              {user.name}
+            </Typography>
+
+
+
+            <Button
+              variant="outlined"
+
+              size="small"
+
+              startIcon={
+                <EditIcon/>
+              }
+
+              onClick={()=>{
+                setOpen(true)
+              }}
+
+              sx={{
+                borderRadius:2,
+
+                textTransform:'none',
+
+                fontSize:13
+              }}
+            >
+
+              Chỉnh sửa
+
+            </Button>
+
+
+          </Box>
+
+
+
+
+          {/* Role */}
+          <Typography
+            color="text.secondary"
+
+            fontSize={14}
+          >
+            {user.role}
           </Typography>
 
-          <IconButton size="small" onClick={() => setOpen(true)}>
-            <EditIcon fontSize="small" />
-          </IconButton>
+
+
+
+          {/* Booking */}
+          <Typography
+            color="#d59b5a"
+
+            fontWeight={600}
+
+            fontSize={14}
+          >
+
+            Đã đặt được 10 lần
+
+          </Typography>
+
+
+
         </Box>
+
+
       </Box>
 
-      <ProfileTabs value={activeTab} onChange={onTabChange} />
-       <UpdateProfileDialog open={open} onClose={() => setOpen(false)} />
+
+
+
+
+      {/* ================= DIVIDER ================= */}
+
+      <Divider />
+
+
+
+
+
+      {/* ================= TABS ================= */}
+
+      <Box
+        sx={{
+          px:2,
+
+          py:0.5
+        }}
+      >
+
+        <ProfileTabs
+          value={activeTab}
+
+          onChange={onTabChange}
+        />
+
+      </Box>
+
+
+
+
+
+      {/* ================= DIALOG ================= */}
+
+      <UpdateProfileDialog
+
+        open={open}
+
+        onClose={()=>{
+          setOpen(false)
+        }}
+
+      />
+
+
     </Box>
+
   )
 }
+
 
 export default ProfileHeader
