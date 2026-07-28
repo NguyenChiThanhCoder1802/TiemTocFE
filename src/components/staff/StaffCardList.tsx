@@ -1,14 +1,14 @@
 import {
   Box,
   Card,
-  CardContent,
   Typography,
-  Avatar,
   Chip,
   Stack
 } from '@mui/material'
+
 import { useNavigate } from 'react-router-dom'
 import type { Staff } from '../../types/Staff/Staff'
+
 
 interface Props {
   staffs: Staff[]
@@ -18,6 +18,8 @@ interface Props {
   availability?: Record<string, boolean>
 }
 
+
+
 const StaffCardList = ({
   staffs,
   selectedStaffId,
@@ -25,102 +27,300 @@ const StaffCardList = ({
   title,
   availability = {}
 }: Props) => {
+
+
   const navigate = useNavigate()
 
+
+
   return (
+
     <Box mt={6}>
-      {title && (
-        <Typography variant="h5" mb={3} fontWeight={600}>
-          {title}
-        </Typography>
-      )}
 
-      <Stack direction="row" flexWrap="wrap" gap={3}>
-        {staffs.map(staff => {
-          const isSelected = staff._id === selectedStaffId
-          const isAvailable = availability[staff.slug] !== false
 
-         
+      {
+        title && (
+
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            mb={3}
+          >
+            {title}
+          </Typography>
+
+        )
+      }
+
+
+
+      <Box
+        sx={{
+          display:'flex',
+          flexWrap:'wrap',
+          gap:3
+        }}
+      >
+
+
+      {
+        staffs.map(staff => {
+
+
+          const isSelected =
+            staff._id === selectedStaffId
+
+
+          const isAvailable =
+            availability[staff.slug] !== false
+
+
+
           return (
+
             <Card
               key={staff._id}
-               onClick={() => {
-                  if (!isAvailable) return
-                  onSelect?.(isSelected ? null : staff)
-                }}
 
-             sx={{
-              width: 280,
-              cursor: isAvailable ? 'pointer' : 'not-allowed',
-              opacity: isAvailable ? 1 : 0.5,
-              border: isSelected ? '2px solid' : '1px solid #e0e0e0',
-              borderColor: isSelected ? 'primary.main' : '#e0e0e0',
-              boxShadow: isSelected ? 6 : 1,
-              transition: '0.25s',
-              '&:hover': isAvailable
-                ? {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 6
-                  }
-                : {}
-            }}
+              onClick={()=>{
+                if(!isAvailable) return
+
+                onSelect?.(
+                  isSelected ? null : staff
+                )
+              }}
+
+
+              sx={{
+
+                width:{
+                  xs:'100%',
+                  sm:260,
+                  md:280
+                },
+
+
+                cursor:
+                isAvailable
+                ? 'pointer'
+                :'not-allowed',
+
+
+                opacity:
+                isAvailable ? 1 : .5,
+
+
+                overflow:'hidden',
+
+
+                border:
+                isSelected
+                ? '2px solid #d2a679'
+                :'1px solid #eee',
+
+
+                boxShadow:
+                isSelected
+                ? '0 8px 25px rgba(210,166,121,.35)'
+                : '0 4px 15px rgba(0,0,0,.08)',
+
+
+                transition:'all .3s ease',
+
+
+                '&:hover':{
+
+                  transform:
+                  isAvailable
+                  ? 'translateY(-8px)'
+                  :'none',
+
+                  boxShadow:
+                  '0 12px 30px rgba(0,0,0,.15)'
+                }
+
+              }}
 
             >
-              <CardContent>
-                <Stack alignItems="center" spacing={1.2}>
-                  {/* Avatar → xem profile */}
-                  <Avatar
-                     src={staff.avatar || ''}
-  alt={staff.name || 'Staff'}
-                    sx={{ width: 72, height: 72, cursor: 'pointer' }}
-                    onClick={e => {
-                      e.stopPropagation()
-                      navigate(`/staffs/${staff.slug}`)
-                    }}
-                  />
 
-                  <Typography fontWeight={600}>
+
+
+              {/* IMAGE */}
+
+              <Box
+                sx={{
+                  height:260,
+                  overflow:'hidden',
+                  cursor:'pointer'
+                }}
+
+                onClick={(e)=>{
+
+                  e.stopPropagation()
+
+                  navigate(
+                    `/staffs/${staff.slug}`
+                  )
+
+                }}
+
+              >
+
+                <Box
+                  component="img"
+                  src={
+                    staff.avatar ||
+                    '/default-avatar.png'
+                  }
+                  alt={staff.name}
+
+                  sx={{
+                    width:'100%',
+                    height:'100%',
+                    objectFit:'cover',
+
+                    transition:
+                    'transform .4s ease',
+
+                    '&:hover':{
+                      transform:'scale(1.08)'
+                    }
+                  }}
+                />
+
+
+              </Box>
+
+
+
+
+              {/* CONTENT */}
+
+              <Box
+                sx={{
+                  p:2.5
+                }}
+              >
+
+
+                <Stack spacing={1}>
+
+
+
+                  <Typography
+                    variant="h6"
+                    fontWeight={700}
+                    textAlign="center"
+                  >
                     {staff.name}
                   </Typography>
 
-                  <Chip
-                    label={staff.position}
-                    size="small"
-                    color="secondary"
-                  />
 
-                  <Typography variant="body2" color="text.secondary">
-                    {staff.experienceYears} năm kinh nghiệm
+
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
+                  >
+                    {staff.experienceYears}
+                    {' '}
+                    năm kinh nghiệm
                   </Typography>
 
-                  <Typography variant="body2">
-                    ⭐ {staff.ratingAverage.toFixed(1)} •{' '}
-                    {staff.completedBookings} lượt
-                  </Typography>
-                {/* Trạng thái */}
-                  {!isAvailable && (
-                    <Chip
-                      label="Đã kín lịch"
-                      color="error"
-                      size="small"
-                    />
-                  )}
 
-                  {isAvailable && isSelected && (
-                    <Chip
-                      label="Đã chọn"
-                      color="primary"
-                      size="small"
-                    />
-                  )}
+
+
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    gap={1}
+                    alignItems="center"
+                  >
+
+
+                    <Typography
+                      fontWeight={600}
+                    >
+                      ⭐
+                      {' '}
+                      {staff.ratingAverage.toFixed(1)}
+                    </Typography>
+
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                    >
+                      (
+                      {staff.completedBookings}
+                      {' '}
+                      lượt)
+                    </Typography>
+
+
+                  </Box>
+
+
+
+
+
+                  {
+                    !isAvailable && (
+
+                      <Chip
+                        label="Đã kín lịch"
+                        color="error"
+                        size="small"
+                        sx={{
+                          mx:'auto'
+                        }}
+                      />
+
+                    )
+                  }
+
+
+
+
+                  {
+                    isAvailable &&
+                    isSelected && (
+
+                      <Chip
+                        label="Đã chọn stylist"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          mx:'auto'
+                        }}
+                      />
+
+                    )
+                  }
+
+
                 </Stack>
-              </CardContent>
+
+
+              </Box>
+
+
             </Card>
+
           )
-        })}
-      </Stack>
+
+        })
+      }
+
+
+      </Box>
+
+
     </Box>
+
   )
 }
+
+
 
 export default StaffCardList

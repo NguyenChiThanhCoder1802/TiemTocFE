@@ -51,8 +51,11 @@ const ItemCardList = ({ items, title, linkPrefix, loading,maxItems = 4 }: Props)
               <Skeleton
                 key={i}
                 variant="rounded"
-                width={260}
-                height={320}
+                height={380}
+                sx={{
+                  width: '100%',
+                  borderRadius: 2
+                }}
               />
             ))
           : visibleItems.map((item, index) => (

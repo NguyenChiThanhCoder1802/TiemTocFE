@@ -70,13 +70,9 @@ const AppRouter = () => {
         <Route path="/results" element={<ResultPage />} />
         <Route path="/staffs/:slug" element={<StaffDetailPage />} />
         <Route path="/change-password" element={<SecuritySettings />} />
-        {/* <Route path="/services/:id" element={<ServiceDetailPage />} /> */}
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
-
         <Route path="/combos/:slug" element={<ComboServiceDetailPage />} />
-        {/* <Route path="/customer/booking" element={<BookingPage />} /> */}
         <Route path="/discounts" element={<DiscountListPage />} />
-        {/* <Route path="/customer/booking/:serviceId" element={<BookingForm />} /> */}
   
         <Route path='/customer/booking/combo/:slug' element={<BookingComboPage />} />
         <Route
