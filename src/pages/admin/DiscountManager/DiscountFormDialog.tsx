@@ -6,7 +6,8 @@ import {
   TextField,
   Button,
   Stack,
-  MenuItem
+  MenuItem,
+  InputAdornment
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 
@@ -20,7 +21,22 @@ interface Props {
   initialData: DiscountCard | null
   onClose: () => void
   onCreate: (payload: CreateDiscountCardPayload) => void
-  onUpdate: (id: string, payload: Partial<CreateDiscountCardPayload> & { isActive?: boolean }) => void
+  onUpdate: (id: string, payload: Partial<DiscountCard>) => void
+}
+
+const DEFAULT_FORM_STATE = {
+  code: '',
+  name: '',
+  description: '',
+  discountType: 'percent' as 'percent' | 'fixed',
+  discountValue: 0,
+  maxDiscountAmount: undefined as number | undefined,
+  minValue: 0,
+  serviceIds: [] as string[],
+  quantity: 1,
+  userLimit: 1,
+  startDate: new Date().toISOString().slice(0, 10),
+  endDate: ''
 }
 
 export function DiscountFormDialog({
@@ -30,80 +46,61 @@ export function DiscountFormDialog({
   onCreate,
   onUpdate
 }: Props) {
-  const [form, setForm] = useState<CreateDiscountCardPayload>({
-  code: '',
-  name: '',
-  description: '',
-  discountType: 'percent',
-  discountValue: 0,
-  maxDiscountAmount: undefined,
-  minValue: 0,
-  serviceIds: [],
-  quantity: 1,
-  userLimit: 1,
-  startDate: '',
-  endDate: ''
-})
-
+  const [form, setForm] = useState(DEFAULT_FORM_STATE)
 
   useEffect(() => {
-  if (!initialData) return
+    if (initialData) {
+      setForm({
+        code: initialData.code || '',
+        name: initialData.name || '',
+        description: initialData.description || '',
+        discountType: initialData.discountType || 'percent',
+        discountValue: initialData.discountValue || 0,
+        maxDiscountAmount: initialData.maxDiscountAmount,
+        minValue: initialData.minValue || 0,
+        serviceIds: initialData.serviceIds || [],
+        quantity: initialData.quantity || 1,
+        userLimit: initialData.userLimit || 1,
+        startDate: initialData.startDate ? initialData.startDate.slice(0, 10) : '',
+        endDate: initialData.endDate ? initialData.endDate.slice(0, 10) : ''
+      })
+    } else {
+      setForm(DEFAULT_FORM_STATE)
+    }
+  }, [initialData, open])
 
-  setForm({
-    code: initialData.code,
-    name: initialData.name,
-    description: initialData.description,
-    discountType: initialData.discountType,
-    discountValue: initialData.discountValue,
-    maxDiscountAmount: initialData.maxDiscountAmount,
-    minValue: initialData.minValue,
-    serviceIds: initialData.serviceIds,
-    quantity: initialData.quantity,
-    userLimit: initialData.userLimit,
-    startDate: initialData.startDate.slice(0, 10),
-    endDate: initialData.endDate.slice(0, 10)
-  })
-}, [initialData])
-
-
- const handleSubmit = () => {
-  if (initialData) {
-    const {
-      name,
-      description,
-      discountValue,
-      maxDiscountAmount,
-      minValue,
-      quantity,
-      userLimit,
-      startDate,
-      endDate
-    } = form
-
-    onUpdate(initialData._id, {
-      name,
-      description,
-      discountValue,
-      maxDiscountAmount,
-      minValue,
-      quantity,
-      userLimit,
-      startDate,
-      endDate
-    })
-  } else {
-    onCreate(form)
+  // Xử lý chuyển đổi Loại Giảm Giá
+  const handleDiscountTypeChange = (type: 'percent' | 'fixed') => {
+    setForm((prev) => ({
+      ...prev,
+      discountType: type,
+      // Tự động clear maxDiscountAmount nếu chuyển sang giảm tiền cố định
+      maxDiscountAmount: type === 'fixed' ? undefined : prev.maxDiscountAmount
+    }))
   }
-}
 
+  const handleSubmit = () => {
+    // Clean payload trước khi gửi lên Backend
+    const payload = {
+      ...form,
+      maxDiscountAmount: form.discountType === 'percent' ? form.maxDiscountAmount : undefined
+    }
+
+    if (initialData) {
+      onUpdate(initialData._id, payload)
+    } else {
+      onCreate(payload as CreateDiscountCardPayload)
+    }
+    onClose()
+  }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
         {initialData ? 'Cập nhật mã giảm giá' : 'Tạo mã giảm giá'}
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent dividers>
         <Stack spacing={2} mt={1}>
           <TextField
             label="Mã giảm giá"
@@ -112,14 +109,23 @@ export function DiscountFormDialog({
               setForm({ ...form, code: e.target.value.toUpperCase() })
             }
             disabled={!!initialData}
+            placeholder="VD: SUMMERSALE2026"
+            required
           />
 
           <TextField
             label="Tên chương trình"
             value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            required
+          />
+
+          <TextField
+            label="Mô tả"
+            multiline
+            rows={2}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
 
           <TextField
@@ -127,73 +133,94 @@ export function DiscountFormDialog({
             label="Loại giảm giá"
             value={form.discountType}
             onChange={(e) =>
-              setForm({
-                ...form,
-                discountType: e.target.value as 'percent' | 'fixed'
-              })
+              handleDiscountTypeChange(e.target.value as 'percent' | 'fixed')
             }
           >
             <MenuItem value="percent">Giảm theo %</MenuItem>
-            <MenuItem value="fixed">Giảm tiền cố định</MenuItem>
+            <MenuItem value="fixed">Giảm tiền cố định (VNĐ)</MenuItem>
           </TextField>
 
+          {/* Form linh hoạt theo discountType */}
           <TextField
-            label="Giá trị giảm"
+            label={form.discountType === 'percent' ? 'Mức giảm (%)' : 'Số tiền giảm (VNĐ)'}
             type="number"
             value={form.discountValue}
+            inputProps={{
+              min: 0,
+              max: form.discountType === 'percent' ? 100 : undefined
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {form.discountType === 'percent' ? '%' : 'VNĐ'}
+                </InputAdornment>
+              )
+            }}
             onChange={(e) =>
-              setForm({
-                ...form,
-                discountValue: Number(e.target.value)
-              })
+              setForm({ ...form, discountValue: Number(e.target.value) })
+            }
+            required
+          />
+
+          {/* Chỉ hiển thị Giảm Tối Đa khi chọn Giảm theo % */}
+          {form.discountType === 'percent' && (
+            <TextField
+              label="Số tiền giảm tối đa (VNĐ)"
+              type="number"
+              placeholder="Để trống nếu không giới hạn"
+              value={form.maxDiscountAmount ?? ''}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>
+              }}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  maxDiscountAmount: e.target.value ? Number(e.target.value) : undefined
+                })
+              }
+            />
+          )}
+
+          <TextField
+            label="Giá trị đơn hàng tối thiểu"
+            type="number"
+            value={form.minValue}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>
+            }}
+            onChange={(e) =>
+              setForm({ ...form, minValue: Number(e.target.value) })
             }
           />
 
-          <TextField
-            label="Giá trị tối thiểu"
-            type="number"
-            value={form.minValue}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                minValue: Number(e.target.value)
-              })
-            }
-          />
+          <Stack direction="row" spacing={2}>
             <TextField
-              label="Số lượt sử dụng"
+              fullWidth
+              label="Tổng số lượt sử dụng"
               type="number"
               value={form.quantity}
               onChange={(e) =>
                 setForm({ ...form, quantity: Number(e.target.value) })
               }
+              required
             />
 
             <TextField
-              label="Giới hạn mỗi người dùng"
+              fullWidth
+              label="Giới hạn / 1 người dùng"
               type="number"
               value={form.userLimit}
               onChange={(e) =>
                 setForm({ ...form, userLimit: Number(e.target.value) })
               }
+              required
             />
+          </Stack>
 
-            {form.discountType === 'percent' && (
-              <TextField
-                label="Giảm tối đa"
-                type="number"
-                value={form.maxDiscountAmount || ''}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    maxDiscountAmount: Number(e.target.value)
-                  })
-                }
-              />
-            )}
           <TextField
-            label="Service IDs (phân cách bằng dấu ,)"
-            value={form.serviceIds?.join(',') || ''}
+            label="Service IDs (phân cách bằng dấu phẩy)"
+            placeholder="Để trống nếu áp dụng cho tất cả dịch vụ"
+            value={form.serviceIds?.join(', ') || ''}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -205,30 +232,38 @@ export function DiscountFormDialog({
             }
           />
 
-          <TextField
-            label="Ngày bắt đầu"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={form.startDate}
-            onChange={(e) =>
-              setForm({ ...form, startDate: e.target.value })
-            }
-          />
+          <Stack direction="row" spacing={2}>
+            <TextField
+              fullWidth
+              label="Ngày bắt đầu"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={form.startDate}
+              onChange={(e) =>
+                setForm({ ...form, startDate: e.target.value })
+              }
+              required
+            />
 
-          <TextField
-            label="Ngày kết thúc"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={form.endDate}
-            onChange={(e) =>
-              setForm({ ...form, endDate: e.target.value })
-            }
-          />
+            <TextField
+              fullWidth
+              label="Ngày kết thúc"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={form.endDate}
+              onChange={(e) =>
+                setForm({ ...form, endDate: e.target.value })
+              }
+              required
+            />
+          </Stack>
         </Stack>
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose}>Huỷ</Button>
+      <DialogActions sx={{ px: 3, py: 2 }}>
+        <Button onClick={onClose} color="inherit">
+          Huỷ
+        </Button>
         <Button variant="contained" onClick={handleSubmit}>
           {initialData ? 'Cập nhật' : 'Tạo mới'}
         </Button>

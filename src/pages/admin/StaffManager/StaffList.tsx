@@ -14,7 +14,7 @@ import {
   Avatar
 } from '@mui/material'
 
-import { getStaffListApi,deleteStaffApi } from '../../../api/AdminAPI'
+import { getStaffListApi,updateStaffStatusApi } from '../../../api/AdminAPI'
 import UpdateStaffDialog from "./UpdateStaffDialog"
 
 import type { Staff } from '../../../types/Staff/Staff'
@@ -24,18 +24,21 @@ import CreateStaffDialog from "./CreateStaffDialog"
 /* ===================== HELPERS ===================== */
 
 
-const renderWorkingStatus = (status: Staff['workingStatus']) => {
+const renderWorkingStatus = (status: Staff["workingStatus"]) => {
   switch (status) {
-    case 'active':
-      return <Chip label="Đang làm" color="success" size="small" />
-    case 'off':
-      return <Chip label="Nghỉ" color="warning" size="small" />
-    case 'resigned':
-      return <Chip label="Đã nghỉ việc" size="small" />
+    case "active":
+      return <Chip color="success" label="Đang làm" />;
+
+    case "off":
+      return <Chip color="warning" label="Nghỉ phép" />;
+
+    case "resigned":
+      return <Chip color="error" label="Đã nghỉ việc" />;
+
     default:
-      return null
+      return null;
   }
-}
+};
 
 /* ===================== COMPONENT ===================== */
 
@@ -48,16 +51,21 @@ const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null)
     const res = await getStaffListApi(false)
     setStaffs(res.data.data)
   }
-
+  const handleChangeStatus = async (
+    id: string,
+    status: Staff["workingStatus"]
+) => {
+    try {
+        await updateStaffStatusApi(id, status);
+        fetchStaffs();
+    } catch (err) {
+        console.log(err);
+    }
+}
   useEffect(() => {
     fetchStaffs()
   }, [])
-  const handleDelete = async (id: string) => {
-  if (!confirm("Bạn có chắc muốn xoá nhân viên này?")) return
-
-  await deleteStaffApi(id)
-  fetchStaffs()
-}
+  
   return (
     <Box>
       {/* ===== HEADER ===== */}
@@ -128,14 +136,46 @@ const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null)
                   Sửa
                 </Button>
 
-                <Button
-                  size="small"
-                  color="error"
-                  variant="outlined"
-                  onClick={() => handleDelete(staff._id)}
-                >
-                  nghỉ việc
-                </Button>
+                <Stack direction="row" spacing={1}>
+  {staff.workingStatus !== "active" && (
+    <Button
+      size="small"
+      color="success"
+      variant="outlined"
+      onClick={() =>
+        handleChangeStatus(staff._id, "active")
+      }
+    >
+      Đi làm
+    </Button>
+  )}
+
+  {staff.workingStatus !== "off" && (
+    <Button
+      size="small"
+      color="warning"
+      variant="outlined"
+      onClick={() =>
+        handleChangeStatus(staff._id, "off")
+      }
+    >
+      Nghỉ phép
+    </Button>
+  )}
+
+  {staff.workingStatus !== "resigned" && (
+    <Button
+      size="small"
+      color="error"
+      variant="outlined"
+      onClick={() =>
+        handleChangeStatus(staff._id, "resigned")
+      }
+    >
+      Nghỉ việc
+    </Button>
+  )}
+</Stack>
               </Stack>
             </TableCell>
             </TableRow>
