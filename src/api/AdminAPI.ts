@@ -17,22 +17,20 @@ export const getStaffListApi = (onlyOnline = false) => {
   })
 }
 export const createStaffApi = (data: FormData) => {
-  return axiosInstance.post("/admin/staffs", data,{
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  })
-}
-export const updateStaffApi = (id: string, data: FormData) => {
-  return axiosInstance.patch(`/admin/staffs/${id}`, data, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  })
+    return axiosInstance.post("/admin/staffs", data);
 }
 
-export const deleteStaffApi = (id: string) => {
-  return axiosInstance.delete(`/admin/staffs/${id}`)
+export const updateStaffApi = (id: string, data: FormData) => {
+    return axiosInstance.patch(`/admin/staffs/${id}`, data);
+}
+export const updateStaffStatusApi = (
+    id: string,
+    workingStatus: "active" | "off" | "resigned"
+) => {
+    return axiosInstance.patch(
+        `/admin/staffs/${id}/status`,
+        { workingStatus }
+    )
 }
 
 
