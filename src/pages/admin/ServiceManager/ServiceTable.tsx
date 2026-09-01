@@ -9,74 +9,134 @@ import {
   Chip,
   Stack,
   Tooltip,
-  Typography
+  Typography,
 } from '@mui/material'
-import { Edit, Delete, Star } from '@mui/icons-material'
+
+import {
+  Edit,
+  Delete,
+  Star,
+} from '@mui/icons-material'
+
 import type { Service } from '../../../types/HairService/Service'
 import { formatTagLabel } from '../../../utils/formatTag'
-import type { Category } from '../../../types/Category/Category'
-import { getCategoryName } from '../../../utils/CategoryHelper'
 
 interface Props {
   services: Service[]
-  categories: Category[]
+
   onEdit: (service: Service) => void
   onDelete: (id: string) => void
+  onStatistics: (service: Service) => void
 }
 
-const isDiscountActive = (service: Service) => {
-  const d = service.serviceDiscount
-  if (!d || d.percent <= 0) return false
+const isDiscountActive = (
+  service: Service
+) => {
+  const discount = service.serviceDiscount
+
+  if (
+    !discount ||
+    discount.percent <= 0 ||
+    !discount.isActive
+  ) {
+    return false
+  }
 
   const now = new Date()
+
   return (
-    (!d.startAt || new Date(d.startAt) <= now) &&
-    (!d.endAt || new Date(d.endAt) >= now)
+    (!discount.startAt ||
+      new Date(discount.startAt) <= now) &&
+    (!discount.endAt ||
+      new Date(discount.endAt) >= now)
   )
 }
 
-
-
-const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
+const ServiceTable = ({
+  services,
+  onEdit,
+  onDelete,
+  onStatistics,
+}: Props) => {
   return (
     <Table size="small">
       <TableHead>
         <TableRow>
           <TableCell>Ảnh</TableCell>
+
           <TableCell>Dịch vụ</TableCell>
+
           <TableCell>Danh mục</TableCell>
+
           <TableCell>Giá</TableCell>
+
           <TableCell>Thời gian</TableCell>
+
           <TableCell>Tags</TableCell>
-          <TableCell align="center">Trạng thái</TableCell>
-          <TableCell align="right">Hành động</TableCell>
+
+          <TableCell>Đánh giá</TableCell>
+
+          <TableCell>Trạng thái</TableCell>
+
+          <TableCell align="right">
+            Hành động
+          </TableCell>
         </TableRow>
       </TableHead>
 
       <TableBody>
-        {services.map((s) => {
-          const discountActive = isDiscountActive(s)
+        {services.map((service) => {
+          const discountActive =
+            isDiscountActive(service)
 
           return (
-            <TableRow key={s._id} hover>
-              {/* Ảnh */}
+            <TableRow
+              key={service._id}
+              hover
+            >
+              {/* ================= IMAGE ================= */}
+
               <TableCell>
                 <Avatar
-                  src={s.images?.[0]}
+                  src={service.images?.[0]}
                   variant="rounded"
-                  sx={{ width: 56, height: 56 }}
+                  sx={{
+                    width: 56,
+                    height: 56,
+                  }}
                 />
               </TableCell>
 
-              {/* Tên + Featured */}
+              {/* ================= SERVICE ================= */}
+
               <TableCell>
                 <Stack spacing={0.5}>
-                  <Typography fontWeight={500}>{s.name}</Typography>
+                  <Typography fontWeight={600}>
+                    {service.name}
+                  </Typography>
 
-                  {s.isFeatured && (
-                    <Stack direction="row" spacing={0.5} alignItems="center">
-                      <Star fontSize="small" sx={{ color: 'warning.main' }} />
-                      <Typography variant="caption" color="warning.main">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                  >
+                    {service.bookingCount} lượt đặt
+                  </Typography>
+
+                  {service.isFeatured && (
+                    <Stack
+                      direction="row"
+                      spacing={0.5}
+                      alignItems="center"
+                    >
+                      <Star
+                        fontSize="small"
+                        color="warning"
+                      />
+
+                      <Typography
+                        variant="caption"
+                        color="warning.main"
+                      >
                         Nổi bật
                       </Typography>
                     </Stack>
@@ -84,82 +144,151 @@ const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
                 </Stack>
               </TableCell>
 
-              {/* Category */}
+              {/* ================= CATEGORY ================= */}
+
               <TableCell>
                 <Chip
                   size="small"
-                  label={getCategoryName(s.category) || '—'}
+                  label={
+                    typeof service.category ===
+                    'object'
+                      ? service.category.name
+                      : service.category || '—'
+                  }
                   variant="outlined"
                 />
               </TableCell>
 
+              {/* ================= PRICE ================= */}
 
-
-              {/* Giá */}
               <TableCell>
-                <Stack spacing={0.25}>
+                <Stack spacing={0.3}>
                   {discountActive && (
                     <Typography
                       variant="caption"
-                      sx={{ textDecoration: 'line-through', opacity: 0.6 }}
+                      sx={{
+                        textDecoration:
+                          'line-through',
+                        opacity: 0.6,
+                      }}
                     >
-                      {s.price.toLocaleString()}₫
+                      {service.price.toLocaleString(
+                        'vi-VN'
+                      )}
+                      ₫
                     </Typography>
                   )}
 
-                  <Typography fontWeight={600} color="primary.main">
-                    {s.finalPrice.toLocaleString()}₫
+                  <Typography
+                    fontWeight={700}
+                    color="primary.main"
+                  >
+                    {service.finalPrice.toLocaleString(
+                      'vi-VN'
+                    )}
+                    ₫
                   </Typography>
 
                   {discountActive && (
                     <Chip
                       size="small"
-                      label={`-${s.serviceDiscount?.percent}%`}
+                      label={`-${service.serviceDiscount?.percent}%`}
                       color="primary"
                       sx={{
                         width: 'fit-content',
-                        fontWeight: 500
                       }}
                     />
                   )}
-
                 </Stack>
               </TableCell>
 
-              {/* Thời gian */}
-              <TableCell>{s.duration} phút</TableCell>
+              {/* ================= DURATION ================= */}
 
-              {/* Tags */}
               <TableCell>
-                <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                  {s.tags?.slice(0, 3).map((tag, idx) => (
-                    <Chip
-                      key={idx}
-                      size="small"
-                      label={formatTagLabel(tag)}
-                      variant="outlined"
-                    />
-                  ))}
+                {service.duration} phút
+              </TableCell>
 
-                  {s.tags && s.tags.length > 3 && (
-                    <Chip
-                      size="small"
-                      label={`+${s.tags.length - 3}`}
-                      variant="outlined"
-                    />
-                  )}
+              {/* ================= TAGS ================= */}
+
+              <TableCell>
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  flexWrap="wrap"
+                >
+                  {service.tags
+                    ?.slice(0, 2)
+                    .map((tag) => (
+                      <Chip
+                        key={tag}
+                        size="small"
+                        label={formatTagLabel(
+                          tag
+                        )}
+                        variant="outlined"
+                      />
+                    ))}
+
+                  {service.tags &&
+                    service.tags.length > 2 && (
+                      <Chip
+                        size="small"
+                        label={`+${service.tags.length - 2}`}
+                        variant="outlined"
+                      />
+                    )}
                 </Stack>
               </TableCell>
 
-              {/* Trạng thái */}
-              <TableCell align="center">
-                <Stack spacing={0.25} alignItems="center">
-                  <Typography
-                    variant="body2"
-                    sx={{ opacity: s.isActive ? 1 : 0.4 }}
+              {/* ================= RATING ================= */}
+
+              <TableCell>
+                <Stack spacing={0.3}>
+                  <Stack
+                    direction="row"
+                    spacing={0.5}
+                    alignItems="center"
                   >
-                    {s.isActive ? 'Hoạt động' : 'Ẩn'}
+                    <Star
+                      fontSize="small"
+                      color="warning"
+                    />
+
+                    <Typography
+                      fontWeight={600}
+                    >
+                      {service.ratingAverage.toFixed(
+                        1
+                      )}
+                    </Typography>
+                  </Stack>
+
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                  >
+                    {service.ratingCount} đánh giá
                   </Typography>
+                </Stack>
+              </TableCell>
+
+              {/* ================= STATUS ================= */}
+
+              <TableCell>
+                <Stack spacing={0.5}>
+                  <Chip
+                    size="small"
+                    label={
+                      service.isActive
+                        ? 'Hoạt động'
+                        : 'Ẩn'
+                    }
+                    color={
+                      service.isActive
+                        ? 'success'
+                        : 'default'
+                    }
+                  />
 
                   {discountActive && (
                     <Chip
@@ -171,19 +300,44 @@ const ServiceTable = ({ services, onEdit, onDelete }: Props) => {
                 </Stack>
               </TableCell>
 
-              {/* Action */}
-              <TableCell align="right">
-                <Tooltip title="Chỉnh sửa">
-                  <IconButton onClick={() => onEdit(s)}>
-                    <Edit />
-                  </IconButton>
-                </Tooltip>
+              {/* ================= ACTION ================= */}
 
-                <Tooltip title="Xoá">
-                  <IconButton color="error" onClick={() => onDelete(s._id)}>
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
+              <TableCell align="right">
+                <Stack
+                  direction="row"
+                  justifyContent="flex-end"
+                >
+                  <Tooltip title="Thống kê">
+                    <IconButton
+                      onClick={() =>
+                        onStatistics(service)
+                      }
+                    >
+                      <Star />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Chỉnh sửa">
+                    <IconButton
+                      onClick={() =>
+                        onEdit(service)
+                      }
+                    >
+                      <Edit />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Xoá">
+                    <IconButton
+                      color="error"
+                      onClick={() =>
+                        onDelete(service._id)
+                      }
+                    >
+                      <Delete />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </TableCell>
             </TableRow>
           )

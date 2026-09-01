@@ -1,4 +1,5 @@
 export interface ServiceDiscount {
+  isActive: any
   percent: number
   startAt?: string
   endAt?: string

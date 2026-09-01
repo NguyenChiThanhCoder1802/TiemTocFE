@@ -4,7 +4,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material'
-import type { Category } from '../../types/Category/Category'
+import type { Category } from '../../../../types/Category/Category'
 
 interface Props {
   categories: Category[]

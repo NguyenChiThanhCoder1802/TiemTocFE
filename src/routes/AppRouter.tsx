@@ -15,7 +15,6 @@ import HomeStaff from '../pages/staff/HomeStaff';
 import AuthLayout from '../layouts/AuthLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import ServiceDetailPage from '../pages/DetailPage/ServiceDetailPage';
-import Account from '../pages/admin/AccountManager/Account';
 import ProfilePage from '../pages/customer/Profile/ProfilePage';
 import StaffList from '../pages/admin/StaffManager/StaffList';
 import StaffDetailPage from '../pages/DetailPage/StaffDetailPage';
@@ -56,7 +55,6 @@ const AppRouter = () => {
           <Route path="/admin/ServiceManager/HairSalonService" element={<HairSalonService />} />
           <Route path="/admin/ComboManager/Combo" element={<ComboManager />} />
           <Route path="/admin/DiscountManager" element={<DiscountCardManager />} />
-          <Route path="/admin/AccountManager/Accounts" element={<Account />} />
           <Route path="/admin/StaffManager/StaffList" element={<StaffList />} />
           <Route path="/admin/BookingManager" element={<BookingManager />} />
           <Route path="/admin/CategoryManager" element={<Category />} />

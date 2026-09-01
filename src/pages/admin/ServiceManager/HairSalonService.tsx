@@ -1,221 +1,293 @@
-import { Box, Typography, Button, Stack } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Paper,
+} from '@mui/material'
+
 import { Add } from '@mui/icons-material'
-import { useEffect, useState, useCallback } from 'react'
+
+import {
+  useEffect,
+  useState,
+  useCallback,
+} from 'react'
+
 import {
   fetchServiceAdmin,
   createService,
   updateService,
-  deleteService
+  deleteService,
 } from '../../../api/servicesAPI'
+
 import { fetchCategories } from '../../../api/CategoryAPI'
+
 import type { Service } from '../../../types/HairService/Service'
 import type { Category } from '../../../types/Category/Category'
+
 import ServiceTable from './ServiceTable'
 import ServiceFormDialog from './ServiceFormDialog'
+import ServiceStats from './components/ServiceStats'
+import ServiceFilters from './components/ServiceFilters'
+import ServicePagination from './components/ServicePagination'
+import ServiceStatisticsDialog from './components/ServiceStatisticsDialog'
 
-import CategoryFilter from '../../../components/filters/CategoryFilter'
-import SearchFilter from '../../../components/filters/SearchFilter'
-import PriceFilter from '../../../components/filters/PriceFilter'
-import SortFilter from '../../../components/filters/SortFilter'
-import DiscountFilter from '../../../components/filters/DiscountFilter'
 import type { FetchServicesParams } from '../../../types/SearchParams/Params'
 
-
 const HairSalonService = () => {
-  const [services, setServices] = useState<Service[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [openServiceDialog, setOpenServiceDialog] = useState(false)
-  const [editingService, setEditingService] = useState<Service | null>(null)
- const [filters, setFilters] = useState<FetchServicesParams>({
-  page: 1,
-  limit: 10
-})
-const [totalPages, setTotalPages] = useState(1)
+  const [services, setServices] =
+    useState<Service[]>([])
 
-  const loadData = useCallback( async () => {
-    const [serviceData, categoryData] = await Promise.all([
+  const [categories, setCategories] =
+    useState<Category[]>([])
+
+  const [openServiceDialog, setOpenServiceDialog] =
+    useState(false)
+
+  const [editingService, setEditingService] =
+    useState<Service | null>(null)
+
+  const [statisticsService, setStatisticsService] =
+    useState<Service | null>(null)
+
+  const [filters, setFilters] =
+    useState<FetchServicesParams>({
+      page: 1,
+      limit: 10,
+    })
+
+  const [total, setTotal] = useState(0)
+
+  const [totalPages, setTotalPages] =
+    useState(1)
+
+  /* ==================================================
+     LOAD DATA
+  ================================================== */
+
+  const loadData = useCallback(async () => {
+    const [
+      serviceData,
+      categoryData,
+    ] = await Promise.all([
       fetchServiceAdmin(filters),
-       
-      fetchCategories({ isActive: true })
+      fetchCategories({
+        isActive: true,
+      }),
     ])
-    setServices(serviceData.data)
-    setTotalPages(serviceData.pagination.totalPages)
-    setCategories(categoryData)
-  },
-  [filters]
-  )
 
+    setServices(serviceData.data)
+
+    setTotal(
+      serviceData.pagination.total
+    )
+
+    setTotalPages(
+      serviceData.pagination.totalPages
+    )
+
+    setCategories(categoryData)
+  }, [filters])
 
   useEffect(() => {
-  loadData()
-}, [loadData])
+    loadData()
+  }, [loadData])
 
+  /* ==================================================
+     FILTER
+  ================================================== */
 
+  const handleFilterChange = (
+    value: Partial<FetchServicesParams>
+  ) => {
+    setFilters((current) => ({
+      ...current,
+      ...value,
+    }))
+  }
 
-  const handleServiceSubmit = async (formData: FormData) => {
+  /* ==================================================
+     CREATE / UPDATE
+  ================================================== */
+
+  const handleServiceSubmit = async (
+    formData: FormData
+  ) => {
     if (editingService) {
-      await updateService(editingService._id, formData)
+      await updateService(
+        editingService._id,
+        formData
+      )
     } else {
       await createService(formData)
     }
+
     setOpenServiceDialog(false)
+
+    setEditingService(null)
+
     loadData()
   }
 
- 
+  /* ==================================================
+     DELETE
+  ================================================== */
+
+  const handleDelete = async (
+    id: string
+  ) => {
+    if (
+      !confirm(
+        'Bạn có chắc muốn xoá dịch vụ này?'
+      )
+    ) {
+      return
+    }
+
+    await deleteService(id)
+
+    loadData()
+  }
+
   return (
     <Box>
-      {/* HEADER */}
-      <Box mb={3}>
-        {/* TOP BAR */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={2}
-        >
-          <Typography variant="h5" fontWeight={700}>
+      {/* ==================================================
+          HEADER
+      ================================================== */}
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Box>
+          <Typography
+            variant="h5"
+            fontWeight={700}
+          >
             Quản lý dịch vụ
           </Typography>
 
-           <Stack direction="row" spacing={1.5} alignItems="center">
-              <DiscountFilter
-                value={filters.discountOnly}
-                onChange={(discountOnly) =>
-                  setFilters((f) => ({
-                    ...f,
-                    discountOnly,
-                    page: 1
-                  }))
-                }
-              />
-
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                sx={{ height: 36 }}
-                onClick={() => {
-                  setEditingService(null)
-                  setOpenServiceDialog(true)
-                }}
-              >
-                Thêm dịch vụ
-              </Button>
-            </Stack>  
-        </Stack>
-
-        {/* FILTERS */}
-        <Stack
-          direction="row"
-          spacing={1.5}
-          flexWrap="wrap"
-          alignItems="center"
-        >
-          <CategoryFilter
-            categories={categories}
-            value={filters.categoryId ?? null}
-            onChange={(categoryId) =>
-              setFilters((f) => ({
-                ...f,
-                categoryId: categoryId ?? undefined,
-                page: 1
-              }))
-            }
-          />
-
-          <SearchFilter
-            value={filters.search}
-            onChange={(search) =>
-              setFilters((f) => ({
-                ...f,
-                search,
-                page: 1
-              }))
-            }
-          />
-
-          <PriceFilter
-            minPrice={filters.minPrice}
-            maxPrice={filters.maxPrice}
-            onChange={(v) =>
-              setFilters((f) => ({
-                ...f,
-                ...v,
-                page: 1
-              }))
-            }
-          />
-
-          <SortFilter
-            value={filters.sort}
-            onChange={(sort) =>
-              setFilters((f) => ({
-                ...f,
-                sort
-              }))
-            }
-          />
-
-        
-        </Stack>
-      </Box>
-
-
-      {/* TABLE */}
-      <ServiceTable
-        services={services}
-        categories={categories}
-        onEdit={(s) => {
-          setEditingService(s)
-          setOpenServiceDialog(true)
-        }}
-        onDelete={async (id) => {
-          if (confirm('Bạn có chắc muốn xoá dịch vụ này?')) {
-            await deleteService(id)
-            loadData()
-          }
-        }}
-      />
-      <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2,
-            mt: 3
-          }}
-        >
-          <Button
-            variant="outlined"
-            disabled={filters.page! <= 1}
-            onClick={() => setFilters((f) => ({ ...f, page: f.page! - 1 }))}
+          <Typography
+            variant="body2"
+            color="text.secondary"
           >
-            {'<'}
-          </Button>
-
-          <Typography fontWeight={600}>
-            Trang {filters.page} / {totalPages}
+            Quản lý dịch vụ, giá, trạng thái
+            và hiệu suất
           </Typography>
-
-          <Button
-            variant="outlined"
-            disabled={filters.page! >= totalPages}
-            onClick={() => setFilters((f) => ({ ...f, page: f.page! + 1 }))}
-          >
-            {'>'}
-          </Button>
         </Box>
 
-      {/* SERVICE DIALOG */}
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => {
+            setEditingService(null)
+            setOpenServiceDialog(true)
+          }}
+        >
+          Thêm dịch vụ
+        </Button>
+      </Stack>
+
+      {/* ==================================================
+          STATS
+      ================================================== */}
+
+      <ServiceStats
+        services={services}
+      />
+
+      {/* ==================================================
+          FILTER
+      ================================================== */}
+
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          mb: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+        }}
+      >
+        <ServiceFilters
+          filters={filters}
+          categories={categories}
+          onChange={handleFilterChange}
+        />
+      </Paper>
+
+      {/* ==================================================
+          TABLE
+      ================================================== */}
+
+      <Paper
+        elevation={0}
+        sx={{
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          overflow: 'auto',
+        }}
+      >
+        <ServiceTable
+          services={services}
+          onEdit={(service) => {
+            setEditingService(service)
+            setOpenServiceDialog(true)
+          }}
+          onDelete={handleDelete}
+          onStatistics={(service) => {
+            setStatisticsService(service)
+          }}
+        />
+      </Paper>
+
+      {/* ==================================================
+          PAGINATION
+      ================================================== */}
+
+      <ServicePagination
+        page={filters.page ?? 1}
+        totalPages={totalPages}
+        total={total}
+        onChange={(page) =>
+          setFilters((current) => ({
+            ...current,
+            page,
+          }))
+        }
+      />
+
+      {/* ==================================================
+          FORM
+      ================================================== */}
+
       <ServiceFormDialog
         open={openServiceDialog}
         service={editingService}
         categories={categories}
-        onClose={() => setOpenServiceDialog(false)}
+        onClose={() => {
+          setOpenServiceDialog(false)
+          setEditingService(null)
+        }}
         onSubmit={handleServiceSubmit}
       />
 
-    
+      {/* ==================================================
+          STATISTICS
+      ================================================== */}
+
+      <ServiceStatisticsDialog
+        open={Boolean(statisticsService)}
+        service={statisticsService}
+        onClose={() =>
+          setStatisticsService(null)
+        }
+      />
     </Box>
   )
 }

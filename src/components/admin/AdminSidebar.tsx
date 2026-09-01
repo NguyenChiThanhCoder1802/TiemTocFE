@@ -14,7 +14,6 @@ import {
   AutoAwesome,
   Category,
   Badge,
-  People,
   LocalOffer
 } from '@mui/icons-material'
 import { NavLink } from 'react-router-dom'
@@ -28,7 +27,6 @@ const menu = [
   { text: 'Combo', icon: <AutoAwesome />, path: '/admin/ComboManager/Combo' },
   { text: 'Danh mục', icon: <Category />, path: '/admin/CategoryManager' },
   { text: 'Nhân viên', icon: <Badge />, path: '/admin/StaffManager/StaffList' },
-  { text: 'Tài khoản', icon: <People />, path: '/admin/AccountManager/Accounts' },
   { text: 'Thẻ Giảm Giá', icon: <LocalOffer />, path: '/admin/DiscountManager' },
 ]
 
