@@ -72,7 +72,7 @@ export default function BookingTable({ bookings, onSelect }: Props) {
             </TableCell>
 
             <TableCell>{b.customer?.name}</TableCell>
-            <TableCell>{b.staff?.user?.name ?? "Chưa gán"}</TableCell>
+            <TableCell>{b.staff?.name ?? "Chưa gán"}</TableCell>
 
             <TableCell>
               {b.services.map(s => (

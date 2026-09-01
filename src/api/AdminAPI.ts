@@ -2,8 +2,35 @@ import axiosInstance from "../utils/axiosInstance"
 import type { ApiResponse } from "../types/ApiResponse"
 import type { AdminDashboardStat } from "../types/Admin/stat"
 import type { AdminBooking } from "../types/Booking/AdminBooking"
+import type { BookingStatus } from "../types/Booking/Booking"
 /* ================= ADMIN API ================= */
+export interface GetAllBookingsParams {
+  status?: BookingStatus
+  search?: string
+  page?: number
+  limit?: number
+}
 
+export interface BookingPagination {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface BookingStats {
+  total: number
+  pending: number
+  confirmed: number
+  completed: number
+  cancelled: number
+}
+
+export interface GetAllBookingsResponse {
+  data: AdminBooking[]
+  pagination: BookingPagination
+  stats: BookingStats
+}
 export const getAdminDashboardStat = async () => {
   const res = await axiosInstance.get<ApiResponse<AdminDashboardStat>>(
     "/admin/dashboard"
@@ -35,15 +62,15 @@ export const updateStaffStatusApi = (
 
 
 
-export const getAllBookingsApi = async (params?: {
-  status?: string
-  page?: number
-  limit?: number
-}) => {
-  const res = await axiosInstance.get<{
-    data: AdminBooking[]
-    pagination: any
-  }>("/admin/bookings", { params })
+export const getAllBookingsApi = async (
+  params?: GetAllBookingsParams
+) => {
+  const res = await axiosInstance.get<GetAllBookingsResponse>(
+    "/admin/bookings",
+    {
+      params,
+    }
+  )
 
   return res.data
 }
